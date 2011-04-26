@@ -38,6 +38,9 @@
 		// function for adding datapoints to the store
 		// datapoints are usually defined by x and y but could also contain a third parameter which represents the occurrence
 		addDataPoint: function(x, y){
+			if(x < 0 || y < 0)
+				return;
+				
 			var heatmap = this.get("heatmap"),
 			data = this.get("data");
 			
@@ -338,5 +341,5 @@
 			}
 		};
 	})();
-	window.h337 = window.heatmapFactory = heatmapFactory;
+	w.h337 = w.heatmapFactory = heatmapFactory;
 })(window);
