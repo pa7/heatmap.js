@@ -165,6 +165,8 @@
 				this.set("max", config.max || false);
 				this.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});	// default is the common blue to red gradient
 				this.set("opacity", parseInt(255/(100/config.opacity)) || 180);
+				this.set("width", config.width || 0);
+				this.set("height", config.height || 0);
 		},
 		init: function(){
 				this.initColorPalette();
