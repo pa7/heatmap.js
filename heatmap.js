@@ -94,7 +94,7 @@
 					if(two === undefined)
 						continue;
 					// if both indexes are defined, push the values into the array
-					exportData.push({x: parseInt(one), y: parseInt(two), count: data[one][two]});
+					exportData.push({x: parseInt(one, 10), y: parseInt(two, 10), count: data[one][two]});
 				}
 			}
 					
@@ -164,7 +164,7 @@
 				this.set("visible", config.visible);
 				this.set("max", config.max || false);
 				this.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});	// default is the common blue to red gradient
-				this.set("opacity", parseInt(255/(100/config.opacity)) || 180);
+				this.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
 				this.set("width", config.width || 0);
 				this.set("height", config.height || 0);
 		},
@@ -316,6 +316,8 @@
 			var w = this.get("width"),
 			h = this.get("height");
 			this.store.set("data",[]);
+			// @TODO: reset stores max to 1 
+			//this.store.max = 1;
 			this.get("ctx").clearRect(0,0,w,h);
 			this.get("actx").clearRect(0,0,w,h);
 		}
@@ -327,7 +329,16 @@
 			},
 			util: {
 				mousePosition: function(ev){
+					// this doesn't work right
+					// rather use 
+					/*
+						// this = element to observe
+						var x = ev.pageX - this.offsetLeft;
+						var y = ev.pageY - this.offsetTop;
+						
+					*/
 					var x, y;
+					
 					if (ev.layerX) { // Firefox
 						x = ev.layerX;
 						y = ev.layerY;

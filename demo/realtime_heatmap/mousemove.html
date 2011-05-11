@@ -4,6 +4,10 @@
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<title>heatmap.js Realtime heatmap based on mousemovement</title>
+		<meta name="robots" content="index, follow" />
+		<meta name="description" content="Realtime heatmap based on mouse movement " />
+		<meta name="author" content="Patrick Wied" />
+		<meta name="keywords" content="heatmap, realtime, mouse movement, javascript, canvas, html5" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<style>
 			body, html {
@@ -49,18 +53,22 @@
 				This is a demonstration of a realtime heatmap based on the user's mouse movement.<br /><br />
 				<strong>Note: if you want to see the dynamic repainting, stop your cursor on the heatmap for some time.</strong>
 			</div>
+			<div style="position:absolute;width:940px;top:550px;text-align:center;"><a href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</a> by <a href="http://www.patrick-wied.at" target="_blank">Patrick Wied</a></div>
 		</div>
+		
 		<script type="text/javascript" src="../../src/heatmap.js"></script>
 		<script type="text/javascript">
 
+		window.onload = function(){
+		
 		var xx = h337.create({"element":document.getElementById("heatmapArea"), "radius":25, "visible":true});
 		
-		(function(){
+			(function(){
 				var active = false,
 				lastCoords = [],
 				mouseMove = false,
+				mouseOver = false,
 				activate = function(){
-				
 					active = true;
 				},
 				$ = function(id){
@@ -71,35 +79,40 @@
 					xx.store.addDataPoint(lastCoords[0], lastCoords[1]);
 				},
 				antiIdle = function(){
-					if(!mouseMove && lastCoords && !timer){
-						timer = setInterval(simulateEv, 500);			
+					if(mouseOver && !mouseMove && lastCoords && !timer){
+						timer = setInterval(simulateEv, 1000);			
 					}
 				};
+				
 				
 				(function(fn){
 					setInterval(fn, 1000);
 				}(antiIdle));
 				var tmp = $("heatmapArea");
 
-				tmp.onmousout = function(){
+				tmp.onmouseout = function(){
+					mouseOver = false;
 					if(timer){
 						clearInterval(timer)
 						timer = null;
 					}
 				};
 				
+				
 				tmp.onmousemove = tmp.onclick = function(ev){
 					mouseMove = true;
+					mouseOver = true;
 					if(active){
 						if(timer){
 							clearInterval(timer);
 							timer = null;
 						}
+						
 						var pos = h337.util.mousePosition(ev);
-						if(pos){
+						
 							xx.store.addDataPoint(pos[0], pos[1]);
 							lastCoords = [pos[0], pos[1]];
-						}
+						
 						active = false;
 					}
 					mouseMove = false;
@@ -123,6 +136,8 @@
 					setInterval(fn, 50);
 				}(activate));
 			})();
+		};
 		</script>
+
 	</body>
 </html>
