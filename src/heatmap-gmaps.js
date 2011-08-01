@@ -18,18 +18,40 @@ HeatmapOverlay.prototype = new google.maps.OverlayView();
 
 HeatmapOverlay.prototype.onAdd = function(){
 	
+	var panes = this.getPanes();
+    
+    var w = this.getMap().getDiv().clientWidth;
+    var h = this.getMap().getDiv().clientHeight;	
 	var el = document.createElement("div");
-	el.style.cssText = "position:absolute;top:0;left:0;width:800px;height:600px;border:0;";
+    el.style.position = "absolute";
+    el.style.top = 0;
+    el.style.left = 0;
+    el.style.width = w + "px";
+    el.style.height = h + "px";
+    el.style.border = 0;
 	
 	this.conf.element = el;
-	var panes = this.getPanes();
 	panes.overlayLayer.appendChild(el);
 
 	this.heatmap = h337.create(this.conf);
 }
 
-HeatmapOverlay.prototype.draw = function(){
+HeatmapOverlay.prototype.onRemove = function(){
+    // Empty for now.
+}
 
+HeatmapOverlay.prototype.draw = function(){
+    
+    var overlayProjection = this.getProjection();
+    var currentBounds = this.map.getBounds();
+    var ne = overlayProjection.fromLatLngToDivPixel(currentBounds.getNorthEast());
+    var sw = overlayProjection.fromLatLngToDivPixel(currentBounds.getSouthWest());
+    var topY = ne.y;
+    var leftX = sw.x;
+    
+    this.conf.element.style.left = leftX;
+    this.conf.element.style.top = topY;
+            
 	if(this.latlngs.length > 0){
 		this.heatmap.clear();
 		var len = this.latlngs.length,
@@ -42,9 +64,21 @@ HeatmapOverlay.prototype.draw = function(){
 
 		while(len--){
 			var latlng = this.latlngs[len].latlng;
-			var point = this.pixelTransform(projection.fromLatLngToDivPixel(latlng));
-			d.data.push({x: point.x, y: point.y, count: this.latlngs[len].c});
+			if(!currentBounds.contains(latlng)) { continue; }
 			
+			// DivPixel is pixel in overlay pixel coordinates... we need
+			// to transform to screen coordinates so it'll match the canvas
+			// which is continually repositioned to follow the screen.
+			var divPixel = projection.fromLatLngToDivPixel(latlng);
+			var screenPixel = new google.maps.Point(
+			        divPixel.x - leftX,
+			        divPixel.y - topY);
+			var roundedPoint = this.pixelTransform(screenPixel);
+			d.data.push({ 
+			    x: roundedPoint.x,
+			    y: roundedPoint.y,
+			    count: this.latlngs[len].c
+			});
 		}
 		this.heatmap.store.setDataSet(d);
 	}
@@ -76,15 +110,14 @@ HeatmapOverlay.prototype.pixelTransform = function(p){
 
 HeatmapOverlay.prototype.setDataSet = function(data){
 
-	var mapdata = {};
-	mapdata.max = data.max;
-	mapdata.data = [];
-	var d = data.data,
-	dlen = d.length;
+	var mapdata = {
+	    max: data.max,
+	    data: []
+	};
+	var d = data.data;
+	var dlen = d.length;
 	var projection = this.getProjection();
-	
-	while(dlen--){
-		
+	while(dlen--){	
 		var latlng = new google.maps.LatLng(d[dlen].lat, d[dlen].lng);
 		this.latlngs.push({latlng: latlng, c: d[dlen].count});
 		var point = this.pixelTransform(projection.fromLatLngToDivPixel(latlng));
@@ -100,12 +133,8 @@ HeatmapOverlay.prototype.addDataPoint = function(lat, lng, count){
 	var projection = this.getProjection(),
 	latlng = new google.maps.LatLng(lat, lng),
 	point = this.pixelTransform(projection.fromLatLngToDivPixel(latlng));
-	
-	
-	
 	this.heatmap.store.addDataPoint(point.x, point.y, count);
-	
-	this.latlngs.push({latlng: latlng, c: count});
+	this.latlngs.push({ latlng: latlng, c: count });
 }
 
 HeatmapOverlay.prototype.toggle = function(){
