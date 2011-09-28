@@ -9,13 +9,14 @@ The heatmaps are fully customizable - your welcome to choose your own color grad
 Just add heatmap.js to your webpage and it will create one global object called **heatmapFactory** which you also can access as **h337**.
 This global object has a function **create** that takes one argument **config** (Object) and returns a heatmap instance. 
 At the configuration object you can specify the following properties in order to customize your heatmap instance:
-- **radius** (optional) Number. That's the radius of a single datapoint in the heatmap (measured in pixels). Default is 40
-- **element** (required) String|HTMLelement. Either provide an element's id or the element itself which should contain the heatmap.
-- **visible** (optional) Boolean. Whether the heatmap is visible or not. Default is true
-- **gradient** (optional) Object. An object which contains colorstops from 0 to 1. Default is the standard heatmap gradient.
-- **opacity** (optional) Number [0-100]. Opacity of the heatmap measured in percent.
+- radius (optional) Number. That's the radius of a single datapoint in the heatmap (measured in pixels). Default is 40
+- element (required) String|HTMLelement. Either provide an element's id or the element itself which should contain the heatmap.
+- visible (optional) Boolean. Whether the heatmap is visible or not. Default is true
+- gradient (optional) Object. An object which contains colorstops from 0 to 1. Default is the standard heatmap gradient.
+- opacity (optional) Number [0-100]. Opacity of the heatmap measured in percent.
 
 Here is an example instanciation:
+
 ```javascript
 var config = {
     "radius": 30,
@@ -43,16 +44,16 @@ var dataSet = heatmap.store.exportDataSet();
 
 As you can see a heatmap instance contains a store which stores it's datapoints. 
 A store has the following functions:
-- **setDataSet(Object)** void. This initializes the heatmap with a dataset. The dataset object has to have the following structure: {max: <maximum count>, data:[{x: <dataPointX>, y: <dataPointY>, count: <valueAtXY>},...]}
-- **addDataPoint(Number, Number, [Number])** void. Adds a single datapoint to the store. First parameter is x, second parameter is y. Third parameter is the value, if not specified 1 will be used.
-- **exportdataSet()** Object. Returns the store's data as an object with the same structure that the import object at setDataSet has.
+- setDataSet(Object) void. This initializes the heatmap with a dataset. The dataset object has to have the following structure: {max: <maximum count>, data:[{x: <dataPointX>, y: <dataPointY>, count: <valueAtXY>},...]}
+- addDataPoint(Number, Number, [Number]) void. Adds a single datapoint to the store. First parameter is x, second parameter is y. Third parameter is the value, if not specified 1 will be used.
+- exportdataSet() Object. Returns the store's data as an object with the same structure that the import object at setDataSet has.
 
 ## License
 heatmap.js is dual-licensed under the MIT and the Beerware license, feel free to use it in your projects. 
 
 ## Questions?
-Feel free to contact me:
-on my website [patrick-wied.at](http://www.patrick-wied.at "")
-via twitter [@patrickwied](http://twitter.com/#!/patrickwied "")
+Feel free to contact me:  
+on my website [patrick-wied.at](http://www.patrick-wied.at "")  
+via twitter [@patrickwied](http://twitter.com/#!/patrickwied "")  
 or email [contact@patrick-wied.at](mailto:contact@patrick-wied.at "")
 
