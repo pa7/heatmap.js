@@ -11,7 +11,10 @@ function HeatmapOverlay(map, cfg){
 	this.heatmap = null;
 	this.conf = cfg;
 	this.latlngs = [];
-	this.setMap(map);	
+  this.bounds = null;
+	this.setMap(map);
+  var me = this;
+  google.maps.event.addListener(map, 'idle', function() { me.draw() });
 }
 
 HeatmapOverlay.prototype = new google.maps.OverlayView();
@@ -44,13 +47,22 @@ HeatmapOverlay.prototype.draw = function(){
     
     var overlayProjection = this.getProjection();
     var currentBounds = this.map.getBounds();
+    if (currentBounds.equals(this.bounds)) {
+      return;
+    }
+    this.bounds = currentBounds;
     var ne = overlayProjection.fromLatLngToDivPixel(currentBounds.getNorthEast());
     var sw = overlayProjection.fromLatLngToDivPixel(currentBounds.getSouthWest());
     var topY = ne.y;
     var leftX = sw.x;
-    
-    this.conf.element.style.left = leftX;
-    this.conf.element.style.top = topY;
+  var h = sw.y - ne.y;
+  var w = ne.x - sw.x;
+
+    this.conf.element.style.left = leftX + 'px';
+    this.conf.element.style.top = topY + 'px';
+  this.conf.element.style.width = w + 'px';
+  this.conf.element.style.height = h + 'px';
+  this.heatmap.store.get("heatmap").resize();
             
 	if(this.latlngs.length > 0){
 		this.heatmap.clear();

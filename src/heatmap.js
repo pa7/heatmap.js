@@ -186,6 +186,16 @@
                 me.set("height", config.height || 0);
                 me.set("debug", config.debug);
         },
+        resize: function () {
+                var element = this.get("element"),
+                    canvas = this.get("canvas"),
+                    acanvas = this.get("acanvas");
+                canvas.width = acanvas.width = element.style.width.replace(/px/, "") || this.getWidth(element);
+                this.set("width", canvas.width);
+                canvas.height = acanvas.height = element.style.height.replace(/px/, "") || this.getHeight(element);
+                this.set("height", canvas.height);
+        },
+
         init: function(){
                 var me = this,
                     canvas = document.createElement("canvas"),
@@ -196,10 +206,7 @@
 
                 me.set("canvas", canvas);
                 me.set("acanvas", acanvas);
-                canvas.width = acanvas.width = element.style.width.replace(/px/,"") || me.getWidth(element);
-                me.set("width", canvas.width);
-                canvas.height = acanvas.height = element.style.height.replace(/px/,"") || me.getHeight(element);
-                me.set("height", canvas.height);
+                me.resize();
                 canvas.style.position = acanvas.style.position = "absolute";
                 canvas.style.top = acanvas.style.top = "0";
                 canvas.style.left = acanvas.style.left = "0";
