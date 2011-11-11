@@ -49,8 +49,8 @@ HeatmapOverlay.prototype.draw = function(){
     var topY = ne.y;
     var leftX = sw.x;
     
-    this.conf.element.style.left = leftX;
-    this.conf.element.style.top = topY;
+    this.conf.element.style.left = leftX + 'px';
+    this.conf.element.style.top = topY + 'px';
             
 	if(this.latlngs.length > 0){
 		this.heatmap.clear();
