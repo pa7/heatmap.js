@@ -34,7 +34,7 @@ After creating the heatmap object you can set a dataset (import), add single dat
 
 ```javascript
 // set a dataset
-heatmap.store.setDataSet({ max: 10, data: [{x: 10, x: 20, count: 5}, ...]});
+heatmap.store.setDataSet({ max: 10, data: [{x: 10, y: 20, count: 5}, ...]});
 
 // add a single datapoint
 heatmap.store.addDataPoint(10, 20);
