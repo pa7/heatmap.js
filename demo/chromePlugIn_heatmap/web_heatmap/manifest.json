@@ -1,0 +1,19 @@
+ {
+     "name": "webHeatmap",
+     "version": "1.0",
+     "description": "trace in the webpage",
+     "content_scripts": [{
+         "matches": ["file:///*/*","http://*/*","https://*/*"],       
+         "js": ["heatmap.js","content.js" ],          
+         "run_at": "document_idle",               
+         "all_frames": true                  
+     }],
+	 "permissions": [   
+		"tabs", "http://*/*","https://*/*"  
+	 ]  ,
+	 "browser_action": {  
+		"default_icon": "icon.png" ,
+		"default_title": "webHeatmap",
+		"default_popup": "popup.html"
+	  }  	 
+ }
