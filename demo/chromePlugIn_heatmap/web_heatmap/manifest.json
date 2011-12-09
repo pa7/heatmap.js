@@ -1,6 +1,6 @@
  {
      "name": "webHeatmap",
-     "version": "1.0",
+     "version": "1.1",
      "description": "trace in the webpage",
      "content_scripts": [{
          "matches": ["file:///*/*","http://*/*","https://*/*"],       
