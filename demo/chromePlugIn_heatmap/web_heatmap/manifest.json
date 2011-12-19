@@ -1,19 +1,19 @@
  {
      "name": "webHeatmap",
-     "version": "1.1",
+     "version": "1.0",
      "description": "trace in the webpage",
      "content_scripts": [{
          "matches": ["file:///*/*","http://*/*","https://*/*"],       
          "js": ["heatmap.js","content.js" ],          
-         "run_at": "document_idle",
+         "run_at": "document_idle",               
          "all_frames": true                  
-     }],
+     }],     
 	 "permissions": [   
 		"tabs", "http://*/*","https://*/*","contextMenus"
 	 ] ,
 	 "icons": {
 		"16":"icon.png",
-		"128":"icon_big.png"
+		"128":"icon_big.png"		
 	 },
 	 "browser_action": {  
 		"default_icon": "icon.png" ,

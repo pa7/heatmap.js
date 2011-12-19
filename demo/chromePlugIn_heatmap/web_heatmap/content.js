@@ -2,7 +2,6 @@
 	return document.getElementById(id);
 }
 
-
 /**
  * handler
  */
@@ -26,24 +25,45 @@ var heatmapCanvas ={
 	ele:null,
 	scrollTop:0,
 	scrollLeft:0,
+	max:0,
+	d:{"max":0,data:[]},
+	addData:function(x,y) {		
+		var added = 0;
+		for(var i = 0,resLen = heatmapCanvas.d.data.length; i < resLen;i++) {
+			var datax = heatmapCanvas.d.data[i].x;
+			var datay = heatmapCanvas.d.data[i].y;
+	 		if(x == heatmapCanvas.d.data[i].x && y == datay) {				
+				heatmapCanvas.d.data[i].count++;				
+				var max = heatmapCanvas.d.max;
+				var count = heatmapCanvas.d.data[i].count;
+				heatmapCanvas.d.max = max < count?count:max;
+				added = 1;
+				break;
+			}
+		}
+		
+		if(added == 0) {
+			heatmapCanvas.d.data.push({"x":x,"y":y,"count":1});
+		}	
+	},
 	resizeScroll:function() {
 		heatmapCanvas.scrollTop = document.body.scrollTop;
 		heatmapCanvas.scrollLeft = document.body.scrollLeft;		
 	}
+	
 };
 heatmapCanvas.resizeScroll();
-
 /**
  * record the position where the mouse moved
  */
 document.documentElement.onmousemove = function(e) {	
-	space.x.push(heatmapCanvas.scrollLeft + e.clientX);
-	space.y.push(heatmapCanvas.scrollTop + e.clientY);	
+	var x = heatmapCanvas.scrollLeft + e.clientX;
+	var y = heatmapCanvas.scrollTop + e.clientY;
+	heatmapCanvas.addData(x,y);		
 	/*
 		realtime to do
 	*/
 }
-
 
 /*resize the browser*/
 window.onload = function() {
@@ -56,7 +76,6 @@ window.onscroll = function() {
 	heatmapCanvas.resizeScroll();
 }
 
-
 /**
  * hide canvas
  */
@@ -68,8 +87,7 @@ function hideCanvas() {
 
 function drawHeatMap(sendResponse) {		
 		//carete the heat-map canvas
-		if( $$("heatmapCanvas") == null) {
-		
+		if( $$("heatmapCanvas") == null) {		
 			//create outerDiv 
 			var ele = document.createElement("div");		
 			var w = document.body.scrollWidth, h = document.body.scrollHeight;
@@ -96,11 +114,7 @@ function drawHeatMap(sendResponse) {
 		}			
 		heatmapCanvas.ele.style.display = 'block';
 		heatmap.clear();
+	
+		heatmap.store.setDataSet(heatmapCanvas.d);
 
-		//draw heatmap
-		for(var i = 0 , len = space.x.length; i < len; i++) {
-			var x = parseInt(space.x[i]);
-			var y = parseInt(space.y[i]);
-			heatmap.store.addDataPoint(x,y);					
-		}	
 }

@@ -317,7 +317,7 @@
 			h = this.get("height");
 			this.store.set("data",[]);
 			// @TODO: reset stores max to 1 
-			 this.store.max = 1;
+			//this.store.max = 1;
 			this.get("ctx").clearRect(0,0,w,h);
 			this.get("actx").clearRect(0,0,w,h);
 		}
