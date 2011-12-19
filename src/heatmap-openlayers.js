@@ -30,6 +30,19 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	updateLayer: function(){
 		this.setDataSet(this.tmpData);
 	},
+        getPixelOffset: function () {
+            var o = this.mapLayer.map.layerContainerOrigin;
+            var o_lonlat = new OpenLayers.LonLat(o.lon, o.lat);
+            var o_pixel = this.roundPixels(this.mapLayer.getViewPortPxFromLonLat(o_lonlat));
+
+            var c = this.mapLayer.map.center;
+            var c_lonlat = new OpenLayers.LonLat(c.lon, c.lat);
+            var c_pixel = this.roundPixels(this.mapLayer.getViewPortPxFromLonLat(c_lonlat));
+
+            return { x: o_pixel.x - c_pixel.x,
+                     y: o_pixel.y - c_pixel.y };
+
+        },
 	setDataSet: function(obj){
 		var set = {},
 		dataset = obj.data
@@ -41,8 +54,9 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 		while(dlen--){
 			var lonlat = new OpenLayers.LonLat(dataset[dlen].lon, dataset[dlen].lat);
 			var pixel = this.roundPixels(this.mapLayer.getViewPortPxFromLonLat(lonlat));
+                        var pixel_offset = this.getPixelOffset();
 			if(pixel)
-				set.data.push({x: pixel.x, y: pixel.y, count: dataset[dlen].count});
+				set.data.push({x: pixel.x - pixel_offset.x, y: pixel.y - pixel_offset.y, count: dataset[dlen].count});
 		}
 		this.tmpData = obj;
 		this.heatmap.store.setDataSet(set);
@@ -61,7 +75,8 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	addDataPoint: function(lon, lat){
 		var lonlat = new OpenLayers.LonLat(lon, lat);
 		var pixel = this.roundPixels(this.mapLayer.getViewPortPxFromLonLat(lonlat));
-		var args = [pixel.x, pixel.y];
+                var pixel_offset = this.getPixelOffset();
+		var args = [pixel.x - pixel_offset.x, pixel.y - pixel_offset.y];
 		if(pixel){
 			if(arguments.length == 3){
 				args.push(arguments[2]);
