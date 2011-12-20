@@ -1,123 +1,157 @@
 <html>
-<head>
-<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-<title>heatmap.js OpenLayers Heatmap Layer</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<style>
-			body, html {
-				margin:0;
-				padding:0;
-				font-family:Arial;
-			}
-			h1 {
-				margin-bottom:10px;
-			}
-			#main {
-				position:relative;
-				width:1020px;
-				padding:20px;
-				margin:auto;
-			}
-			#heatmapArea {
-				position:relative;
-				float:left;
-				width:800px;
-				height:600px;
-				border:1px dashed black;
-			}
-			#configArea {
-				position:relative;
-				float:left;
-				width:200px;
-				padding:15px;
-				padding-top:0;
-				padding-right:0;
-			}
-			.btn {
-				margin-top:25px;
-				padding:10px 20px 10px 20px;
-				-moz-border-radius:15px;
-				-o-border-radius:15px;
-				-webkit-border-radius:15px;
-				border-radius:15px;
-				border:2px solid black;
-				cursor:pointer;
-				color:white;
-				background-color:black;
-			}
-			#gen:hover{
-				background-color:grey;
-				color:black;
-			}
-			textarea{
-				width:260px;
-				padding:10px;
-				height:200px;
-			}
-			h2{
-				margin-top:0;
-			}
-		</style>
-<link rel="shortcut icon" type="image/png" href="http://www.patrick-wied.at/img/favicon.png" />
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <title>heatmap.js OpenLayers Heatmap Layer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body, html {
+                margin:0;
+                padding:0;
+                font-family:Arial;
+            }
+            h1 {
+                margin-bottom:10px;
+            }
+            #main {
+                position:relative;
+                width:1020px;
+                padding:20px;
+                margin:auto;
+            }
+            #heatmapArea {
+                position:relative;
+                float:left;
+                width:800px;
+                height:600px;
+                border:1px dashed black;
+            }
+            #configArea {
+                position:relative;
+                float:left;
+                width:200px;
+                padding:15px;
+                padding-top:0;
+                padding-right:0;
+            }
+            .btn {
+                margin-top:25px;
+                padding:10px 20px 10px 20px;
+                -moz-border-radius:15px;
+                -o-border-radius:15px;
+                -webkit-border-radius:15px;
+                border-radius:15px;
+                border:2px solid black;
+                cursor:pointer;
+                color:white;
+                background-color:black;
+            }
+            #gen:hover{
+                background-color:grey;
+                color:black;
+            }
+            textarea{
+                width:260px;
+                padding:10px;
+                height:200px;
+            }
+            h2{
+                margin-top:0;
+            }
+        </style>
+        <link rel="shortcut icon" type="image/png" href="http://www.patrick-wied.at/img/favicon.png" />
 
 
-</head>
-<body>
-<div id="main">
-			<h1>OpenLayers Heatmap Overlay</h1>
-			<a href="http://www.patrick-wied.at/static/heatmapjs/" title="heatmap.js">Back to the project page</a><br /><br />
-			<div id="heatmapArea">
-			
-			</div>
-			<div id="configArea">
-				<h2>Sidenotes</h2>
+    </head>
+    <body>
+        <div id="main">
+            <h1>OpenLayers Heatmap Overlay</h1>
+            <a href="http://www.patrick-wied.at/static/heatmapjs/" title="heatmap.js">Back to the project page</a><br /><br />
+            <div id="heatmapArea">
+
+            </div>
+            <div id="configArea">
+                <h2>Sidenotes</h2>
 				This is a demonstration of a canvas heatmap OpenLayers overlay<br /><br />
-				<strong>Note: this is an early release of the OpenLayers heatmap layer. Please feel free to <a href="https://github.com/pa7/heatmap.js">contribute patches</a>. (e.g: display datapoints on dragend even when they weren't visible before)</strong>
-				<div id="tog" class="btn">Toggle HeatmapOverlay</div>
-			</div>
+                <strong>Note: this is an early release of the OpenLayers heatmap layer. Please feel free to <a href="https://github.com/pa7/heatmap.js">contribute patches</a>. (e.g: display datapoints on dragend even when they weren't visible before)</strong>
+                <div id="tog" class="btn">Toggle HeatmapOverlay <button onclick="addPoints();">Add Points</button></div>
+            </div>
+
+            <div style="position:absolute;width:940px;top:750px;text-align:center;"><a href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</a> by <a href="http://www.patrick-wied.at" target="_blank">Patrick Wied</a></div>
+
+        </div>
+        <script src="http://openlayers.org/api/OpenLayers.js"></script>
+        <script type="text/javascript" src="../../src/heatmap.js"></script>
+        <script type="text/javascript" src="../../src/heatmap-openlayers.js"></script>
+        <script type="text/javascript">
+            var map, layer, heatmap;
+
+            function init(){
+                // Generate some random data for test
+                var testData = {
+                    max: 50,
+                    data: []
+                };                
+                var lon, lat, c;
+                for(var i=0; i<500; i++) {
+                    lon = Math.floor(Math.random()*(-180-180)+180);
+                    lat = Math.floor(Math.random()*(-85-85)+85);
+                    c = Math.floor(Math.random()*50);
+                    testData.data.push({lonlat: new OpenLayers.LonLat(lon, lat), count: c});
+                }
+
+                // Create a new map where all layers are overlays and 
+                // specifying map projection and some controls.
+                map = new OpenLayers.Map('heatmapArea',
+                {
+                    allOverlays: true,
+                    projection: new OpenLayers.Projection("EPSG:900913"),
+                    displayProjection: new OpenLayers.Projection("EPSG:900913"),
+                    units: "m",
+                    maxResolution: 156543.0339,
+                    maxExtent: new OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508),
+                    controls: [
+                        new OpenLayers.Control.Navigation(),
+                        new OpenLayers.Control.PanZoomBar(),
+                        new OpenLayers.Control.LayerSwitcher(),
+                        new OpenLayers.Control.ScaleLine(),
+                        new OpenLayers.Control.MousePosition()
+                    ]
+                });
 			
-<div style="position:absolute;width:940px;top:750px;text-align:center;"><a href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</a> by <a href="http://www.patrick-wied.at" target="_blank">Patrick Wied</a></div>
+                // Create an OpenStreetMaps
+                layer = new OpenLayers.Layer.OSM();
 
-</div>
-<script src="http://openlayers.org/api/OpenLayers.js"></script>
-<script type="text/javascript" src="../../src/heatmap.js"></script>
-<script type="text/javascript" src="../../src/heatmap-openlayers.js"></script>
-<script type="text/javascript">
-var map, layer, heatmap;
-
-
-
-function init(){
-
-	var testData = {
-		max: 100,
-		data: [
-			{"lat":100,"lng":100,"count":100}
-		]
-	};
-
-   map = new OpenLayers.Map( 'heatmapArea');
-   layer = new OpenLayers.Layer.MapServer( "OpenLayers WMS",
-       "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'} );
-
-   // create our heatmap layer
-   heatmap = new OpenLayers.Layer.Heatmap( "Heatmap Layer", map, layer, {visible: true, radius:10}, {isBaseLayer: false, opacity: 0.3});
-   map.addLayers([layer, heatmap]);
+                // Create our heatmap layer indicanting the projection used to create the testData.
+                heatmap = new OpenLayers.Layer.Heatmap("Heatmap Layer", map, testData,
+                {visible: true, radius: 15}, 
+                {isBaseLayer: false, opacity: 0.3, projection: new OpenLayers.Projection("EPSG:4326")});
   
-   map.zoomToMaxExtent();
-   map.zoomIn();
-   heatmap.setDataSet(testData);
-}
+                // Add layers and set the initial zoom level.
+                map.addLayers([layer, heatmap]);
+  
+                map.zoomToMaxExtent();
+                map.zoomIn();
+            }
+
+            window.onload = function(){ 
+                init(); 
+            };
+
+            document.getElementById("tog").onclick = function(){
+                heatmap.toggle();
+            };
+            
+            function addPoints() {
+                // Add more points
+                for(var i=0; i<100; i++) {
+                    lon = Math.floor(Math.random()*(-180-180)+180);
+                    lat = Math.floor(Math.random()*(-85-85)+85);
+                    c = Math.floor(Math.random()*50);
+                    heatmap.addDataPoint(new OpenLayers.LonLat(lon, lat), c);
+                }
+            }
 
 
-window.onload = function(){ init(); };
-
-
-document.getElementById("tog").onclick = function(){
-		heatmap.toggle();
-	};
-
-
-</script>
+        </script>
 
 </html>
