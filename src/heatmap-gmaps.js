@@ -7,22 +7,26 @@
  */ 
  
 function HeatmapOverlay(map, cfg){
+    var me = this;
 
-	this.heatmap = null;
-	this.conf = cfg;
-	this.latlngs = [];
-	this.setMap(map);	
+    me.heatmap = null;
+    me.conf = cfg;
+    me.latlngs = [];
+    me.bounds = null;
+    me.setMap(map);
+  
+  google.maps.event.addListener(map, 'idle', function() { me.draw() });
 }
 
 HeatmapOverlay.prototype = new google.maps.OverlayView();
 
 HeatmapOverlay.prototype.onAdd = function(){
 	
-	var panes = this.getPanes();
+    var panes = this.getPanes(),
+        w = this.getMap().getDiv().clientWidth,
+        h = this.getMap().getDiv().clientHeight,	
+	el = document.createElement("div");
     
-    var w = this.getMap().getDiv().clientWidth;
-    var h = this.getMap().getDiv().clientHeight;	
-	var el = document.createElement("div");
     el.style.position = "absolute";
     el.style.top = 0;
     el.style.left = 0;
@@ -30,10 +34,10 @@ HeatmapOverlay.prototype.onAdd = function(){
     el.style.height = h + "px";
     el.style.border = 0;
 	
-	this.conf.element = el;
-	panes.overlayLayer.appendChild(el);
+    this.conf.element = el;
+    panes.overlayLayer.appendChild(el);
 
-	this.heatmap = h337.create(this.conf);
+    this.heatmap = h337.create(this.conf);
 }
 
 HeatmapOverlay.prototype.onRemove = function(){
@@ -44,13 +48,23 @@ HeatmapOverlay.prototype.draw = function(){
     
     var overlayProjection = this.getProjection();
     var currentBounds = this.map.getBounds();
+    if (currentBounds.equals(this.bounds)) {
+      return;
+    }
+    this.bounds = currentBounds;
     var ne = overlayProjection.fromLatLngToDivPixel(currentBounds.getNorthEast());
     var sw = overlayProjection.fromLatLngToDivPixel(currentBounds.getSouthWest());
     var topY = ne.y;
     var leftX = sw.x;
     
+    var h = sw.y - ne.y;
+    var w = ne.x - sw.x;
+
     this.conf.element.style.left = leftX + 'px';
     this.conf.element.style.top = topY + 'px';
+    this.conf.element.style.width = w + 'px';
+    this.conf.element.style.height = h + 'px';
+    this.heatmap.store.get("heatmap").resize();
             
 	if(this.latlngs.length > 0){
 		this.heatmap.clear();
