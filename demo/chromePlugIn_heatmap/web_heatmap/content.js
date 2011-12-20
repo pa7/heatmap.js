@@ -2,6 +2,7 @@
 	return document.getElementById(id);
 }
 
+
 /**
  * handler
  */
@@ -59,11 +60,13 @@ heatmapCanvas.resizeScroll();
 document.documentElement.onmousemove = function(e) {	
 	var x = heatmapCanvas.scrollLeft + e.clientX;
 	var y = heatmapCanvas.scrollTop + e.clientY;
-	heatmapCanvas.addData(x,y);		
+	heatmapCanvas.addData(x,y);
+		
 	/*
 		realtime to do
 	*/
 }
+
 
 /*resize the browser*/
 window.onload = function() {
@@ -76,6 +79,9 @@ window.onscroll = function() {
 	heatmapCanvas.resizeScroll();
 }
 
+
+
+
 /**
  * hide canvas
  */
@@ -87,7 +93,8 @@ function hideCanvas() {
 
 function drawHeatMap(sendResponse) {		
 		//carete the heat-map canvas
-		if( $$("heatmapCanvas") == null) {		
+		if( $$("heatmapCanvas") == null) {
+		
 			//create outerDiv 
 			var ele = document.createElement("div");		
 			var w = document.body.scrollWidth, h = document.body.scrollHeight;
@@ -114,6 +121,8 @@ function drawHeatMap(sendResponse) {
 		}			
 		heatmapCanvas.ele.style.display = 'block';
 		heatmap.clear();
+	
+	
 	
 		heatmap.store.setDataSet(heatmapCanvas.d);
 
