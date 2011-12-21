@@ -20,6 +20,7 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 		this.div.appendChild(heatdiv);
 		// add to our heatmap.js config
 		hmoptions.element = heatdiv;
+		this.map = map;
 		this.mapLayer = mLayer;
 		// create the heatmap with passed heatmap-options
 		this.heatmap = h337.create(hmoptions);
