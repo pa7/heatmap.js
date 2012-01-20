@@ -11,7 +11,7 @@ function HeatmapOverlay(map, cfg){
 	this.heatmap = null;
 	this.conf = cfg;
 	this.latlngs = [];
-	this.setMap(map);	
+	this.setMap(map);
 }
 
 HeatmapOverlay.prototype = new google.maps.OverlayView();
@@ -19,7 +19,7 @@ HeatmapOverlay.prototype = new google.maps.OverlayView();
 HeatmapOverlay.prototype.onAdd = function(){
 	
 	var el = document.createElement("div");
-	el.style.cssText = "position:absolute;top:0;left:0;width:"+$('#map-canvas').width()+"px;height:"+$('#map-canvas').height()+"px;border:0;";
+	el.style.cssText = "position:absolute;top:0;left:0;width:"+document.getElementById('map-canvas').width()+"px;height:"+document.getElementById('map-canvas').height()+"px;border:0;";
 	
 	this.conf.element = el;
 	var panes = this.getPanes();
@@ -27,16 +27,15 @@ HeatmapOverlay.prototype.onAdd = function(){
 
 	this.heatmap = h337.create(this.conf);
 
-  update_posts(lat,lng,initialradius);
-}
+};
 
 HeatmapOverlay.prototype.draw = function(){
   this.projection = this.getProjection();
-  this.canvasCenter = this.projection.fromLatLngToDivPixel(map.getCenter()); 
+  this.canvasCenter = this.projection.fromLatLngToDivPixel(map.getCenter());
   this.worldWidth = this.projection.getWorldWidth();
-  this.canvasWidth = Math.min(this.worldWidth, $('#map-canvas').width()); 
-  this.canvasHeight = Math.min(this.worldWidth, $('#map-canvas').height()); 
-  this.conf.element.style.left = this.canvasCenter.x - this.canvasWidth / 2 + 'px'; 
+  this.canvasWidth = Math.min(this.worldWidth, document.getElementById('map-canvas').width());
+  this.canvasHeight = Math.min(this.worldWidth, document.getElementById('map-canvas').height());
+  this.conf.element.style.left = this.canvasCenter.x - this.canvasWidth / 2 + 'px';
   this.conf.element.style.top = this.canvasCenter.y - this.canvasHeight / 2 + 'px';
     
   this.heatmap.clear();
