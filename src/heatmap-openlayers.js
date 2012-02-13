@@ -15,10 +15,9 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	// the heatmap isn't a basic layer by default - you usually want to display the heatmap over another map ;)
 	isBaseLayer: false,
 	heatmap: null,
-	mapLayer: null,
 	// we store the lon lat data, because we have to redraw with new positions on zoomend|moveend
 	tmpData: {},
-        initialize: function(name, map, mLayer, hmoptions, options){
+        initialize: function(name, map, hmoptions, options){
             var heatdiv = document.createElement("div"),
                 handler;
 
@@ -29,7 +28,6 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	    this.div.appendChild(heatdiv);
 	    // add to our heatmap.js config
 	    hmoptions.element = heatdiv;
-	    this.mapLayer = mLayer;
 	    this.map = map;
             // create the heatmap with passed heatmap-options
 	    this.heatmap = h337.create(hmoptions);
@@ -54,12 +52,12 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
                 this.setDataSet(this.tmpData);
 	},
         getPixelOffset: function () {
-            var o = this.mapLayer.map.layerContainerOrigin,
+            var o = this.map.layerContainerOrigin,
                 o_lonlat = new OpenLayers.LonLat(o.lon, o.lat),
-                o_pixel = this.mapLayer.getViewPortPxFromLonLat(o_lonlat),
-                c = this.mapLayer.map.center,
+                o_pixel = this.map.getViewPortPxFromLonLat(o_lonlat),
+                c = this.map.center,
                 c_lonlat = new OpenLayers.LonLat(c.lon, c.lat),
-                c_pixel = this.mapLayer.getViewPortPxFromLonLat(c_lonlat);
+                c_pixel = this.map.getViewPortPxFromLonLat(c_lonlat);
 
             return { 
                 x: o_pixel.x - c_pixel.x,
@@ -101,8 +99,8 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	},
 	// same procedure as setDataSet
 	addDataPoint: function(lonlat){
-	    var pixel = this.roundPixels(this.mapLayer.getViewPortPxFromLonLat(lonlat)),
-                entry = {lonlat: lonlat};
+	    var pixel = this.roundPixels(this.map.getViewPortPxFromLonLat(lonlat)),
+                entry = {lonlat: lonlat},
                 args;
 
             if(arguments.length == 2){
