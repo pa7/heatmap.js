@@ -41,6 +41,12 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	    map.events.register("zoomend", this, handler);
 	    map.events.register("moveend", this, handler);
         },
+	onMapResize: function(){
+		var el = this.heatmap.get('element');
+		el.style.width = this.map.size.w+'px';
+		el.style.height = this.map.size.h+'px';
+		this.heatmap.resize();
+	},
 	updateLayer: function(){
                 var pixelOffset = this.getPixelOffset(),
                     el = this.heatmap.get('element');

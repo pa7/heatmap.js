@@ -15,17 +15,17 @@ function HeatmapOverlay(map, cfg){
     me.bounds = null;
     me.setMap(map);
   
-  google.maps.event.addListener(map, 'idle', function() { me.draw();});
+    google.maps.event.addListener(map, 'idle', function() { me.draw();});
+    google.maps.event.addListener(map, 'resize', function() { me.resize();});
 }
 
 HeatmapOverlay.prototype = new google.maps.OverlayView();
 
 HeatmapOverlay.prototype.onAdd = function(){
-    
     var panes = this.getPanes(),
         w = this.getMap().getDiv().clientWidth,
         h = this.getMap().getDiv().clientHeight,
-    el = document.createElement("div");
+    	el = document.createElement("div");
     
     el.style.position = "absolute";
     el.style.top = 0;
@@ -43,6 +43,15 @@ HeatmapOverlay.prototype.onAdd = function(){
 HeatmapOverlay.prototype.onRemove = function(){
     // Empty for now.
     // TODO: Destroy this.conf.element?
+};
+
+HeatmapOverlay.prototype.resize = function(){
+	var el = this.heatmap.get('element'),
+		w = this.getMap().getDiv().clientWidth,
+		h = this.getMap().getDiv().clientHeight;
+	el.style.width = w + "px";
+	el.style.height = h + "px";
+	this.heatmap.resize();
 };
 
 HeatmapOverlay.prototype.draw = function(){
@@ -77,7 +86,6 @@ HeatmapOverlay.prototype.draw = function(){
 };
 
 HeatmapOverlay.prototype.pixelTransform = function(p){
-  
   var left = this.canvasCenter.x - this.canvasWidth / 2;
   var top = this.canvasCenter.y - this.canvasHeight / 2;
   p.x -= left;
@@ -91,7 +99,6 @@ HeatmapOverlay.prototype.pixelTransform = function(p){
 };
 
 HeatmapOverlay.prototype.setDataSet = function(data){
-
     var mapdata = {
         max: data.max,
         data: []
@@ -114,7 +121,6 @@ HeatmapOverlay.prototype.setDataSet = function(data){
 };
 
 HeatmapOverlay.prototype.addDataPoint = function(lat, lng, count){
-
     var projection = this.getProjection(),
         latlng = new google.maps.LatLng(lat, lng),
         point = this.pixelTransform(projection.fromLatLngToDivPixel(latlng));
