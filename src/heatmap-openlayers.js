@@ -124,6 +124,15 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	toggle: function(){
 		this.heatmap.toggleDisplay();
 	},
+    isVisable: function() {
+		return this.heatmap.isVisable();
+	},
+	show: function() {
+		this.heatmap.show();										
+	},
+	hide: function() {
+		this.heatmap.hide();										
+	},
 	destroy: function() {
         // for now, nothing special to do here. 
         OpenLayers.Layer.Grid.prototype.destroy.apply(this, arguments);  
