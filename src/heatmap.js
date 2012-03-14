@@ -149,6 +149,7 @@
             max : false,
             gradient : false,
             opacity: 180,
+            premultiplyAlpha: false,
             debug: false
         };
         // heatmap store containing the datapoints and information about the maximum
@@ -231,7 +232,20 @@
             canvas.height = "256";
             var ctx = canvas.getContext("2d"),
                 grad = ctx.createLinearGradient(0,0,1,256),
-            gradient = me.get("gradient");
+                gradient = me.get("gradient"),
+                testData;
+
+            // Test how the browser renders alpha by setting a partially transparent pixel
+            // and reading the result.  A good browser will return a value reasonably close
+            // to what was set.  A bad browser (like android) will return a ridiculously wrong value.
+            var testData = ctx.getImageData(0,0,1,1);
+            testData.data[0] = testData.data[3] = 64; // 25% red & alpha
+            testData.data[1] = testData.data[2] = 0; // 0% blue & green
+            ctx.putImageData(testData, 0, 0);
+            testData = ctx.getImageData(0,0,1,1);
+            me.set("premultiplyAlpha", (testData.data[0] < 60 || testData.data[0] > 70));
+
+
             for(var x in gradient){
                 grad.addColorStop(x, gradient[x]);
             }
@@ -269,8 +283,9 @@
                     radiusOut = me.get("radiusOut"),
                     height = me.get("height"),
                     actx = me.get("actx"),
-                    ctx = me.get("ctx");
-
+                    ctx = me.get("ctx"),
+                    premultiplyAlpha = me.get("premultiplyAlpha");
+    
                 var x2 = radiusOut*2;
 
                 if(x+x2>width)
@@ -300,12 +315,22 @@
 
                     // we ve started with i=3
                     // set the new r, g and b values
+                    var finalAlpha = (alpha < opacity)?alpha:opacity;
                     imageData[i-3]=palette[offset];
                     imageData[i-2]=palette[offset+1];
                     imageData[i-1]=palette[offset+2];
+                    
+                    if (premultiplyAlpha) {
+                    	// To fix browsers that premultiply incorrectly, we'll pass in a value scaled
+                    	// appropriately so when the multiplication happens the correct value will result.
+                    	imageData[i-3] /= 255/finalAlpha;
+                    	imageData[i-2] /= 255/finalAlpha;
+                    	imageData[i-1] /= 255/finalAlpha;
+                    }
+                    
                     // we want the heatmap to have a gradient from transparent to the colors
                     // as long as alpha is lower than the defined opacity (maximum), we'll use the alpha value
-                    imageData[i] = (alpha < opacity)?alpha:opacity;
+                    imageData[i] = finalAlpha;
                 }
                 // the rgb data manipulation didn't affect the ImageData object(defined on the top)
                 // after the manipulation process we have to set the manipulated data to the ImageData object
