@@ -171,8 +171,9 @@
     // public functions
     heatmap.prototype = {
         configure: function(config){
-                var me = this;
-                var rout, rin;
+                var me = this,
+                    rout, rin;
+
                 if(config.radius){
                     rout = config.radius;
                     rin = parseInt(rout/2, 10);
@@ -227,13 +228,14 @@
         initColorPalette: function(){
 
             var me = this,
-                canvas = document.createElement("canvas");
+                canvas = document.createElement("canvas"),
+                gradient = me.get("gradient"),
+                ctx, grad, testData;
+
             canvas.width = "1";
             canvas.height = "256";
-            var ctx = canvas.getContext("2d"),
-                grad = ctx.createLinearGradient(0,0,1,256),
-                gradient = me.get("gradient"),
-                testData;
+            ctx = canvas.getContext("2d");
+            grad = ctx.createLinearGradient(0,0,1,256);
 
             // Test how the browser renders alpha by setting a partially transparent pixel
             // and reading the result.  A good browser will return a value reasonably close
@@ -256,19 +258,23 @@
         },
         getWidth: function(element){
             var width = element.offsetWidth;
-            if(element.style.paddingLeft)
+            if(element.style.paddingLeft){
                 width+=element.style.paddingLeft;
-            if(element.style.paddingRight)
+            }
+            if(element.style.paddingRight){
                 width+=element.style.paddingRight;
+            }
 
             return width;
         },
         getHeight: function(element){
             var height = element.offsetHeight;
-            if(element.style.paddingTop)
+            if(element.style.paddingTop){
                 height+=element.style.paddingTop;
-            if(element.style.paddingBottom)
+            }
+            if(element.style.paddingBottom){
                 height+=element.style.paddingBottom;
+            }
 
             return height;
         },
@@ -280,30 +286,35 @@
                     height = me.get("height"),
                     actx = me.get("actx"),
                     ctx = me.get("ctx"),
-                    premultiplyAlpha = me.get("premultiplyAlpha");
-
-                var x2 = radiusOut*2;
-
-                if(x+x2>width)
-                    x=width-x2;
-                if(x<0)
-                    x=0;
-                if(y<0)
-                    y=0;
-                if(y+x2>height)
-                    y=height-x2;
-                // get the image data for the mouse movement area
-                var image = actx.getImageData(x,y,x2,x2),
-                // some performance tweaks
-                    imageData = image.data,
-                    length = imageData.length,
+                    x2 = radiusOut * 2,
+                    premultiplyAlpha = me.get("premultiplyAlpha"),
                     palette = me.get("gradient"),
-                    opacity = me.get("opacity");
+                    opacity = me.get("opacity"),
+                    image, imageData, length, alpha, offset, finalAlpha;
+
+                if(x+x2>width){
+                    x=width-x2;
+                }
+                if(x<0){
+                    x=0;
+                }
+                if(y<0){
+                    y=0;
+                }
+                if(y+x2>height){
+                    y=height-x2;
+                }
+                // get the image data for the mouse movement area
+                image = actx.getImageData(x,y,x2,x2);
+                // some performance tweaks
+                imageData = image.data;
+                length = imageData.length;
+
                 // loop thru the area
                 for(var i=3; i < length; i+=4){
 
                     // [0] -> r, [1] -> g, [2] -> b, [3] -> alpha
-                    var alpha = imageData[i],
+                    alpha = imageData[i],
                     offset = alpha*4;
 
                     if(!offset)
@@ -311,7 +322,7 @@
 
                     // we ve started with i=3
                     // set the new r, g and b values
-                    var finalAlpha = (alpha < opacity)?alpha:opacity;
+                    finalAlpha = (alpha < opacity)?alpha:opacity;
                     imageData[i-3]=palette[offset];
                     imageData[i-2]=palette[offset+1];
                     imageData[i-1]=palette[offset+2];
