@@ -115,7 +115,7 @@ function init(){
     layer = new OpenLayers.Layer.OSM();
 
    // create our heatmap layer
-   heatmap = new OpenLayers.Layer.Heatmap( "Heatmap Layer", map, layer, {visible: true, radius:10}, {isBaseLayer: false, opacity: 0.3, projection: new OpenLayers.Projection("EPSG:4326")});
+   heatmap = new OpenLayers.Layer.Heatmap( "Heatmap Layer", map, {visible: true, radius:10}, {isBaseLayer: false, opacity: 0.3, projection: new OpenLayers.Projection("EPSG:4326")});
    map.addLayers([layer, heatmap]);
   
    map.zoomToMaxExtent();
