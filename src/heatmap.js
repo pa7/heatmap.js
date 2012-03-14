@@ -253,9 +253,6 @@
             ctx.fillRect(0,0,1,256);
 
             me.set("gradient", ctx.getImageData(0,0,1,256).data);
-            delete canvas;
-            delete grad;
-            delete ctx;
         },
         getWidth: function(element){
             var width = element.offsetWidth;
@@ -386,7 +383,6 @@
         cleanup: function(){
             var me = this;
             me.get("element").removeChild(me.get("canvas"));
-            delete me;
         }
     };
 
