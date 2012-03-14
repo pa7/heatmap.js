@@ -237,15 +237,14 @@
 
             // Test how the browser renders alpha by setting a partially transparent pixel
             // and reading the result.  A good browser will return a value reasonably close
-            // to what was set.  A bad browser (like android) will return a ridiculously wrong value.
-            var testData = ctx.getImageData(0,0,1,1);
+            // to what was set.  Some browsers (e.g. on Android) will return a ridiculously wrong value.
+            testData = ctx.getImageData(0,0,1,1);
             testData.data[0] = testData.data[3] = 64; // 25% red & alpha
             testData.data[1] = testData.data[2] = 0; // 0% blue & green
             ctx.putImageData(testData, 0, 0);
             testData = ctx.getImageData(0,0,1,1);
             me.set("premultiplyAlpha", (testData.data[0] < 60 || testData.data[0] > 70));
-
-
+            
             for(var x in gradient){
                 grad.addColorStop(x, gradient[x]);
             }
@@ -285,7 +284,7 @@
                     actx = me.get("actx"),
                     ctx = me.get("ctx"),
                     premultiplyAlpha = me.get("premultiplyAlpha");
-    
+
                 var x2 = radiusOut*2;
 
                 if(x+x2>width)
