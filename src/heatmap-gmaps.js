@@ -44,12 +44,12 @@ HeatmapOverlay.prototype.onRemove = function(){
     // Empty for now.
 }
 
-HeatmapOverlay.prototype.draw = function(){
+HeatmapOverlay.prototype.draw = function(force){
      
     var overlayProjection = this.getProjection(),
         currentBounds = this.map.getBounds();
     
-    if (currentBounds.equals(this.bounds)) {
+    if (!force&&currentBounds.equals(this.bounds)) {
       return;
     }
     this.bounds = currentBounds;
@@ -66,7 +66,7 @@ HeatmapOverlay.prototype.draw = function(){
     this.conf.element.style.width = w + 'px';
     this.conf.element.style.height = h + 'px';
     this.heatmap.store.get("heatmap").resize();
-            
+
     if(this.latlngs.length > 0){
     	this.heatmap.clear();
     	
@@ -145,7 +145,7 @@ HeatmapOverlay.prototype.setDataSet = function(data){
     }
     this.heatmap.clear();
     this.heatmap.store.setDataSet(mapdata);
-
+    this.draw(true);
 }
 
 HeatmapOverlay.prototype.addDataPoint = function(lat, lng, count){
