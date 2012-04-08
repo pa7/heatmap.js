@@ -15,7 +15,6 @@ function HeatmapOverlay(map, cfg){
     me.bounds = null;
     me.setMap(map);
   
-  google.maps.event.addListener(map, 'idle', function() { me.draw() });
 }
 
 HeatmapOverlay.prototype = new google.maps.OverlayView();
@@ -45,7 +44,7 @@ HeatmapOverlay.prototype.onRemove = function(){
 }
 
 HeatmapOverlay.prototype.draw = function(){
-     
+	
     var overlayProjection = this.getProjection(),
         currentBounds = this.map.getBounds();
     
@@ -81,48 +80,16 @@ HeatmapOverlay.prototype.draw = function(){
             var latlng = this.latlngs[len].latlng;
 	    if(!currentBounds.contains(latlng)) { continue; }
 	    	
-	    // DivPixel is pixel in overlay pixel coordinates... we need
-	    // to transform to screen coordinates so it'll match the canvas
-	    // which is continually repositioned to follow the screen.
-	    var divPixel = projection.fromLatLngToDivPixel(latlng),
-	        screenPixel = new google.maps.Point(divPixel.x - leftX, divPixel.y - topY);
+	    var containerPixel = projection.fromLatLngToContainerPixel(latlng);
 
-	    var roundedPoint = this.pixelTransform(screenPixel);
-		
-             d.data.push({ 
-	        x: roundedPoint.x,
-	        y: roundedPoint.y,
+        d.data.push({ 
+	        x: containerPixel.x,
+	        y: containerPixel.y,
 	        count: this.latlngs[len].c
 	    });
         }
         this.heatmap.store.setDataSet(d);
     }
-}
-
-HeatmapOverlay.prototype.pixelTransform = function(p){
-    var w = this.heatmap.get("width"),
-        h = this.heatmap.get("height");
-
-    while(p.x < 0){
-    	p.x+=w;
-    }
-	
-    while(p.x > w){
-	p.x-=w;
-    }
-		
-    while(p.y < 0){
-	p.y+=h;
-    }
-
-    while(p.y > h){
-	p.y-=h;
-    }
-
-    p.x = (p.x >> 0);
-    p.y = (p.y >> 0);
-	
-    return p;
 }
 
 HeatmapOverlay.prototype.setDataSet = function(data){
@@ -137,10 +104,10 @@ HeatmapOverlay.prototype.setDataSet = function(data){
 
     this.latlngs = [];
    
-    while(dlen--){	
+    while(dlen--){
     	var latlng = new google.maps.LatLng(d[dlen].lat, d[dlen].lng);
     	this.latlngs.push({latlng: latlng, c: d[dlen].count});
-    	var point = this.pixelTransform(projection.fromLatLngToDivPixel(latlng));
+    	var point = projection.fromLatLngToContainerPixel(latlng);
     	mapdata.data.push({x: point.x, y: point.y, count: d[dlen].count});
     }
     this.heatmap.clear();
@@ -152,7 +119,7 @@ HeatmapOverlay.prototype.addDataPoint = function(lat, lng, count){
 
     var projection = this.getProjection(),
         latlng = new google.maps.LatLng(lat, lng),
-        point = this.pixelTransform(projection.fromLatLngToDivPixel(latlng));
+        point = projection.fromLatLngToContainerPixel(latlng);
     
     this.heatmap.store.addDataPoint(point.x, point.y, count);
     this.latlngs.push({ latlng: latlng, c: count });

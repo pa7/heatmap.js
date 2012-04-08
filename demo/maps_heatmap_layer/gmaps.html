@@ -133,7 +133,9 @@ window.onload = function(){
     	};
     
 	
-	// this is important, because if you set the data set too early, the latlng/pixel projection doesn't work
+	// this is important, because setDataSet or addDataPoint functions can be called
+	// only after the overlay has been added into the map and the MapCanvasProjection
+	// has been provided by the API - see Google Maps Developer's Guide - Custom Overlays
 	google.maps.event.addListenerOnce(map, "idle", function(){
 		heatmap.setDataSet(testData);
 	});
