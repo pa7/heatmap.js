@@ -150,7 +150,9 @@
             gradient : false,
             opacity: 180,
             premultiplyAlpha: false,
-            debug: false
+			colorizingQueue: [],
+			colorizingTimeout: 1,
+             debug: false
         };
         // heatmap store containing the datapoints and information about the maximum
         // accessible via instance.store
@@ -187,6 +189,7 @@
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
+                me.set("colorizingTimeout", config.colorizingTimeout || 1),
                 me.set("debug", config.debug);
         },
         resize: function () {
@@ -278,7 +281,26 @@
 
             return height;
         },
-        colorize: function(x, y){
+		colorize: function(x, y) {
+		   // get the private variables
+			var me = this,
+				width = me.get("width"),
+				radiusOut = me.get("radiusOut"),
+				height = me.get("height"),
+				queue = me.get("colorizingQueue"),
+				timer = me.get("colorizingTimer"),
+				timeout = me.get("colorizingTimeout"),
+                queue = me.get("colorizingQueue");
+			
+			queue.push([x,y]);
+			
+			clearTimeout(timer);
+			timer = setTimeout(function() {
+				me.colorizeQueue();
+			}, timeout);
+			me.set("colorizingTimer", timer);
+		},
+        colorizeQueue: function(){
                 // get the private variables
                 var me = this,
                     width = me.get("width"),
@@ -290,59 +312,121 @@
                     premultiplyAlpha = me.get("premultiplyAlpha"),
                     palette = me.get("gradient"),
                     opacity = me.get("opacity"),
-                    image, imageData, length, alpha, offset, finalAlpha;
+                    image, imageData, length, alpha, offset, finalAlpha,
+					rect, compare, point, x, y, dx, dy, intersect,
+					rects = [],
+					queue = me.get("colorizingQueue");
 
-                if(x+x2>width){
-                    x=width-x2;
-                }
-                if(x<0){
-                    x=0;
-                }
-                if(y<0){
-                    y=0;
-                }
-                if(y+x2>height){
-                    y=height-x2;
-                }
-                // get the image data for the mouse movement area
-                image = actx.getImageData(x,y,x2,x2);
-                // some performance tweaks
-                imageData = image.data;
-                length = imageData.length;
+				var rects = [];
+                var x2 = radiusOut*2;
+				for (var i = 0, l = queue.length; i < l; i++) {
+					// loop over queue to determine bounding boxes that need to be colorized
+					
+					point = queue[i];
+					x = point[0];
+					y = point[1];
+					
+					if(x+x2>width){
+						x=width-x2;
+					}
+					if(x<0){
+						x=0;
+					}
+					if(y<0){
+						y=0;
+					}
+					if(y+x2>height){
+						y=height-x2;
+					}
+					
+					var rect = {
+						left: x,
+						right: x+x2,
+						top: y,
+						bottom: y+x2
+					};
+					
+					do {
+						intersect = false;
+						for (var si = 0, sl = rects.length; si < sl; si++) {
+							compare = rects[si];
+							if (rect.left < compare.right
+							 && rect.right > compare.left
+							 && rect.top < compare.bottom
+							 && rect.bottom > compare.top) {
+								// if boxes intersect,
+								// .. delete the intersecting rect
+								rects.splice(si, 1);
+								si--; sl--;
+								// .. compute the bounding box for both rects
+								rect = {
+									left: Math.min(rect.left, compare.left),
+									right: Math.max(rect.right, compare.right),
+									top: Math.min(rect.top, compare.top),
+									bottom: Math.max(rect.bottom, compare.bottom)
+								};
+								// .. and restart loop with the bounding box
+								intersect = true;
+								break;
+							}
+						}
+					}
+					while (intersect);
+					// rect now has no intersecting boxes in the rects array
+					// so we can add it to our array
+					rects.push(rect);
+				}
+				
+				for (var si = 0, sl = rects.length; si < sl; si++) {
+					rect = rects[si];
+					var x = rect.left;
+					var y = rect.top;
+					var dx = rect.right - rect.left;
+					var dy = rect.bottom - rect.top;
+					
+					// get the image data for the mouse movement area
+					image = actx.getImageData(x,y,dx,dy);
+					// some performance tweaks
+					imageData = image.data;
+					length = imageData.length;
 
-                // loop thru the area
-                for(var i=3; i < length; i+=4){
+					// loop thru the area
+					for(var i=3; i < length; i+=4){
 
-                    // [0] -> r, [1] -> g, [2] -> b, [3] -> alpha
-                    alpha = imageData[i],
-                    offset = alpha*4;
+						// [0] -> r, [1] -> g, [2] -> b, [3] -> alpha
+						alpha = imageData[i],
+						offset = alpha*4;
 
-                    if(!offset)
-                        continue;
+						if(!offset)
+							continue;
 
-                    // we ve started with i=3
-                    // set the new r, g and b values
-                    finalAlpha = (alpha < opacity)?alpha:opacity;
-                    imageData[i-3]=palette[offset];
-                    imageData[i-2]=palette[offset+1];
-                    imageData[i-1]=palette[offset+2];
-                    
-                    if (premultiplyAlpha) {
-                    	// To fix browsers that premultiply incorrectly, we'll pass in a value scaled
-                    	// appropriately so when the multiplication happens the correct value will result.
-                    	imageData[i-3] /= 255/finalAlpha;
-                    	imageData[i-2] /= 255/finalAlpha;
-                    	imageData[i-1] /= 255/finalAlpha;
-                    }
-                    
-                    // we want the heatmap to have a gradient from transparent to the colors
-                    // as long as alpha is lower than the defined opacity (maximum), we'll use the alpha value
-                    imageData[i] = finalAlpha;
-                }
-                // the rgb data manipulation didn't affect the ImageData object(defined on the top)
-                // after the manipulation process we have to set the manipulated data to the ImageData object
-                image.data = imageData;
-                ctx.putImageData(image,x,y);
+						// we ve started with i=3
+						// set the new r, g and b values
+						finalAlpha = (alpha < opacity)?alpha:opacity;
+						imageData[i-3]=palette[offset];
+						imageData[i-2]=palette[offset+1];
+						imageData[i-1]=palette[offset+2];
+						
+						if (premultiplyAlpha) {
+							// To fix browsers that premultiply incorrectly, we'll pass in a value scaled
+							// appropriately so when the multiplication happens the correct value will result.
+							imageData[i-3] /= 255/finalAlpha;
+							imageData[i-2] /= 255/finalAlpha;
+							imageData[i-1] /= 255/finalAlpha;
+						}
+						
+						// we want the heatmap to have a gradient from transparent to the colors
+						// as long as alpha is lower than the defined opacity (maximum), we'll use the alpha value
+						imageData[i] = finalAlpha;
+					}
+					// the rgb data manipulation didn't affect the ImageData object(defined on the top)
+					// after the manipulation process we have to set the manipulated data to the ImageData object
+					ctx.putImageData(image,x,y);
+				}
+				
+				// empty the queue when we are done
+				queue = [];
+				me.set("colorizingQueue", queue);
         },
         drawAlpha: function(x, y, count){
                 // storing the variables because they will be often used
@@ -430,3 +514,4 @@
     })();
     w.h337 = w.heatmapFactory = heatmapFactory;
 })(window);
+
