@@ -46,29 +46,13 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 		this.heatmap.resize();
 	},
 	updateLayer: function(){
-                var pixelOffset = this.getPixelOffset(),
+                var zeroPx = new OpenLayers.Pixel(0,0),
+                    origPx = this.map.getLayerPxFromViewPortPx(zeroPx),
                     el = this.heatmap.get('element');
-                // if the pixeloffset e.g. for x was positive move the canvas element to the left by setting left:-offset.y px 
-                // otherwise move it the right by setting it a positive value. same for top
-                el.style.top = ((pixelOffset.y > 0)?('-'+pixelOffset.y):(Math.abs(pixelOffset.y)))+'px';
-                el.style.left = ((pixelOffset.x > 0)?('-'+pixelOffset.x):(Math.abs(pixelOffset.x)))+'px';
-		
+                el.style.top = origPx.y+'px';
+                el.style.left = origPx.x+'px';
                 this.setDataSet(this.tmpData);
 	},
-        getPixelOffset: function () {
-            var o = this.map.layerContainerOrigin,
-                o_lonlat = new OpenLayers.LonLat(o.lon, o.lat),
-                o_pixel = this.map.getViewPortPxFromLonLat(o_lonlat),
-                c = this.map.center,
-                c_lonlat = new OpenLayers.LonLat(c.lon, c.lat),
-                c_pixel = this.map.getViewPortPxFromLonLat(c_lonlat);
-
-            return { 
-                x: o_pixel.x - c_pixel.x,
-                y: o_pixel.y - c_pixel.y 
-            };
-
-        },
 	setDataSet: function(obj){
 	    var set = {},
 		dataset = obj.data,
@@ -82,22 +66,18 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
                 entry = dataset[dlen],
                 lonlat = entry.lonlat.clone().transform(this.projection, this.map.getProjectionObject()),
                 pixel = this.roundPixels(this.getViewPortPxFromLonLat(lonlat));
-                    
-                if(pixel){
-                    set.data.push({x: pixel.x, y: pixel.y, count: entry.count});
-                }
+                
+                set.data.push({x: pixel.x, y: pixel.y, count: entry.count});
             }
 	    this.tmpData = obj;
 	    this.heatmap.store.setDataSet(set);
 	},
 	// we don't want to have decimal numbers such as xxx.9813212 since they slow canvas performance down + don't look nice
 	roundPixels: function(p){
-	    if(p.x < 0 || p.y < 0){
-	        return false;
-            }
-		
-            p.x = (p.x >> 0);
-	    p.y = (p.y >> 0);
+
+	    // fast rounding - thanks to Seb Lee-Delisle for this neat hack
+	    p.x = ~~ (p.x+0.5);
+	    p.y = ~~ (p.y+0.5);
 	
             return p;
 	},
@@ -113,14 +93,12 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 
             this.tmpData.data.push(entry);
             
-            if(pixel){
-                args = [pixel.x, pixel.y];
+            args = [pixel.x, pixel.y];
 
-		if(arguments.length == 2){
-		    args.push(arguments[1]);
-		}
-		this.heatmap.store.addDataPoint.apply(this.heatmap.store, args);
-	    }
+            if(arguments.length == 2){
+                args.push(arguments[1]);
+            }
+            this.heatmap.store.addDataPoint.apply(this.heatmap.store, args);
 
 	},
 	toggle: function(){
