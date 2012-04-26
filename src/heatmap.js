@@ -264,10 +264,15 @@
         colorize: function(x, y){
                 // get the private variables
                 var me = this,
-                    width = me.get("width"),
                     radiusOut = me.get("radiusOut"),
-                    height = me.get("height"),
-                    actx = me.get("actx"),
+                    width = me.get("width"),
+                    height = me.get("height");
+                // skip out of range
+		if (x<(-radiusOut) || x>(width+radiusOut) ||
+		    y<(-radiusOut) || y>(height+radiusOut))
+			return;
+                // get the private variables
+                var actx = me.get("actx"),
                     ctx = me.get("ctx");
                 
                 var x2 = radiusOut*2;
@@ -312,11 +317,16 @@
                 ctx.putImageData(image,x,y);    
         },
         drawAlpha: function(x, y, count){
-                // storing the variables because they will be often used
                 var me = this,
                     r1 = me.get("radiusIn"),
                     r2 = me.get("radiusOut"),
-                    ctx = me.get("actx"),
+                    width = me.get("width"),
+                    height = me.get("height");
+                // skip out of range
+		if (x<(-r2) || x>(width+r2) || y<(-r2) || y>(height+r2))
+			return;
+                // storing the variables because they will be often used
+                var ctx = me.get("actx"),
                     max = me.get("max"),
                     // create a radial gradient with the defined parameters. we want to draw an alphamap
                     rgr = ctx.createRadialGradient(x,y,r1,x,y,r2),
