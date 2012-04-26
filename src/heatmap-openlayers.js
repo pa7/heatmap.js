@@ -32,10 +32,8 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
             // create the heatmap with passed heatmap-options
 	    this.heatmap = h337.create(hmoptions);
 
-            handler = function(){ 
-                if(this.tmpData.max){
-                    this.updateLayer(); 
-                }
+            handler = function(){
+                this.updateLayer();
             };
 	    // on zoomend and moveend we have to move the canvas element and redraw the datapoints with new positions
 	    map.events.register("zoomend", this, handler);
@@ -74,7 +72,7 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	setDataSet: function(obj){
 	    var set = {},
 		dataset = obj.data,
-		dlen = dataset.length,
+		dlen = dataset!=undefined?dataset.length:0,
                 entry, lonlat, pixel;
 
 		set.max = obj.max;
