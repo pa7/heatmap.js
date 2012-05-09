@@ -99,6 +99,7 @@ HeatmapOverlay.prototype.pixelTransform = function(p){
 };
 
 HeatmapOverlay.prototype.setDataSet = function(data){
+    this.heatmap.clear();
     var mapdata = {
         max: data.max,
         data: []
@@ -115,9 +116,7 @@ HeatmapOverlay.prototype.setDataSet = function(data){
         var point = this.pixelTransform(projection.fromLatLngToDivPixel(latlng));
         mapdata.data.push({x: point.x, y: point.y, count: d[dlen].count});
     }
-    this.heatmap.clear();
     this.heatmap.store.setDataSet(mapdata);
-
 };
 
 HeatmapOverlay.prototype.addDataPoint = function(lat, lng, count){
