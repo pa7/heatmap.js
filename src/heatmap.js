@@ -13,7 +13,7 @@
     // store object constructor
     // a heatmap contains a store
     // the store has to know about the heatmap in order to trigger heatmap updates when datapoints get added
-    function store(hmap){
+    var store = function store(hmap){
 
         var _ = {
             // data is a two dimensional array
@@ -133,7 +133,7 @@
 
 
     // heatmap object constructor
-    function heatmap(config){
+    var heatmap = function heatmap(config){
         // private variables
         var _ = {
             radiusIn : 20,
@@ -176,7 +176,7 @@
 
                 if(config.radius){
                     rout = config.radius;
-                    rin = parseInt(rout/2, 10);
+                    rin = parseInt(rout/4, 10);
                 }
                 me.set("radiusIn", rin || 15);
                 me.set("radiusOut", rout || 40);
@@ -286,7 +286,7 @@
                     height = me.get("height"),
                     actx = me.get("actx"),
                     ctx = me.get("ctx"),
-                    x2 = radiusOut * 2,
+                    x2 = radiusOut * 4,
                     premultiplyAlpha = me.get("premultiplyAlpha"),
                     palette = me.get("gradient"),
                     opacity = me.get("opacity"),
@@ -305,7 +305,7 @@
                     y=height-x2;
                 }
                 // get the image data for the mouse movement area
-                image = actx.getImageData(x,y,x2,x2);
+                image = actx.getImageData(x, y, x2, x2);
                 // some performance tweaks
                 imageData = image.data;
                 length = imageData.length;
@@ -342,25 +342,28 @@
                 // the rgb data manipulation didn't affect the ImageData object(defined on the top)
                 // after the manipulation process we have to set the manipulated data to the ImageData object
                 image.data = imageData;
-                ctx.putImageData(image,x,y);
+                ctx.putImageData(image, x, y);
         },
         drawAlpha: function(x, y, count){
                 // storing the variables because they will be often used
                 var me = this,
-                    r1 = me.get("radiusIn"),
                     r2 = me.get("radiusOut"),
                     ctx = me.get("actx"),
                     max = me.get("max"),
-                    // create a radial gradient with the defined parameters. we want to draw an alphamap
-                    rgr = ctx.createRadialGradient(x,y,r1,x,y,r2),
-                    xb = x-r2, yb = y-r2, mul = 2*r2;
-                // the center of the radial gradient has .1 alpha value
-                rgr.addColorStop(0, 'rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
-                // and it fades out to 0
-                rgr.addColorStop(1, 'rgba(0,0,0,0)');
-                // drawing the gradient
-                ctx.fillStyle = rgr;
-                ctx.fillRect(xb,yb,mul,mul);
+                    xb = x-2*r2, yb = y-2*r2;
+
+                ctx.shadowOffsetX = 1000; 
+                ctx.shadowOffsetY = 1000; 
+                ctx.shadowBlur = 15; 
+
+                ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
+                ctx.fillStyle = 'rgba(0,0,0,1)'; 
+                ctx.beginPath();
+
+                ctx.arc(x - 1000, y - 1000, r2, 0, Math.PI * 2, true );
+                ctx.closePath();
+                ctx.fill();
+
                 // finally colorize the area
                 me.colorize(xb,yb);
         },
@@ -400,7 +403,7 @@
     return {
             create: function(config){
                 return new heatmap(config);
-            },
+            }, 
             util: {
                 mousePosition: function(ev){
                     // this doesn't work right
