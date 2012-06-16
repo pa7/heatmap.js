@@ -53,19 +53,18 @@
 
             // if count parameter is set increment by count otherwise by 1
             data[x][y]+=(arguments.length<3)?1:arguments[2];
-
+            
             me.set("data", data);
             // do we have a new maximum?
             if(me.max < data[x][y]){
                 // max changed, we need to redraw all existing(lower) datapoints
                 heatmap.get("actx").clearRect(0,0,heatmap.get("width"),heatmap.get("height"));
-                me.setDataSet({ max: data[x][y], data: data });
+                me.setDataSet({ max: data[x][y], data: data }, true);
                 return;
             }
-            heatmap.drawAlpha(x, y, data[x][y]);
+            heatmap.drawAlpha(x, y, data[x][y], true);
         },
-        setDataSet: function(obj){
-
+        setDataSet: function(obj, internal){
             var me = this,
                 heatmap = me.get("heatmap"),
                 data = [],
@@ -78,19 +77,34 @@
             // if a legend is set, update it
             heatmap.get("legend") && heatmap.get("legend").update(obj.max);
             
-            while(dlen--){
-                var point = d[dlen];
-                heatmap.drawAlpha(point.x, point.y, point.count, false);
-                if(!data[point.x])
-                    data[point.x] = [];
+            if(internal != null){
+                for(var one in d){
+                    // jump over undefined indexes
+                    if(one === undefined)
+                        continue;
+                    for(var two in d[one]){
+                        if(two === undefined)
+                            continue;
+                        // if both indexes are defined, push the values into the array
+                        heatmap.drawAlpha(one, two, d[one][two], false);   
+                    }
+                }
+            }else{
 
-                if(!data[point.x][point.y])
-                    data[point.x][point.y] = 0;
+                while(dlen--){
+                    var point = d[dlen];
+                    heatmap.drawAlpha(point.x, point.y, point.count, false);
+                    if(!data[point.x])
+                        data[point.x] = [];
 
-                data[point.x][point.y]=point.count;
+                    if(!data[point.x][point.y])
+                        data[point.x][point.y] = 0;
+
+                    data[point.x][point.y]=point.count;
+                }
             }
             heatmap.colorize();
-            this.set("data", data);
+            this.set("data", d);
         },
         exportDataSet: function(){
             var me = this,
@@ -324,7 +338,7 @@
 
                 me.set("radius", config["radius"] || 40);
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
-                me.set("visible", config.visible);
+                me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || false);
                 me.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});    // default is the common blue to red gradient
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
@@ -366,11 +380,8 @@
                 me.set("actx", actx);
 
                 me.resize();
-                canvas.style.position = acanvas.style.position = "absolute";
-                canvas.style.top = acanvas.style.top = "0";
-                canvas.style.left = acanvas.style.left = "0";
-                canvas.style.zIndex = 1000000;
-
+                canvas.style.cssText = acanvas.style.cssText = "position:absolute;top:0;left:0;z-index:10000000;";
+                
                 if(!me.get("visible"))
                     canvas.style.display = "none";
 
@@ -540,17 +551,17 @@
         drawAlpha: function(x, y, count, colorize){
                 // storing the variables because they will be often used
                 var me = this,
-                    r2 = me.get("radius"),
+                    radius = me.get("radius"),
                     ctx = me.get("actx"),
                     max = me.get("max"),
                     bounds = me.get("bounds"),
-                    xb = x-(1.5*r2) >> 0, yb = y-(1.5*r2) >> 0,
-                    xc = x+(1.5*r2) >> 0, yc = y+(1.5*r2) >> 0;
+                    xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
+                    xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
                 ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
                 
                 ctx.beginPath();
-                ctx.arc(x - 1000, y - 1000, r2, 0, Math.PI * 2, true );
+                ctx.arc(x - 1000, y - 1000, radius, 0, Math.PI * 2, true);
                 ctx.closePath();
                 ctx.fill();
                 
