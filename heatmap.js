@@ -364,17 +364,25 @@
                 // finally colorize the area
                 me.colorize(xb,yb);
         },
+        setVisible: function (v) {
+            var me = this;            
+            if(v)
+                me.show();
+            else
+                me.hide();
+        },
         toggleDisplay: function(){
-                var me = this,
-                    visible = me.get("visible"),
-                canvas = me.get("canvas");
-
-                if(!visible)
-                    canvas.style.display = "block";
-                else
-                    canvas.style.display = "none";
-
-                me.set("visible", !visible);
+            this.setVisible(!me.get("visible"));
+        },
+        show: function() {
+            var me = this;
+            me.get("canvas").style.display = "block";
+            me.set("visible", true);
+        },
+        hide: function() {
+            var me = this;
+            me.get("canvas").style.display = "none";
+            me.set("visible", false);
         },
         // dataURL export
         getImageData: function(){
