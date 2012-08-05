@@ -73,11 +73,10 @@
             // clear the heatmap before the data set gets drawn
             heatmap.clear();
             this.max = obj.max;
-
             // if a legend is set, update it
             heatmap.get("legend") && heatmap.get("legend").update(obj.max);
             
-            if(internal != null){
+            if(internal != null && internal){
                 for(var one in d){
                     // jump over undefined indexes
                     if(one === undefined)
@@ -90,7 +89,6 @@
                     }
                 }
             }else{
-
                 while(dlen--){
                     var point = d[dlen];
                     heatmap.drawAlpha(point.x, point.y, point.count, false);
@@ -100,7 +98,7 @@
                     if(!data[point.x][point.y])
                         data[point.x][point.y] = 0;
 
-                    data[point.x][point.y]=point.count;
+                    data[point.x][point.y] = point.count;
                 }
             }
             heatmap.colorize();
@@ -164,7 +162,7 @@
                 config = me.config,
                 title = config.title || "Legend",
                 position = config.position,
-                offset = config.offset,
+                offset = config.offset || 10,
                 gconfig = config.gradient,
                 labelsEl = document.createElement("ul"),
                 labelsHtml = "",
@@ -189,7 +187,7 @@
             }
 
             element = document.createElement("div");
-            element.style.cssText = "border-radius:5px;position:absolute;"+positionCss+"font-family:Helvetica; width:256px; height:50px;z-index:10000000000; background:rgba(255,255,255,1);padding:10px;border:1px solid black;";
+            element.style.cssText = "border-radius:5px;position:absolute;"+positionCss+"font-family:Helvetica; width:256px;z-index:10000000000; background:rgba(255,255,255,1);padding:10px;border:1px solid black;margin:0;";
             element.innerHTML = "<h3 style='padding:0;margin:0;text-align:center;font-size:16px;'>"+title+"</h3>";
             // create gradient in canvas
             labelsEl.style.cssText = "position:relative;font-size:12px;display:block;list-style:none;list-style-type:none;margin:0;height:15px;";
@@ -204,6 +202,8 @@
             
             me.set("element", element);
             me.set("labelsEl", labelsEl);
+
+            me.update(1);
         },
         processGradientObject: function(){
             // create array and sort it
@@ -393,7 +393,6 @@
                 // debugging purposes only
                 if(me.get("debug"))
                     document.body.appendChild(acanvas);
-
                 
                 actx.shadowOffsetX = 1000; 
                 actx.shadowOffsetY = 1000; 
@@ -487,7 +486,6 @@
                     bottom = y + x2;
 
                 }else{
-                    
                     if(bounds['l'] < 0){
                         left = 0;
                     }else{
@@ -513,7 +511,6 @@
                 image = actx.getImageData(left, top, right-left, bottom-top);
                 imageData = image.data;
                 length = imageData.length;
-
                 // loop thru the area
                 for(var i=3; i < length; i+=4){
 
@@ -559,12 +556,13 @@
                     xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
                 ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
-                
+                ctx.shadowOffsetX = 1000;
+                ctx.shadowOffsetY = 1000;
+                ctx.shadowBlur = 15;
                 ctx.beginPath();
                 ctx.arc(x - 1000, y - 1000, radius, 0, Math.PI * 2, true);
                 ctx.closePath();
                 ctx.fill();
-                
                 if(colorize){
                     // finally colorize the area
                     me.colorize(xb,yb);
