@@ -197,9 +197,9 @@
                 var element = this.get("element"),
                     canvas = this.get("canvas"),
                     acanvas = this.get("acanvas");
-                canvas.width = acanvas.width = element.style.width.replace(/px/, "") || this.getWidth(element);
+                canvas.width = acanvas.width = this.get("width") || element.style.width.replace(/px/, "") || this.getWidth(element);
                 this.set("width", canvas.width);
-                canvas.height = acanvas.height = element.style.height.replace(/px/, "") || this.getHeight(element);
+                canvas.height = acanvas.height = this.get("height") || element.style.height.replace(/px/, "") || this.getHeight(element);
                 this.set("height", canvas.height);
         },
 
