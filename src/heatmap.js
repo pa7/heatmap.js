@@ -82,7 +82,8 @@
             // clear the heatmap before the data set gets drawn
             heatmap.clear();
             this.max = obj.max;
-
+            
+            heatmap.bufferColorizing();
             while(dlen--){
                 var point = d[dlen];
                 heatmap.drawAlpha(point.x, point.y, point.count);
@@ -94,6 +95,7 @@
 
                 data[point.x][point.y]=point.count;
             }
+            heatmap.colorizeQueue();
             this.set("data", data);
         },
         exportDataSet: function(){
@@ -150,8 +152,8 @@
             gradient : false,
             opacity: 180,
             premultiplyAlpha: false,
-			colorizingQueue: [],
-			colorizingTimeout: 1,
+            colorizingQueue: [],
+            bufferingColorize: false,
              debug: false
         };
         // heatmap store containing the datapoints and information about the maximum
@@ -189,7 +191,6 @@
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
-                me.set("colorizingTimeout", config.colorizingTimeout || 1),
                 me.set("debug", config.debug);
         },
         resize: function () {
@@ -289,16 +290,18 @@
 				height = me.get("height"),
 				queue = me.get("colorizingQueue"),
 				timer = me.get("colorizingTimer"),
-				timeout = me.get("colorizingTimeout"),
-                queue = me.get("colorizingQueue");
+				queue = me.get("colorizingQueue"),
+				buffering = me.get("bufferingColorize");
 			
 			queue.push([x,y]);
 			
-			clearTimeout(timer);
-			timer = setTimeout(function() {
+			if (!buffering) {
 				me.colorizeQueue();
-			}, timeout);
-			me.set("colorizingTimer", timer);
+			}
+		},
+		bufferColorizing: function() {
+			var me = this;
+			me.set("bufferingColorize", true);
 		},
         colorizeQueue: function(){
                 // get the private variables
@@ -427,6 +430,7 @@
 				// empty the queue when we are done
 				queue = [];
 				me.set("colorizingQueue", queue);
+				me.set("bufferingColorize", false);
         },
         drawAlpha: function(x, y, count){
                 // storing the variables because they will be often used
