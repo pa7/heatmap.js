@@ -6,7 +6,7 @@
  * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
  */
  
-L.TileLayer.HeatMap = L.Class.extend({
+L.TileLayer.HeatMap = L.TileLayer.extend({
 
     initialize: function(options) {
         L.Util.setOptions(this, options);
@@ -16,7 +16,7 @@ L.TileLayer.HeatMap = L.Class.extend({
 
     onAdd: function(map) {
         this._map = map;
-        this._initHeatMap(this._map, this.options);
+        this._initHeatMap(this.options);
         map.on("viewreset", this._redraw, this);
         map.on("moveend", this._redraw, this);
         map.on("dragend", this._redraw, this);
@@ -32,7 +32,7 @@ L.TileLayer.HeatMap = L.Class.extend({
         map.off("zoomend", this._redraw, this);
     },
 
-    _initHeatMap: function(map, options){
+    _initHeatMap: function(options){
         options = options || {};
         //this._opacity = options.opacity || 0.6;
 
@@ -46,7 +46,6 @@ L.TileLayer.HeatMap = L.Class.extend({
         canv.style.height = this._map.getSize().y+"px";
         canv.width = parseInt(canv.style.width);
         canv.height = parseInt(canv.style.height);
-        canv.style.opacity = this._opacity;
         container.appendChild(canv);
 
         var config = {
@@ -57,7 +56,13 @@ L.TileLayer.HeatMap = L.Class.extend({
             "gradient": options.gradient
         };
 
-        this.heatmap = heatmapFactory.create(config);
+        this._heatmap = heatmapFactory.create(config);
+
+            if (this._map.options.zoomAnimation && L.Browser.any3d) {
+                //L.DomUtil.addClass(this._heatmap._div, 'leaflet-zoom-animated');
+            } else {
+                L.DomUtil.addClass(this._heatmap._div, 'leaflet-zoom-hide');
+            }
 
         this._div = container;
         this._map.getPanes().overlayPane.appendChild(this._div);
@@ -75,7 +80,6 @@ L.TileLayer.HeatMap = L.Class.extend({
     _resetCanvasPosition: function() {
         var bounds = this._map.getBounds();
         var topLeft = this._map.latLngToLayerPoint(bounds.getNorthWest());
-        //topLeft = this._map.layerPointToContainerPoint(topLeft);
 
         L.DomUtil.setPosition(this._div, topLeft);
     },
@@ -83,7 +87,7 @@ L.TileLayer.HeatMap = L.Class.extend({
     _redraw: function(ctx) {
         //console.log("redraw",ctx)
         this._resetCanvasPosition();
-        this.heatmap.clear();
+        this._heatmap.clear();
         if (this.data.length > 0) {
             for (var i=0, l=this.data.length; i<l; i++) {
                 var lonlat = new L.LatLng(this.data[i].lat, this.data[i].lon);
@@ -100,10 +104,29 @@ L.TileLayer.HeatMap = L.Class.extend({
     },
 
     _drawHeatmapPoint: function(x, y, value) {
-        this.heatmap.store.addDataPoint(
+        this._heatmap.store.addDataPoint(
             Math.floor(x),
             Math.floor(y),
             value);
+    }, 
+
+    _animateZoom: function (e) {
+        var map = this._map,
+        heatmap = this._heatmap,
+        scale = map.getZoomScale(e.zoom),
+        nw = this._bounds.getNorthWest(),
+        se = this._bounds.getSouthEast(),
+
+        topLeft = map._latLngToNewLayerPoint(nw, e.zoom, e.center),
+        size = map._latLngToNewLayerPoint(se, e.zoom, e.center)._subtract(topLeft),
+        currentSize = map.latLngToLayerPoint(se)._subtract(map.latLngToLayerPoint(nw)),
+        origin = topLeft._add(size._subtract(currentSize)._divideBy(2));
+
+        heatmap.style[L.DomUtil.TRANSFORM] = L.DomUtil.getTranslateString(origin) + ' scale(' + scale + ') ';
     }
 
 });
+
+L.TileLayer.heatMap = function (options) {
+    return new L.TileLayer.HeatMap(options);
+};
