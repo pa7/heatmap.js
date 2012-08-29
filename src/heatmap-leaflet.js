@@ -2,8 +2,9 @@
  * heatmap.js 0.0.0.1 Leaflet overlay
  *
  * Copyright (c) 2012, Dominik Moritz
- * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
+ * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+ *
+ * Attribution: https://github.com/sunng87/heatcanvas
  */
  
 L.TileLayer.HeatMap = L.TileLayer.extend({
