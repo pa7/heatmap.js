@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2012, Dominik Moritz
  * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- *
+ * 
  * Attribution: https://github.com/sunng87/heatcanvas
  */
  

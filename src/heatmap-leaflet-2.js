@@ -10,7 +10,7 @@ L.TileLayer.HeatMap = L.TileLayer.Canvas.extend({
     addData: function(dataset) {
         this._data = dataset;
     },
-    
+
     drawTile: function(tile, tilePoint, zoom) {
         var ctx = tile.getContext('2d');
 
@@ -20,11 +20,11 @@ L.TileLayer.HeatMap = L.TileLayer.Canvas.extend({
         var seCoord = this._map.unproject(sePoint, ctx.zoom, true);
         var bounds = [nwCoord.lng, seCoord.lat, seCoord.lng, nwCoord.lat];
 
-        tile.style.width = (nwPoint.x-sePoint.x)+"px";
-        tile.style.height = (nwPoint.y-sePoint.y)+"px";
+        var tileSize = this.options.tileSize;
+        tile.style.width = tileSize+"px";
+        tile.style.height = tileSize+"px";
         tile.width = parseInt(tile.style.width);
         tile.height = parseInt(tile.style.height);
-
 
         var options = this.options;
         var config = {
@@ -35,8 +35,9 @@ L.TileLayer.HeatMap = L.TileLayer.Canvas.extend({
             "gradient": options.gradient
         };
 
-        heatmap = heatmapFactory.create(config);
+        heatmap = h337.create(config);
 
+        // todo clip
         if (this._data.length > 0) {
             for (var i=0, l=this._data.length; i<l; i++) {
                 var lonlat = new L.LatLng(this._data[i].lat, this._data[i].lon);
