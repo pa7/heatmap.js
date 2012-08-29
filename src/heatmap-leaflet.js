@@ -70,7 +70,7 @@ L.TileLayer.HeatMap = L.TileLayer.extend({
     },
 
     pushData: function(lat, lon, value) {
-        this.data.push({"lat":lat, "lon":lon, "v":value});
+        this.data.push({"lat":lat, "lon":lon, "value":value});
         this._drawHeatmapPoint(lat, lon, value);
     },
 
