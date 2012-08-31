@@ -312,7 +312,8 @@
                 t: 1000,
                 b: 0
             },
-            debug: false
+            debug: false,
+            percentageBasedCoordinates: false
         };
         // heatmap store containing the datapoints and information about the maximum
         // accessible via instance.store
@@ -345,6 +346,7 @@
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
                 me.set("debug", config.debug);
+        		me.set("percentageBasedCoordinates", config.percentageBasedCoordinates);
 
                 if(config.legend){
                     var legendCfg = config.legend;
@@ -552,7 +554,16 @@
                     ctx = me.get("actx"),
                     max = me.get("max"),
                     bounds = me.get("bounds"),
-                    xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
+                	width = me.get("width"),
+                	height = me.get("height");
+
+				// calculate physical coordinates, if using percentage based data
+        		if (me.get("percentageBasedCoordinates")) {
+        			x = x*width;
+        			y = y*height;
+        		}
+
+                var xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
                     xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
                 ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
