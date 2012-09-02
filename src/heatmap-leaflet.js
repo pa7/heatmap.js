@@ -89,24 +89,24 @@ L.TileLayer.HeatMap = L.TileLayer.extend({
         //console.log("redraw",ctx)
         this._resetCanvasPosition();
         this._heatmap.clear();
+        var pointsToDraw = [];
+        max = 0;
         if (this.data.length > 0) {
             for (var i=0, l=this.data.length; i<l; i++) {
                 var lonlat = new L.LatLng(this.data[i].lat, this.data[i].lon);
                 var localXY = this._map.latLngToContainerPoint(lonlat);
-                this._drawHeatmapPoint(
-                        Math.floor(localXY.x),
-                        Math.floor(localXY.y),
-                        this.data[i].v);
+                if (this.data[i].value > max) {
+                    max = this.data[i].value;
+                };
+                pointsToDraw.push({
+                    x: localXY.x,
+                    y: localXY.y,
+                    count: this.data[i].value
+                });
             }
         }
+        this._heatmap.store.setDataSet({max: max, data: pointsToDraw});
         return this;
-    },
-
-    _drawHeatmapPoint: function(x, y, value) {
-        this._heatmap.store.addDataPoint(
-            Math.floor(x),
-            Math.floor(y),
-            value);
     },
 
     _animateZoom: function (e) {
