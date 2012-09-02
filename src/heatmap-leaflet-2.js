@@ -10,7 +10,9 @@
 
  L.TileLayer.HeatMap = L.TileLayer.Canvas.extend({
     options: {
-        async: false,
+        // calculate the maximum value on a per view basis instead of global
+        // this creates issues when moving the map
+        maxPerView: false,
         debug: false
     },
 
@@ -36,13 +38,10 @@
         };
     },
 
+    // Add a dataset to be drawn. You might want to redraw() if you had previeous datasets.
     addData: function(dataset) {
         this._data = dataset;
-        array = [];
-        dataset.forEach(function(item){
-            array.push(item.value);
-        });
-        this._cache.max = Math.max.apply(Math, array);
+        this._cache.max = this._calculateMaxValue(dataset);
     },
 
     _createTileProto: function () {
@@ -118,11 +117,40 @@
         var bounds = this._cache.bounds[padding];
         if (!bounds) {
             var tileSize = this.options.tileSize;
-            var p1 = new L.Point(-padding, -padding), //topLeft
-                p2 = new L.Point(padding+tileSize, padding+tileSize); //bottomRight
+            var p1 = new L.Point(-padding, -padding); //topLeft
+            var p2 = new L.Point(padding+tileSize, padding+tileSize); //bottomRight
             bounds = this._cache.bounds[padding] = new L.Bounds(p1, p2);
         };
         return bounds.contains([localXY.x, localXY.y]);
+    },
+
+    _getMaxValue: function() {
+        if (this.options.maxPerView) {
+            var dataset = [];
+            var mapBounds = this._map.getBounds();
+            this._data.forEach(function(item){
+                if (mapBounds.contains([item.lat, item.lon])) {
+                    dataset.push(item);
+                };
+            });
+
+            return this._calculateMaxValue(dataset)
+        } else {
+            return this._cache.max;
+        }
+    },
+
+    _calculateMaxValue: function(dataset) {
+        array = [];
+        dataset.forEach(function(item){
+            array.push(item.value || item.count);
+        });
+        return Math.max.apply(Math, array);
+    },
+
+    _redrawTile: function (tile) {
+        $('canvas', tile).remove();
+        L.TileLayer.Canvas.prototype._redrawTile.call(this, tile);
     },
 
     _draw: function(ctx) {
@@ -137,7 +165,7 @@
 
         var heatmap = h337.create(config);
 
-        var pointsToDraw = [];
+        var pointsInTile = [];
         if (this._data.length > 0) {
             for (var i=0, l=this._data.length; i<l; i++) {
 
@@ -145,7 +173,7 @@
                 var localXY = this._tilePoint(ctx, lonlat);
 
                 if (this._isInTile(localXY)) {
-                    pointsToDraw.push({
+                    pointsInTile.push({
                         x: localXY.x,
                         y: localXY.y,
                         count: this._data[i].value
@@ -154,7 +182,7 @@
             }
         }
 
-        heatmap.store.setDataSet({max: this._cache.max, data: pointsToDraw});
+        heatmap.store.setDataSet({max: this._getMaxValue(), data: pointsInTile});
 
         return this;
     },
