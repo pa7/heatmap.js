@@ -67,7 +67,6 @@
             "opacity": options.opacity * 100,
             "gradient": options.gradient
         };
-
         tile.heatmap = h337.create(config);
 
         return tile;
@@ -163,15 +162,11 @@
         return Math.max.apply(Math, array);
     },
 
-    // removes previous heatmap and draws a new one
-    _redrawTile: function (tile) {
-        $('canvas', tile).remove();
-        L.TileLayer.Canvas.prototype._redrawTile.call(this, tile);
-    },
-
     _draw: function(ctx) {
 
         var heatmap = ctx.heatmap
+        heatmap.clear();
+
         var pointsInTile = [];
         if (this._data.length > 0) {
             for (var i=0, l=this._data.length; i<l; i++) {
