@@ -6,7 +6,7 @@
 		<title>Leaflet Heatmap demo</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
-		
+
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css" />
 		<!--[if lte IE 8]>
 		    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" />
@@ -14,9 +14,9 @@
 		<style type="text/css" media="screen">
 			body{
 				margin: 0;
-				padding: 0;	
+				padding: 0;
 			}
-			
+
 			#map {
 				width: 100%;
 				height: 100%;
@@ -36,22 +36,22 @@
 					}
 				);
 
-				heatmap = L.TileLayer.heatMap({
+				var heatmapLayer = L.TileLayer.heatMap({
 					radius: 15,
 					opacity: 0.7,
 					gradient: {
-						0.45: "rgb(0,0,255)", 
-						0.55: "rgb(0,255,255)", 
-						0.65: "rgb(0,255,0)", 
-						0.95: "yellow", 
-						1.0: "rgb(255,0,0)" 
+						0.45: "rgb(0,0,255)",
+						0.55: "rgb(0,255,255)",
+						0.65: "rgb(0,255,0)",
+						0.95: "yellow",
+						1.0: "rgb(255,0,0)"
 					}
 				});
 
-				heatmap.addData(testData.data);
+				heatmapLayer.addData(testData.data);
 
 				var overlayMaps = {
-					'Heatmap': heatmap
+					'Heatmap': heatmapLayer
 				};
 
 				var controls = L.control.layers(null, overlayMaps, {collapsed: false});
@@ -59,14 +59,14 @@
 				var map = new L.Map('map', {
 					center: new L.LatLng(51.505, -0.09),
 					zoom: 6,
-					layers: [baseLayer, heatmap]
+					layers: [baseLayer, heatmapLayer]
 				});
 
 				controls.addTo(map);
 			});
 		</script>
 	</head>
-	<body>	
+	<body>
 		<div id="map"></div>
 	</body>
 

@@ -1,12 +1,12 @@
-/* 
+/*
  * heatmap.js 0.0.0.1 Leaflet overlay
  *
  * Copyright (c) 2012, Dominik Moritz
  * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- * 
+ *
  * Attribution: https://github.com/sunng87/heatcanvas
  */
- 
+
 L.TileLayer.HeatMap = L.TileLayer.extend({
 
     initialize: function(options) {
@@ -77,7 +77,7 @@ L.TileLayer.HeatMap = L.TileLayer.extend({
     addData: function(dataset) {
         this.data = dataset;
     },
-    
+
     _resetCanvasPosition: function() {
         var bounds = this._map.getBounds();
         var topLeft = this._map.latLngToLayerPoint(bounds.getNorthWest());
@@ -92,9 +92,7 @@ L.TileLayer.HeatMap = L.TileLayer.extend({
         if (this.data.length > 0) {
             for (var i=0, l=this.data.length; i<l; i++) {
                 var lonlat = new L.LatLng(this.data[i].lat, this.data[i].lon);
-                var localXY = this._map.latLngToLayerPoint(lonlat);
-                // todo: do once
-                localXY = this._map.layerPointToContainerPoint(localXY);
+                var localXY = this._map.latLngToContainerPoint(lonlat);
                 this._drawHeatmapPoint(
                         Math.floor(localXY.x),
                         Math.floor(localXY.y),
@@ -109,7 +107,7 @@ L.TileLayer.HeatMap = L.TileLayer.extend({
             Math.floor(x),
             Math.floor(y),
             value);
-    }, 
+    },
 
     _animateZoom: function (e) {
         var map = this._map,
