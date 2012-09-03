@@ -23,6 +23,8 @@
             max: 0,
             bounds: {}
         };
+        
+        this._data = [];
 
         this.drawTile = function (tile, tilePoint, zoom) {
             var ctx = {
