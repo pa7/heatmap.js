@@ -23,7 +23,7 @@
             max: 0,
             bounds: {}
         };
-        
+
         this._data = [];
 
         this.drawTile = function (tile, tilePoint, zoom) {
@@ -41,10 +41,27 @@
         };
     },
 
-    // Add a dataset to be drawn. You might want to redraw() if you had previeous datasets.
-    addData: function(dataset) {
+    // set a dataset to be drawn
+    // you might want to redraw() if you had a previous dataset
+    setData: function(dataset) {
         this._data = dataset;
         this._cache.max = this._calculateMaxValue(dataset);
+    },
+
+    // add a dataset
+    // you might want to redraw()
+    addData: function(dataset) {
+        // todo: redraw affected tiles
+        this._data.concat(dataset);
+        this._cache.max = Math.max(this._cache.max, this._calculateMaxValue(dataset));
+    },
+
+    // push a single item
+    // you might want to redraw()
+    pushItem: function(lat, lon, value) {
+        // todo: redraw affected tiles
+        this._data.push({'lat': lat, 'lon': lon, 'value': value});
+        this._cache.max = Math.max(value, this._cache.max);
     },
 
     _createTileProto: function () {
@@ -95,7 +112,7 @@
         g.fillRect(max / 2 - 5, max / 2 - 5, 10, 10);
         g.strokeText(ctx.tilePoint.x + ' ' + ctx.tilePoint.y + ' ' + ctx.zoom, max / 2 - 30, max / 2 - 10);
 
-        this._drawPoint(ctx, [0,0])
+        this._drawPoint(ctx, [0,0]);
     },
 
     _drawPoint: function (ctx, geom) {
@@ -135,7 +152,7 @@
             var p1 = new L.Point(-padding, -padding); //topLeft
             var p2 = new L.Point(padding+tileSize, padding+tileSize); //bottomRight
             bounds = this._cache.bounds[padding] = new L.Bounds(p1, p2);
-        };
+        }
         return bounds.contains([localXY.x, localXY.y]);
     },
 
@@ -147,10 +164,10 @@
             this._data.forEach(function(item){
                 if (mapBounds.contains([item.lat, item.lon])) {
                     dataset.push(item);
-                };
+                }
             });
 
-            return this._calculateMaxValue(dataset)
+            return this._calculateMaxValue(dataset);
         } else {
             return this._cache.max;
         }
@@ -166,7 +183,7 @@
 
     _draw: function(ctx) {
 
-        var heatmap = ctx.heatmap
+        var heatmap = ctx.heatmap;
         heatmap.clear();
 
         var pointsInTile = [];
@@ -182,7 +199,7 @@
                         y: localXY.y,
                         count: this._data[i].value
                     });
-                };
+                }
             }
         }
 
