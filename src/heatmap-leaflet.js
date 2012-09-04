@@ -206,10 +206,6 @@
         heatmap.store.setDataSet({max: this._getMaxValue(), data: pointsInTile});
 
         return this;
-    },
-
-    tileDrawn: function (tile) {
-        this._tileOnLoad.call(tile);
     }
 });
 
