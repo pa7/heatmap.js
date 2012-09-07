@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />
+        <!--The viewport meta tag is used to improve the presentation and behavior
+        of the samples on iOS devices-->
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"
+        />
+        <title>Heatmap.js Adapter</title>
+        <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css">
+        <style>
+            html, body {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .esriScalebar {
+                padding: 20px 20px;
+            }
+            #map {
+                padding:0;
+                border:1px solid #000;
+            }
+            #container {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+            }
+            .buttonContainer {
+                position:absolute;
+                z-index:99;
+                top:10px;
+                right:10px;
+            }
+            .mapButton {
+                --moz-box-shadow:inset 0px 1px 0px 0px #cae3fc;
+                -webkit-box-shadow:inset 0px 1px 0px 0px #cae3fc;
+                box-shadow:inset 0px 1px 0px 0px #cae3fc;
+                background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #4197ee));
+                background:-moz-linear-gradient(center top, #79bbff 5%, #4197ee 100%);
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#4197ee');
+                background-color:#79bbff;
+                -moz-border-radius:6px;
+                -webkit-border-radius:6px;
+                border-radius:6px;
+                border:1px solid #469df5;
+                display:inline-block;
+                color:#ffffff;
+                font-family:arial;
+                font-size:15px;
+                font-weight:bold;
+                padding:6px 24px;
+                text-decoration:none;
+                text-shadow:1px 1px 0px #287ace;
+                text-decoration: none;
+                cursor: pointer;
+                font-weight: normal;
+                white-space: nowrap;
+                -moz-user-select: none;
+                -webkit-user-select: none;
+                user-select: none;
+                outline: 0;
+            }
+            .mapButton:hover {
+                background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #4197ee), color-stop(1, #79bbff));
+                background:-moz-linear-gradient(center top, #4197ee 5%, #79bbff 100%);
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#4197ee', endColorstr='#79bbff');
+                background-color:#4197ee;
+            }
+            .mapButton:active {
+                position:relative;
+                top:1px;
+            }
+        </style>
+        <script type="text/javascript">
+            var djConfig = {
+                parseOnLoad: true
+            };
+        </script>
+        <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.0"></script>
+        <script type="text/javascript" src="../../src/heatmap.js"></script>
+<script type="text/javascript" src="../../src/heatmap-arcgis.js"></script>
+        <script type="text/javascript">
+            dojo.require("dijit.layout.BorderContainer");
+            dojo.require("dijit.layout.ContentPane");
+            dojo.require("esri.map");
+            // Variables
+            var map;
+            var dataPoints = [];
+            var heatLayer;
+            // Load sample JSON Data
+            function getSampleData() {
+                var sampleData = [
+                   {
+                      "x":-13061715.6766964,
+                      "y":3915574.62376241
+                   },
+                   {
+                      "x":-13031495.9674475,
+                      "y":3841635.63585889
+                   },
+                   {
+                      "x":-13037988.221006,
+                      "y":3912718.39797362
+                   },
+                   {
+                      "x":-13057382.44763,
+                      "y":3919434.26021999
+                   },
+                   {
+                      "x":-13046427.7014802,
+                      "y":3915353.20513907
+                   },
+                   {
+                      "x":-13020181.148386,
+                      "y":3868937.06388284
+                   },
+                   {
+                      "x":-13034660.9633573,
+                      "y":3847321.28104131
+                   },
+                   {
+                      "x":-13059076.2453721,
+                      "y":3908570.28478542
+                   },
+                   {
+                      "x":-13053170.021807,
+                      "y":3894764.15637649
+                   },
+                   {
+                      "x":-13031131.5164515,
+                      "y":3888938.20318008
+                   },
+                   {
+                      "x":-13050681.3686142,
+                      "y":3920776.91568414
+                   },
+                   {
+                      "x":-13048562.6572512,
+                      "y":3917109.82182699
+                   },
+                   {
+                      "x":-13038438.9054229,
+                      "y":3862885.90523389
+                   },
+                   {
+                      "x":-13052685.6604612,
+                      "y":3922480.72010961
+                   },
+                   {
+                      "x":-13067739.1215778,
+                      "y":3922793.10651594
+                   },
+                   {
+                      "x":-13020892.7015692,
+                      "y":3848521.70107942
+                   },
+                   {
+                      "x":-13034137.9499919,
+                      "y":3911947.0261302
+                   },
+                   {
+                      "x":-13043648.502,
+                      "y":3879161.4028
+                   },
+                   {
+                      "x":-13017236.2007192,
+                      "y":3869348.95242585
+                   },
+                   {
+                      "x":-13055133.6505364,
+                      "y":3920193.47628748
+                   },
+                   {
+                      "x":-13056088.308567,
+                      "y":3922887.02571805
+                   },
+                   {
+                      "x":-13038299.0949329,
+                      "y":3912842.54728882
+                   },
+                   {
+                      "x":-13033601.5424426,
+                      "y":3911022.6351456
+                   },
+                   {
+                      "x":-13062781.6033448,
+                      "y":3916805.96612666
+                   },
+                   {
+                      "x":-13034733.0371616,
+                      "y":3856104.10066574
+                   },
+                   {
+                      "x":-13038815.2198483,
+                      "y":3857096.34232645
+                }];
+                dataPoints = sampleData;
+                heatLayer.setData(dataPoints);
+            }
+
+            // empty data points and clear heat layer data
+            function clearSampleData() {
+                dataPoints = [];
+                heatLayer.clearData();
+            }
+
+            // Init
+            function init() {
+                // initial extent of map
+                var initExtent = new esri.geometry.Extent({
+                    "xmin": -13073214.7832198,
+                    "ymin": 3874734.0334393103,
+                    "xmax": -13002701.624626819,
+                    "ymax": 3901334.1192825157,
+                    "spatialReference": {
+                        "wkid": 102100
+                    }
+                });
+                // create map
+                map = new esri.Map("map", {
+                    extent: initExtent
+                });
+                //Add the topographic layer to the map. View the ArcGIS Online site for services http://arcgisonline/home/search.html?t=content&f=typekeywords:service
+                var basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer");
+                map.addLayer(basemap);
+                // once map is loaded
+                dojo.connect(map, 'onLoad', function (theMap) {
+                    //resize the map when the browser resizes
+                    dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
+                    // create heat layer
+                    heatLayer = new HeatmapLayer({
+                        // "radius": 40,
+                        // "gradient": {
+                        // 0.45: "rgb(000,000,255)",
+                        // 0.55: "rgb(000,255,255)",
+                        // 0.65: "rgb(000,255,000)",
+                        // 0.95: "rgb(255,255,000)",
+                        // 1.00: "rgb(255,000,000)"
+                        // },
+                        "map": map,
+                        "domNodeId": "heatLayer",
+                        "opacity": 0.85
+                    });
+                    // add heat layer to map
+                    map.addLayer(heatLayer);
+                    // resize map
+                    map.resize();
+                    // On map click
+                    dojo.connect(map, "onClick", function (evt) {
+                        // add x,y of click event to data point array
+                        dataPoints.push(evt.mapPoint);
+                        // set heatLayer data from dataPoints
+                        heatLayer.setData(dataPoints);
+                    });
+                });
+                dojo.connect(dojo.byId('clearData'), 'onclick', function () {
+                    clearSampleData();
+                });
+                dojo.connect(dojo.byId('getData'), 'onclick', function () {
+                    getSampleData();
+                });
+            }
+            // call init on load of dojo
+            dojo.addOnLoad(init);
+        </script>
+    </head>
+
+    <body class="claro">
+        <div id="container" dojotype="dijit.layout.BorderContainer" design="headline"
+        gutters="false">
+            <div id="heatLayer"></div>
+            <div class="buttonContainer">
+                <span class="mapButton" id="clearData">Clear Data Points</span>
+                <span class="mapButton" id="getData">Load Sample Data</span>
+            </div>
+            <div id="map" dojotype="dijit.layout.ContentPane" region="center"></div>
+        </div>
+    </body>
+
+</html>
