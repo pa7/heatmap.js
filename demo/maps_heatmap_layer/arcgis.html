@@ -6,28 +6,59 @@
         <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />
         <!--The viewport meta tag is used to improve the presentation and behavior
         of the samples on iOS devices-->
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"
-        />
-        <title>Heatmap.js Adapter</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>heatmap.js ArcGIS JavaScript API Heatmap Layer</title>
+        <link rel="shortcut icon"
+        type="image/png" href="http://www.patrick-wied.at/img/favicon.png" />
         <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css">
         <style>
-            html, body {
-                height: 100%;
-                width: 100%;
-                margin: 0;
-                padding: 0;
+            body, html {
+                margin:0;
+                padding:0;
+                font-family:Arial;
             }
-            .esriScalebar {
-                padding: 20px 20px;
+            h1 {
+                margin-bottom:10px;
+            }
+            h2 {
+                margin-top:0;
+            }
+            #main {
+                position:relative;
+                width:1020px;
+                padding:20px;
+                margin:auto;
+            }
+            #heatmapArea {
+                position:relative;
+                float:left;
+                width:800px;
+                height:600px;
+                border:1px dashed black;
+            }
+            #configArea {
+                position:relative;
+                float:left;
+                width:200px;
+                padding:15px;
+                padding-top:0;
+                padding-right:0;
+            }
+            .btn {
+                margin-top:25px;
+                padding:10px 20px 10px 20px;
+                -moz-border-radius:15px;
+                -o-border-radius:15px;
+                -webkit-border-radius:15px;
+                border-radius:15px;
+                border:2px solid black;
+                cursor:pointer;
+                color:white;
+                background-color:black;
             }
             #map {
-                padding:0;
-                border:1px solid #000;
-            }
-            #container {
-                width: 100%;
-                height: 100%;
-                margin: 0;
+                width:800px;
+                height:600px;
             }
             #title {
                 font-family:arial;
@@ -56,8 +87,6 @@
         <script type="text/javascript" src="../../src/heatmap.js"></script>
         <script type="text/javascript" src="../../src/heatmap-arcgis.js"></script>
         <script type="text/javascript">
-            dojo.require("dijit.layout.BorderContainer");
-            dojo.require("dijit.layout.ContentPane");
             dojo.require("esri.map");
             dojo.require("esri.layers.FeatureLayer");
 
@@ -143,6 +172,13 @@
                         // get features
                         getFeatures();
                     });
+                    dojo.connect(dojo.byId('tog'), "onclick", function () {
+                        if (heatLayer.visible) {
+                            heatLayer.hide();
+                        } else {
+                            heatLayer.show();
+                        }
+                    });
                 });
             }
             // call init on load of dojo
@@ -151,12 +187,31 @@
     </head>
     
     <body class="claro">
-        <div id="container" dojotype="dijit.layout.BorderContainer" design="headline"
-        gutters="false">
-            <div id="heatLayer"></div>
-            <div id="title">San Francisco Trees</div>
-            <div id="map" dojotype="dijit.layout.ContentPane"
-            region="center"></div>
+        <div id="main">
+            	<h1>ArcGIS JavaScript API Heatmap Overlay</h1>
+	<a href="http://www.patrick-wied.at/static/heatmapjs/" title="heatmap.js">Back to the project page</a>
+            <br
+            />
+            <br />
+            <div id="heatmapArea">
+                <div id="heatLayer"></div>
+                <div id="title">San Francisco Trees</div>
+                <div id="map"></div>
+            </div>
+            <div id="configArea">
+                	<h2>Sidenotes</h2>
+This is a demonstration of a canvas heatmap overlay with the <a href="http://help.arcgis.com/en/webapi/javascript/arcgis/">ArcGIS API for JavaScript</a>.
+                <br
+                />
+                <br />	<strong>Note: this is an early release of the heatmap layer. Please feel free to <a href="https://github.com/pa7/heatmap.js" target="_blank">contribute patches</a>. (e.g: correct datapoint pixels after dragrelease (in draw))</strong>
+
+                <div
+                id="tog" class="btn">Toggle HeatmapOverlay</div>
+        </div>
+        <div style="position:absolute;width:940px;top:750px;text-align:center;"><a href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</a> by
+            <a
+            href="http://www.patrick-wied.at" target="_blank">Patrick Wied</a>
+        </div>
         </div>
     </body>
 
