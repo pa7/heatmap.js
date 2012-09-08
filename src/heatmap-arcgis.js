@@ -123,36 +123,33 @@ dojo.addOnLoad(function () {
                 // for each data point
                 for (i = 0; i < dataPoints.length; i++) {
                     // create geometry point
-                    dataPoint = esri.geometry.Point(dataPoints[i].x, dataPoints[i].y, this._map.spatialReference);
-                    // if point is in current extent
-                    if (this._map.extent.contains(dataPoint)) {
-                        // if array value is undefined
-                        if (!parsedData.data[dataPoints[i].x]) {
-                            // create empty array value
-                            parsedData.data[dataPoints[i].x] = [];
+                    dataPoint = esri.geometry.Point(dataPoints[i].geometry);
+                    // if array value is undefined
+                    if (!parsedData.data[dataPoint.x]) {
+                        // create empty array value
+                        parsedData.data[dataPoint.x] = [];
+                    }
+                    // array value array is undefined
+                    if (!parsedData.data[dataPoint.x][dataPoint.y]) {
+                        // create object in array
+                        parsedData.data[dataPoint.x][dataPoint.y] = {};
+                        // if count is defined in datapoint
+                        if (dataPoint.hasOwnProperty('count')) {
+                            // create array value with count of count set in datapoint
+                            parsedData.data[dataPoint.x][dataPoint.y].count = dataPoint.count;
+                        } else {
+                            // create array value with count of 0
+                            parsedData.data[dataPoint.x][dataPoint.y].count = 0;
                         }
-                        // array value array is undefined
-                        if (!parsedData.data[dataPoints[i].x][dataPoints[i].y]) {
-                            // create object in array
-                            parsedData.data[dataPoints[i].x][dataPoints[i].y] = {};
-                            // if count is defined in datapoint
-                            if (dataPoints[i].hasOwnProperty('count')) {
-                                // create array value with count of count set in datapoint
-                                parsedData.data[dataPoints[i].x][dataPoints[i].y].count = dataPoints[i].count;
-                            } else {
-                                // create array value with count of 0
-                                parsedData.data[dataPoints[i].x][dataPoints[i].y].count = 0;
-                            }
-                        }
-                        // add 1 to the count
-                        parsedData.data[dataPoints[i].x][dataPoints[i].y].count += 1;
-                        // store dataPoint var
-                        parsedData.data[dataPoints[i].x][dataPoints[i].y].dataPoint = dataPoint;
-                        // if count is greater than current max
-                        if (parsedData.max < parsedData.data[dataPoints[i].x][dataPoints[i].y].count) {
-                            // set max to this count
-                            parsedData.max = parsedData.data[dataPoints[i].x][dataPoints[i].y].count;
-                        }
+                    }
+                    // add 1 to the count
+                    parsedData.data[dataPoint.x][dataPoint.y].count += 1;
+                    // store dataPoint var
+                    parsedData.data[dataPoint.x][dataPoint.y].dataPoint = dataPoint;
+                    // if count is greater than current max
+                    if (parsedData.max < parsedData.data[dataPoint.x][dataPoint.y].count) {
+                        // set max to this count
+                        parsedData.max = parsedData.data[dataPoint.x][dataPoint.y].count;
                     }
                 }
                 // convert parsed data into heatmap plugin formatted data
