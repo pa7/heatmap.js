@@ -41,6 +41,10 @@ dojo.addOnLoad(function () {
             // loaded
             this.loaded = true;
             this.onLoad(this);
+            // global maximum value
+            this.globalMax = 0;
+            // uses local view maximum instead of global maximum
+            this.useLocalMaximum = false;
             // connect on resize
             dojo.connect(this._map, "onResize", this, this.resizeHeatmap);
             // heatlayer div styling
@@ -120,6 +124,9 @@ dojo.addOnLoad(function () {
                     max: 0,
                     data: []
                 };
+                if(!this.useLocalMaximum){
+                    parsedData.max = this.globalMax;
+                }
                 // for each data point
                 for (i = 0; i < dataPoints.length; i++) {
                     // create geometry point
@@ -150,6 +157,9 @@ dojo.addOnLoad(function () {
                     if (parsedData.max < parsedData.data[dataPoint.x][dataPoint.y].count) {
                         // set max to this count
                         parsedData.max = parsedData.data[dataPoint.x][dataPoint.y].count;
+                        if(!this.useLocalMaximum){
+                            this.globalMax = parsedData.data[dataPoint.x][dataPoint.y].count;
+                        }
                     }
                 }
                 // convert parsed data into heatmap plugin formatted data
