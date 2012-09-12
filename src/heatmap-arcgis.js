@@ -26,6 +26,7 @@ dojo.addOnLoad(function () {
                 radius: 40,
                 debug: false,
                 visible: true,
+                useLocalMaximum: false,
                 gradient: {
                     0.45: "rgb(000,000,255)",
                     0.55: "rgb(000,255,255)",
@@ -43,8 +44,6 @@ dojo.addOnLoad(function () {
             this.onLoad(this);
             // global maximum value
             this.globalMax = 0;
-            // uses local view maximum instead of global maximum
-            this.useLocalMaximum = false;
             // connect on resize
             dojo.connect(this._map, "onResize", this, this.resizeHeatmap);
             // heatlayer div styling
@@ -124,7 +123,7 @@ dojo.addOnLoad(function () {
                     max: 0,
                     data: []
                 };
-                if(!this.useLocalMaximum){
+                if (!this.config.useLocalMaximum) {
                     parsedData.max = this.globalMax;
                 }
                 // for each data point
@@ -157,7 +156,7 @@ dojo.addOnLoad(function () {
                     if (parsedData.max < parsedData.data[dataPoint.x][dataPoint.y].count) {
                         // set max to this count
                         parsedData.max = parsedData.data[dataPoint.x][dataPoint.y].count;
-                        if(!this.useLocalMaximum){
+                        if (!this.config.useLocalMaximum) {
                             this.globalMax = parsedData.data[dataPoint.x][dataPoint.y].count;
                         }
                     }

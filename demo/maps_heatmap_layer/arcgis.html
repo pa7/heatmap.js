@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-    
+
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />
@@ -137,7 +137,7 @@
                     extent: initExtent,
                     sliderStyle: "small"
                 });
-                //Add the topographic layer to the map. View the ArcGIS Online site for services http://arcgisonline/home/search.html?t=content&f=typekeywords:service    
+                //Add the topographic layer to the map. View the ArcGIS Online site for services http://arcgisonline/home/search.html?t=content&f=typekeywords:service
                 var basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer");
                 map.addLayer(basemap);
                 // once map is loaded
@@ -146,14 +146,17 @@
                     dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
                     // create heat layer
                     heatLayer = new HeatmapLayer({
-                        // "radius": 40,
-                        // "gradient": {
-                        // 0.45: "rgb(000,000,255)",
-                        // 0.55: "rgb(000,255,255)",
-                        // 0.65: "rgb(000,255,000)",
-                        // 0.95: "rgb(255,255,000)",
-                        // 1.00: "rgb(255,000,000)"
-                        // },
+                        /* config: {
+                            "useLocalMaximum": true,
+                            "radius": 90,
+                            "gradient": {
+                                0.45: "rgb(000,000,255)",
+                                0.55: "rgb(000,255,255)",
+                                0.65: "rgb(000,255,000)",
+                                0.95: "rgb(255,255,000)",
+                                1.00: "rgb(255,000,000)"
+                            }
+                        }, */
                         "map": map,
                         "domNodeId": "heatLayer",
                         "opacity": 0.85
@@ -195,7 +198,7 @@
             dojo.addOnLoad(init);
         </script>
     </head>
-    
+
     <body class="claro">
         <div id="main">
             	<h1>ArcGIS JavaScript API Heatmap Overlay</h1>
