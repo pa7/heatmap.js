@@ -84,7 +84,8 @@
             "element": tile,
             "visible": true,
             "opacity": options.opacity * 100,
-            "gradient": options.gradient
+            "gradient": options.gradient,
+            "debug": options.debug
         };
         tile.heatmap = h337.create(config);
 
@@ -143,9 +144,9 @@
         };
     },
 
-    // checks whether the point is inside a tile
+    // checks whether the point is inside a tile with padding
     _isInTile: function(localXY, padding) {
-        padding = padding || this.options.radius;
+        padding = (padding || this.options.radius);
         var bounds = this._cache.bounds[padding];
         if (!bounds) {
             var tileSize = this.options.tileSize;
@@ -212,4 +213,3 @@
 L.TileLayer.heatMap = function (options) {
     return new L.TileLayer.HeatMap(options);
 };
-
