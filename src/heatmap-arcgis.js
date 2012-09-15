@@ -113,11 +113,11 @@ dojo.addOnLoad(function () {
             this.storeHeatmapData(heatPluginData);
         },
         // runs through data and calulates weights and max
-        parseHeatmapData: function (dataPoints) {
+        parseHeatmapData: function (features) {
             // variables
-            var i, parsedData, dataPoint;
+            var i, parsedData, dataPoint, attributes;
             // if data points exist
-            if (dataPoints) {
+            if (features) {
                 // create parsed data object
                 parsedData = {
                     max: 0,
@@ -127,9 +127,11 @@ dojo.addOnLoad(function () {
                     parsedData.max = this.globalMax;
                 }
                 // for each data point
-                for (i = 0; i < dataPoints.length; i++) {
+                for (i = 0; i < features.length; i++) {
                     // create geometry point
-                    dataPoint = esri.geometry.Point(dataPoints[i].geometry);
+                    dataPoint = esri.geometry.Point(features[i].geometry);
+                    // attributes
+                    attributes = features[i].attributes;
                     // if array value is undefined
                     if (!parsedData.data[dataPoint.x]) {
                         // create empty array value
@@ -140,9 +142,9 @@ dojo.addOnLoad(function () {
                         // create object in array
                         parsedData.data[dataPoint.x][dataPoint.y] = {};
                         // if count is defined in datapoint
-                        if (dataPoint.hasOwnProperty('count')) {
+                        if (attributes && attributes.hasOwnProperty('count')) {
                             // create array value with count of count set in datapoint
-                            parsedData.data[dataPoint.x][dataPoint.y].count = dataPoint.count;
+                            parsedData.data[dataPoint.x][dataPoint.y].count = attributes.count;
                         } else {
                             // create array value with count of 0
                             parsedData.data[dataPoint.x][dataPoint.y].count = 0;
@@ -166,15 +168,28 @@ dojo.addOnLoad(function () {
             }
         },
         // set data function call
-        setData: function (dataPoints) {
+        setData: function (features) {
             // set width/height
             this.resizeHeatmap(null, this._map.width, this._map.height);
             // store points
-            this.lastData = dataPoints;
+            this.lastData = features;
             // create data and then store it
-            this.parseHeatmapData(dataPoints);
+            this.parseHeatmapData(features);
             // redraws the heatmap
             this.refresh();
+        },
+        // add one feature to the heatmap
+        addDataPoint: function (feature) {
+            if (feature) {
+                // push to data
+                this.lastData.push(feature);
+                // set data
+                setData(this.lastData);
+            }
+        },
+        // return data set of features
+        exportDataSet: function () {
+            return this.lastData;
         },
         // clear data function
         clearData: function () {
