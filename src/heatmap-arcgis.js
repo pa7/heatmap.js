@@ -15,7 +15,7 @@ dojo.addOnLoad(function () {
             // map var
             this._map = this.properties.map;
             // last data storage
-            this.lastClustered = [];
+            this.lastData = [];
             // map node
             this.domNode = document.getElementById(this.properties.domNodeId);
             // config
@@ -165,13 +165,13 @@ dojo.addOnLoad(function () {
                 this.convertHeatmapData(parsedData);
             }
         },
-        // set data function call. same as cluster
+        // set data function call
         setData: function (dataPoints) {
             // set width/height
             this.resizeHeatmap(null, this._map.width, this._map.height);
             // store points
-            this.lastClustered = dataPoints;
-            // create clusters and then store them
+            this.lastData = dataPoints;
+            // create data and then store it
             this.parseHeatmapData(dataPoints);
             // redraws the heatmap
             this.refresh();
@@ -187,8 +187,8 @@ dojo.addOnLoad(function () {
         },
         // get image
         getImageUrl: function (extent, width, height, callback) {
-            // create heatmap data using last clustered data
-            this.parseHeatmapData(this.lastClustered);
+            // create heatmap data using last data
+            this.parseHeatmapData(this.lastData);
             // image data
             var imageUrl = this.heatMap.get("canvas").toDataURL("image/png");
             // callback
