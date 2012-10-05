@@ -130,37 +130,50 @@ dojo.addOnLoad(function () {
                 for (i = 0; i < features.length; i++) {
                     // create geometry point
                     dataPoint = esri.geometry.Point(features[i].geometry);
-                    // attributes
-                    attributes = features[i].attributes;
-                    // if array value is undefined
-                    if (!parsedData.data[dataPoint.x]) {
-                        // create empty array value
-                        parsedData.data[dataPoint.x] = [];
+                    // check point
+                    var validPoint = false;
+                    // if not using local max, point is valid
+                    if (!this.config.useLocalMaximum) {
+                        validPoint = true;
                     }
-                    // array value array is undefined
-                    if (!parsedData.data[dataPoint.x][dataPoint.y]) {
-                        // create object in array
-                        parsedData.data[dataPoint.x][dataPoint.y] = {};
-                        // if count is defined in datapoint
-                        if (attributes && attributes.hasOwnProperty('count')) {
-                            // create array value with count of count set in datapoint
-                            parsedData.data[dataPoint.x][dataPoint.y].count = attributes.count;
-                        } else {
-                            // create array value with count of 0
-                            parsedData.data[dataPoint.x][dataPoint.y].count = 0;
-                        }
+                    // using local max, make sure point is within extent
+                    else if(this._map.extent.contains(dataPoint)){
+                        validPoint = true;
                     }
-                    // add 1 to the count
-                    parsedData.data[dataPoint.x][dataPoint.y].count += 1;
-                    // store dataPoint var
-                    parsedData.data[dataPoint.x][dataPoint.y].dataPoint = dataPoint;
-                    // if count is greater than current max
-                    if (parsedData.max < parsedData.data[dataPoint.x][dataPoint.y].count) {
-                        // set max to this count
-                        parsedData.max = parsedData.data[dataPoint.x][dataPoint.y].count;
-                        if (!this.config.useLocalMaximum) {
-                            this.globalMax = parsedData.data[dataPoint.x][dataPoint.y].count;
+                    if (validPoint) {
+                        // attributes
+                        attributes = features[i].attributes;
+                        // if array value is undefined
+                        if (!parsedData.data[dataPoint.x]) {
+                            // create empty array value
+                            parsedData.data[dataPoint.x] = [];
                         }
+                        // array value array is undefined
+                        if (!parsedData.data[dataPoint.x][dataPoint.y]) {
+                            // create object in array
+                            parsedData.data[dataPoint.x][dataPoint.y] = {};
+                            // if count is defined in datapoint
+                            if (attributes && attributes.hasOwnProperty('count')) {
+                                // create array value with count of count set in datapoint
+                                parsedData.data[dataPoint.x][dataPoint.y].count = attributes.count;
+                            } else {
+                                // create array value with count of 0
+                                parsedData.data[dataPoint.x][dataPoint.y].count = 0;
+                            }
+                        }
+                        // add 1 to the count
+                        parsedData.data[dataPoint.x][dataPoint.y].count += 1;
+                        // store dataPoint var
+                        parsedData.data[dataPoint.x][dataPoint.y].dataPoint = dataPoint;
+                        // if count is greater than current max
+                        if (parsedData.max < parsedData.data[dataPoint.x][dataPoint.y].count) {
+                            // set max to this count
+                            parsedData.max = parsedData.data[dataPoint.x][dataPoint.y].count;
+                            if (!this.config.useLocalMaximum) {
+                                this.globalMax = parsedData.data[dataPoint.x][dataPoint.y].count;
+                            }
+                        }
+
                     }
                 }
                 // convert parsed data into heatmap plugin formatted data
