@@ -362,7 +362,24 @@
                 canvas.height = acanvas.height = element.style.height.replace(/px/, "") || this.getHeight(element);
                 this.set("height", canvas.height);
         },
+        createPointTemplate: function() {
+                var me = this,
+                    radius = me.get("radius"),
+                    shadowBlur = 15,
+                    pointTemplate = document.createElement("canvas");
 
+                pointTemplate.width = pointTemplate.height = (radius * 2) + (shadowBlur*2);
+                bctx = pointTemplate.getContext("2d")
+                bctx.shadowOffsetX = 1000;
+                bctx.shadowOffsetY = 1000;
+                bctx.shadowBlur = shadowBlur;
+                bctx.shadowColor = '#000000'
+                bctx.beginPath();
+                bctx.arc((pointTemplate.width/2) - 1000, (pointTemplate.width/2) - 1000, radius, 0, Math.PI * 2, true);
+                bctx.closePath();
+                bctx.fill();
+                me.set("pointTemplate",pointTemplate)
+        },
         init: function(){
                 var me = this,
                     canvas = document.createElement("canvas"),
@@ -397,6 +414,7 @@
                 actx.shadowOffsetX = 1000; 
                 actx.shadowOffsetY = 1000; 
                 actx.shadowBlur = 15; 
+                me.createPointTemplate();
         },
         initColorPalette: function(){
 
@@ -529,7 +547,7 @@
                     imageData[i-1]=palette[offset+2];
                     
                     if (premultiplyAlpha) {
-                    	// To fix browsers that premultiply incorrectly, we'll pass in a value scaled
+                        // To fix browsers that premultiply incorrectly, we'll pass in a value scaled
                     	// appropriately so when the multiplication happens the correct value will result.
                     	imageData[i-3] /= 255/finalAlpha;
                     	imageData[i-2] /= 255/finalAlpha;
@@ -553,16 +571,14 @@
                     max = me.get("max"),
                     bounds = me.get("bounds"),
                     xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
-                    xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
+                    xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0,
+                    pointTemplate = me.get("pointTemplate"),
+                    offset = pointTemplate.width / 2
 
-                ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
-                ctx.shadowOffsetX = 1000;
-                ctx.shadowOffsetY = 1000;
-                ctx.shadowBlur = 15;
-                ctx.beginPath();
-                ctx.arc(x - 1000, y - 1000, radius, 0, Math.PI * 2, true);
-                ctx.closePath();
-                ctx.fill();
+                
+                ctx.globalAlpha = ((count)?(count/me.store.max):0.1)
+                ctx.drawImage(pointTemplate,x-offset,y-offset)
+                
                 if(colorize){
                     // finally colorize the area
                     me.colorize(xb,yb);
