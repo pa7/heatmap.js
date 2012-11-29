@@ -129,7 +129,7 @@ dojo.addOnLoad(function () {
                 // for each data point
                 for (i = 0; i < features.length; i++) {
                     // create geometry point
-                    dataPoint = esri.geometry.Point(features[i].geometry);
+                    dataPoint = esri.geometry.Point(features[i].geometry.x, features[i].geometry.y, this._map.spatialReference);
                     // check point
                     var validPoint = false;
                     // if not using local max, point is valid
