@@ -3,12 +3,12 @@ require([
     "dojo/dom-construct",
     "dojo/query",
 	"dojo/dom-style",
-	"dojo/aspect",
+	"dojo/_base/connect",
     "esri", // We're not directly using anything defined in esri.js but geometry, locator and utils are not AMD. So, the only way to get reference to esri object is through esri module (ie. esri/main)
     "esri/geometry",
     "esri/utils"
 ],
-function(declare, domConstruct, query, domStyle, aspect, esri) {
+function(declare, domConstruct, query, domStyle, connect, esri) {
     declare("HeatmapLayer", [esri.layers.DynamicMapServiceLayer], {
         properties: {},
         heatMap: null,
@@ -49,10 +49,7 @@ function(declare, domConstruct, query, domStyle, aspect, esri) {
             this.globalMax = 0;
 			var _self = this;
             // connect on resize
-			aspect.after(this._map, "resize", function(){
-				_self.resizeHeatmap();
-				return true;
-			});
+			connect.connect(this._map, "onResize", this, this.resizeHeatmap);
             // heatlayer div styling
             this.domNode.style.position = 'relative';
             this.domNode.style.display = 'none';
