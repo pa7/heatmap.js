@@ -9,7 +9,7 @@ require([
     "esri/utils"
 ],
 function(declare, domConstruct, query, domStyle, connect, esri) {
-    declare("HeatmapLayer", [esri.layers.DynamicMapServiceLayer], {
+    var Widget = declare("HeatmapLayer", [esri.layers.DynamicMapServiceLayer], {
         properties: {},
         heatMap: null,
         // constructor
@@ -227,4 +227,5 @@ function(declare, domConstruct, query, domStyle, connect, esri) {
             callback(imageUrl);
         }
     });
+    return Widget;
 });
