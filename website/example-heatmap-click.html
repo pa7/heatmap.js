@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>heatmap.js | Examples: Realtime Click Heatmap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="heatmap.js example showing a realtime click heatmap">
+    <meta name="keywords" content="click heatmap, realtime click heatmap">
+    <meta name="author" content="Patrick Wied">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="index.html">heatmap.js</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="index.html">Home</a></li>
+              <li class="active"><a href="examples.html" title="heatmap.js examples">Examples</a></li>
+              <li><a href="showcases.html" title="Real World Usage of heatmap.js">Showcases</a></li>
+              <li><a href="https://github.com/pa7/heatmap.js/blob/master/README.md" target="_blank" title="Documentation on Github">Documentation</a></li>
+              <li><a href="contact.html" title="Contact for Support &amp; Feedback">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>
+            Examples
+            <small>See how easy it is to create heatmaps with heatmap.js</small>
+            </h1>
+        </div>
+        <div class="row">
+            <div class="span4 well" style="padding:8px 0;">
+                <ul class="nav nav-list">
+                    <li class="nav-header">
+                    Basic Examples
+                    </li>
+                    <li>
+                        <a href="examples.html" title="static heatmap example">Static Heatmap</a>
+                    </li>
+                    <li>
+                        <a href="example-heatmap-legend.html" title="static heatmap example with legend">Static Heatmap with Legend</a>
+                    </li>
+                    <li class="active">
+                        <a href="example-heatmap-click.html" title="realtime heatmap example showing mouse clicks">Realtime Heatmap - Mouse Clicks</a>
+                    </li>
+                    <li>
+                        <a href="example-heatmap-mousemove.html" title="realtime heatmap example showing mouse movement">Realtime Heatmap - Mouse Movement</a>
+                    </li>
+                    <li class="nav-header">
+                    Map Layer Examples
+                    </li>
+                    <li>
+                        <a href="example-heatmap-googlemaps.html" title="google maps v3 heatmap layer example">Google Maps V3 Layer</a>
+                    </li>
+                    <li>
+                        <a href="example-heatmap-openlayers.html" title="openlayers heatmap layer example">Openlayers Layer</a>
+                    </li>
+                    <li>
+                        <a href="example-heatmap-arcgis.html" title="arcgis heatmap example">ArcGIS Layer</a>
+                    </li>
+                    <li>
+                        <a href="example-heatmap-leaflet.html" title="leaflet heatmap example">Leaflet Layer</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tabbable span7" style="width:615px;"> <!-- Onlyrequired for left/right tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab1" data-toggle="tab">Live Demo</a></li>
+                    <li><a href="#tab2" data-toggle="tab">Code</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab1">
+                    <div style="padding:8px 0">This example shows a realtime heatmap with click data, if you click on the surface to the right it will add the datapoint right after the click.</div>
+                        <div class="alert alert-info">Click on the heatmap in order to create datapoints!</div>
+                        <div id="heatmapArea" class="well" style="width:610px;padding:0;height:400px;cursor:pointer;position:relative;">
+                        </div>
+                                            </div>
+                    <div class="tab-pane" id="tab2">
+<pre class="prettyprint linenums">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+...
+&lt;script type="text/javascript" src="heatmap.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+window.onload = function(){
+
+    // heatmap configuration
+    var config = {
+        element: document.getElementById("heatmapArea"),
+        radius: 30,
+        opacity: 50,
+        legend: {
+            position: 'br',
+            title: 'Example Distribution'
+        }   
+    };
+    
+    //creates and initializes the heatmap
+    var heatmap = h337.create(config);
+
+    document.getElementById("heatmapArea").onclick = function(e){
+        // layerX and layerY is deprecated and will be removed,
+        // use another way of determining the x and y position in an element
+        heatmap.store.addDataPoint(e.layerX, e.layerY, 1);
+    };
+};
+&lt;/script&gt;
+&lt;/html&gt;
+</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+      <footer>
+        <p style="width:330px;margin:auto;">heatmap.js by <a href="http://www.patrick-wied.at/" title="patrick wied javascript developer" target="_blank">Patrick Wied</a> (<a href="http://twitter.com/patrickwied" target="_blank">@patrickwied</a>) 2011-2013</p>
+      </footer>
+<a href="https://github.com/pa7/heatmap.js" target="_blank"><img style="position: fixed; top: 0; left: 0; border: 0;z-index:10000" src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png" alt="Fork me on GitHub"></a>
+    </div> <!-- /container -->
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/prettify.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/bootstrap-tab.js"></script>
+    <script type="text/javascript" src="../src/heatmap.js"></script>
+    <script type="text/javascript">
+        !function($){
+            $(function(){
+                window.prettyPrint && prettyPrint();
+                var heatmap = h337.create({
+                    element: $("#heatmapArea")[0],
+                    radius: 30,
+                    opacity: 50,
+                    legend: {
+                        position: 'br',
+                        title: 'Click Distribution'
+                    }
+                });
+                window.heatmap = heatmap;
+
+                var generateData = function(){ 
+                    var max = (Math.random()*10+1) >> 0,
+                        data = [],
+                        length = 20,
+                        width = heatmap.get("width"),
+                        height = heatmap.get("height");
+
+                    while(length--){
+                        data.push({
+                            x: (Math.random()*width) >> 0,
+                            y: (Math.random()*height) >> 0,
+                            count: (Math.random()*max) >> 0
+                        });
+                    }
+
+                    return {
+                        max: max,
+                        data: data
+                    };
+                };
+
+
+                $('#heatmapArea').click(function(e){
+                    var x = e.pageX - this.offsetLeft;
+	            var y = e.pageY - this.offsetTop;
+                    heatmap.store.addDataPoint(x, y, 1);    
+                });
+            });
+        }(window.jQuery)
+    </script>
+
+    <!-- Remove this from your site, it's my analytics script !-->
+    <script type="text/javascript">
+      var pkBaseURL = (("https:" == document.location.protocol) ? "https://www.patrick-wied.at/helper/piwik/" : "http://www.patrick-wied.at/helper/piwik/");
+      document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+      </script><script type="text/javascript">
+      try {
+      var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+      piwikTracker.trackPageView();
+      piwikTracker.enableLinkTracking();
+      } catch( err ) {}
+    </script><noscript><p><img src="http://www.patrick-wied.at/helper/piwik/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+    <!-- End of Analytics Script -->
+  </body>
+</html>
+
+
+

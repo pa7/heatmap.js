@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>heatmap.js | Create HTML5 Heatmaps with Canvas and JavaScript</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="A JavaScript library for generating web heatmaps with HTML5 canvas.">
+    <meta name="keywords" content="heatmap, javascript heatmaps, realtime heatmaps, html5 heatmap">
+    <meta name="author" content="Patrick Wied">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="index.html">heatmap.js</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="index.html">Home</a></li>
+              <li><a href="examples.html" title="heatmap.js examples">Examples</a></li>
+              <li><a href="showcases.html" title="Real World Usage of heatmap.js">Showcases</a></li>
+              <li><a href="https://github.com/pa7/heatmap.js/blob/master/README.md" target="_blank" title="Documentation on Github">Documentation</a></li>
+              <li><a href="contact.html" title="Contact for Support &amp; Feedback">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit" style="height:110px;margin-bottom:15px;">
+    <div id="randomHeatmap" style="position:absolute;margin-left:-55px;margin-top:-55px;width:930px;height:220px;z-index:100;"></div>
+        <div style="position:absolute;z-index:1000;">
+        <h1>JS Heatmaps, anyone?</h1>
+        <p style="background:rgba(255,255,255,0.6);">Heatmap.js is an open source JavaScript library that can be used for generating realtime heatmaps. <br />It uses the power and flexibility of the HTML5 canvas element to draw heatmaps based on your data.</p>
+        </div>
+        <div style="width:920px;height:160px;position:relative;"><div style="position:absolute;right:50px;top:-50px;z-index:1001;"><script type="text/javascript">
+    /* <![CDATA[ */
+      (function() {
+        var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
+        t.parentNode.insertBefore(s, t);
+      })();
+    /* ]]> */
+    </script><a class="FlattrButton" style="display:none;" href="http://www.patrick-wied.at/static/heatmapjs/"></a>&nbsp;<a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="patrickwied">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div>
+      </div>
+      </div>
+      <div class="row">
+        <p style="position:relative;width:400px;margin:auto;margin-bottom:25px;margin-top:10px;"><a class="btn btn-danger btn-large" href="#">Activate Website Heatmap</a>&nbsp;<a class="btn btn-primary btn-large" href="https://github.com/pa7/heatmap.js/archive/master.zip" target="_blank">Download latest build</a></p>
+      </div>
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="span4">
+          <h2>What is a heatmap?</h2>
+           <p>A heatmap is a visualization used for visualizing three dimensional data. Two dimensions represent cartesian coordinates (x and y values) and the third dimension is used for showing the intensity of a datapoint in relative comparison to the absolute maximum of the dataset. The intensity is shown as a color, usually red (hot) is used for the maxima and blue (cold) for minima.</p>
+        </div>
+        <div class="span4">
+          <h2>heatmap.js' purpose</h2>
+           <p>heatmap.js lets you easily create web heatmaps with JavaScript. The heatmaps are fully customizable - feel free to choose your own color gradient, change the opacity, datapoint radius and many more. Use it for A/B testing, visualizing map data or for whatever pops into your mind :)</p>
+          <p><a class="btn" href="#">Examples</a>&nbsp;<a class="btn" href="#">Showcases</a></p>
+       </div>
+
+        <div class="span4">
+          <h2>Browser Support</h2>
+          heatmap.js works on modern web browsers that support HTML5 canvas (including mobile web browsers). It's been tested on the following browsers:
+         <p>BrowserIcon List</p>
+        </div>
+        
+      </div>
+        <br />
+        <div class="row">
+        <div class="span7">
+            <h2>Latest News</h2>
+            <p><strong>2012-12-20: We're currently looking for showcases.</strong> <br />You've created a nice project, prototype or whatever with heatmap.js? <br />We'd love to hear about it! Send us a screenshot, small description, and a link to your project and we'll feature it on our showcases section. <a href="">Message us!</a></p>
+            <p><strong>2012-11-xx: VSauce mentioned the heatmap keyboard in his Youtube Episode</strong><br />VSauce just created an interesting youtube video containing fun facts about keyboard usage. Check it out: "<a href="http://www.youtube.com/watch?v=pPXxhgdtcXs">You don't type alone</a>"</p> 
+        </div>
+        <div class="span5">
+          <h2>Partners</h2>
+        </div>
+      </div>
+      <hr>
+
+      <footer>
+        <p style="width:330px;margin:auto;">heatmap.js by <a href="http://www.patrick-wied.at/" title="patrick wied javascript developer" target="_blank">Patrick Wied</a> (<a href="http://twitter.com/patrickwied" target="_blank">@patrickwied</a>) 2011-2013</p>
+      </footer>
+<a href="https://github.com/pa7/heatmap.js" target="_blank"><img style="position: fixed; top: 0; left: 0; border: 0;z-index:10000" src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png" alt="Fork me on GitHub"></a>
+    </div> <!-- /container -->
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="../src/heatmap.js"></script>
+    <script type="text/javascript">
+      !function($){
+            $(function(){
+              var heatmap1 =  h337.create({"element":document.getElementById("randomHeatmap"),"radius":20, "visible":true, "opacity":30});
+                    heatmap1.store.generateRandomDataSet(400);
+                    heatmap1.get("canvas").onclick = function(){
+                      heatmap1.store.generateRandomDataSet(400);
+                    };
+                    heatmap1.get('canvas').style.zIndex = 1;
+            });
+      }(window.jQuery);
+    </script>
+    <!-- Remove this from your site, it's my analytics script !-->
+    <script type="text/javascript">
+      var pkBaseURL = (("https:" == document.location.protocol) ? "https://www.patrick-wied.at/helper/piwik/" : "http://www.patrick-wied.at/helper/piwik/");
+      document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+      </script><script type="text/javascript">
+      try {
+      var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+      piwikTracker.trackPageView();
+      piwikTracker.enableLinkTracking();
+      } catch( err ) {}
+    </script><noscript><p><img src="http://www.patrick-wied.at/helper/piwik/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+    <!-- End of Analytics Script -->
+  </body>
+</html>
+

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>heatmap.js | Contact</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Contact page for heatmap.js projekt">
+    <meta name="author" content="Patrick Wied">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="index.html">heatmap.js</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="examples.html" title="heatmap.js examples">Examples</a></li>
+              <li><a href="showcases.html" title="Real World Usage of heatmap.js">Showcases</a></li>
+              <li><a href="https://github.com/pa7/heatmap.js/blob/master/README.md" target="_blank" title="Documentation on Github">Documentation</a></li>
+              <li class="active"><a href="contact.html" title="Contact for Support &amp; Feedback">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="page-header">
+            <h1>
+            Contact &amp; Support
+            <small></small>
+            </h1>
+        </div>
+        <div class="row"  style="position:relative;width:560px;margin:auto;">
+            <div id="thanks" class="span7 alert alert-success" style="display:none">
+                <h3>Thank you!</h3>
+                Thank you for your contact request, we will get in touch with you as soon as possible.
+            </div>
+            <div id="formdisplay" class="span7 well">
+                <form class="form-horizontal">
+                    <div id="error" class="alert" style="display:none">
+                        Please fill all the requested fields in order to send the contact request.
+                    </div>
+                    <legend>You need a customized solution, consulting, have feedback for us or just want to let us know about one of your cool projects? Please don't hesitate to message us!</legend>
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label" for="input01">Your Name</label>
+                            <div class="controls">
+                            <input type="text" class="input-xlarge" id="input01">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="input02">Your Email-Address</label>
+                            <div class="controls">
+                            <input type="text" class="input-xlarge" id="input02">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="select01">Type of inquiry</label>
+                            <div class="controls">
+                            <select id="select01">
+                                <option value="question">I have a question</option>
+                                <option value="feedback">I have some feedback</option>
+                                <option value="consulting">I need a custom solution</option>
+                                <option value="consulting">I need some help</option>
+                                <option value="showcase">I have built something awesome</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="text01">Your Message</label>
+                            <div class="controls">
+                            <textarea class="input-xlarge" rows="3" id="text01"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button id="subm" class="btn btn-primary btn-large">Send the Message</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+      <hr>
+
+      <footer>
+        <p style="width:330px;margin:auto;">heatmap.js by <a href="http://www.patrick-wied.at/" title="patrick wied javascript developer" target="_blank">Patrick Wied</a> (<a href="http://twitter.com/patrickwied" target="_blank">@patrickwied</a>) 2011-2013</p>
+      </footer>
+
+    </div> <!-- /container -->
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript">
+        $('#subm').click(function(ev){
+            ev.preventDefault();
+            // validate
+            var valid = true,
+                name = $('#input01').val(),
+                email = $('#input02').val(),
+                type = $('#select01').val(),
+                text = $('#text01').val();
+
+            if(name.length == 0 || email.length == 0 || text.length == 0){
+                valid = false;
+            }
+            if(valid){
+                var dataString = "name="+name+"&email="+email+"&type="+type+"&text="+text;
+            // send ajax request
+                $.ajax({
+                    type: 'POST',
+                    url: 'contact.php',
+                    data: dataString
+                });
+                $('#formdisplay').hide();
+                $('#thanks').show();
+            }else{
+                $('#error').show();
+            }
+        });
+    </script>
+
+    <!-- Remove this from your site, it's my analytics script !-->
+    <script type="text/javascript">
+      var pkBaseURL = (("https:" == document.location.protocol) ? "https://www.patrick-wied.at/helper/piwik/" : "http://www.patrick-wied.at/helper/piwik/");
+      document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+      </script><script type="text/javascript">
+      try {
+      var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+      piwikTracker.trackPageView();
+      piwikTracker.enableLinkTracking();
+      } catch( err ) {}
+    </script><noscript><p><img src="http://www.patrick-wied.at/helper/piwik/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+    <!-- End of Analytics Script -->
+  </body>
+</html>
+
