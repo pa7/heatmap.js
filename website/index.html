@@ -21,7 +21,7 @@
     <![endif]-->
   </head>
 
-  <body>
+  <body id="page">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -68,7 +68,7 @@
       </div>
       </div>
       <div class="row">
-        <p style="position:relative;width:400px;margin:auto;margin-bottom:25px;margin-top:10px;"><a class="btn btn-danger btn-large" href="#">Activate Website Heatmap</a>&nbsp;<a class="btn btn-primary btn-large" href="https://github.com/pa7/heatmap.js/archive/master.zip" target="_blank">Download latest build</a></p>
+        <p style="position:relative;width:400px;margin:auto;margin-bottom:25px;margin-top:10px;"><a class="btn btn-danger btn-large" id="activatr" href="#">Activate Website Heatmap</a>&nbsp;<a class="btn btn-primary btn-large" href="https://github.com/pa7/heatmap.js/archive/master.zip" target="_blank">Download latest build</a></p>
       </div>
       <!-- Example row of columns -->
       <div class="row">
@@ -85,7 +85,9 @@
         <div class="span4">
           <h2>Browser Support</h2>
           heatmap.js works on modern web browsers that support HTML5 canvas (including mobile web browsers). It's been tested on the following browsers:
-         <p>BrowserIcon List</p>
+         <p>
+            <ul style="float:left;padding-left:40px;"><li>Firefox</li><li>Chrome</li><li>Safari</li></ul><ul style="float:left;"><li>IE 9+</li><li>Opera</li><li>...</li></ul>
+         </p>
         </div>
         
       </div>
@@ -93,11 +95,12 @@
         <div class="row">
         <div class="span7">
             <h2>Latest News</h2>
-            <p><strong>2012-12-20: We're currently looking for showcases.</strong> <br />You've created a nice project, prototype or whatever with heatmap.js? <br />We'd love to hear about it! Send us a screenshot, small description, and a link to your project and we'll feature it on our showcases section. <a href="">Message us!</a></p>
+            <p><strong>2012-12-20: We're currently looking for showcases.</strong> <br />You've created a nice project, prototype or whatever with heatmap.js? <br />We'd love to hear about it! Send us a screenshot, small description, and a link to your project and we'll feature it on our showcases section. <a href="contact.html">Message us!</a></p>
             <p><strong>2012-11-xx: VSauce mentioned the heatmap keyboard in his Youtube Episode</strong><br />VSauce just created an interesting youtube video containing fun facts about keyboard usage. Check it out: "<a href="http://www.youtube.com/watch?v=pPXxhgdtcXs">You don't type alone</a>"</p> 
         </div>
         <div class="span5">
           <h2>Partners</h2>
+          Wanna be a partner or sponsor? <a href="contact.html">Contact us</a>
         </div>
       </div>
       <hr>
@@ -107,6 +110,9 @@
       </footer>
 <a href="https://github.com/pa7/heatmap.js" target="_blank"><img style="position: fixed; top: 0; left: 0; border: 0;z-index:10000" src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png" alt="Fork me on GitHub"></a>
     </div> <!-- /container -->
+    <div id="closer" style="position:fixed;top:45px;right:25px;cursor:pointer;background:rgba(0,0,0,0.8);color:white;padding:15px;border:2px solid black;display:none;font-size:30px;z-index:1000000000;border-radius:10px;">
+      Close Heatmap Layer [x]
+    </div>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="../src/heatmap.js"></script>
@@ -119,6 +125,110 @@
                       heatmap1.store.generateRandomDataSet(400);
                     };
                     heatmap1.get('canvas').style.zIndex = 1;
+
+
+      var heatmap2 = h337.create({"element":document.getElementById("page"), "radius":40, "visible":false, "opacity":40});
+      window.heatmap = heatmap2;
+      
+      // realtime heatmap mousemovement handling
+      (function(){
+        var active = false,
+        lastCoords = [],
+        mouseMove = false,
+        mouseOver = false,
+        activate = function(){
+          active = true;
+        },
+        timer = null,
+        simulateEv = function(){
+          heatmap2.store.addDataPoint(lastCoords[0], lastCoords[1]);
+        },
+        antiIdle = function(){
+          if(mouseOver && !mouseMove && lastCoords && !timer){
+            timer = setInterval(simulateEv, 1000);      
+          }
+        };
+        
+        $("#activatr").click(function(){
+          //$("control").style.display = "block";
+          $("#closer").show();
+          heatmap2.toggleDisplay();
+        });
+        // i know i could write a single onclick handler and check whether it's displayed block or not :P
+        /*$("#toggle").onclick = function(){
+          $("control").style.display = "none";
+          heatmap2.toggleDisplay();
+        };
+        */
+        $("#closer").click(function(){
+          $("#closer").hide();
+          heatmap2.toggleDisplay();
+        })
+        $("#closer").mousemove(function(){
+          console.log('jo');
+          mouseOver = false;
+          if(timer){
+            clearInterval(timer)
+            timer = null;
+          }
+        });
+        
+        (function(fn){
+          setInterval(fn, 1000);
+        }(antiIdle));
+        var tmp = $("#page");
+
+        tmp.mouseout(function(){
+          mouseOver = false;
+          if(timer){
+            clearInterval(timer)
+            timer = null;
+          }
+        });
+        
+        var collect = function(ev){
+          mouseMove = true;
+          mouseOver = true;
+          if(active){
+            if(timer){
+              clearInterval(timer);
+              timer = null;
+            }
+            var x = ev.pageX - this.offsetLeft;
+            var y = ev.pageY - this.offsetTop;
+            //var pos = h337.util.mousePosition(ev);
+            
+              heatmap2.store.addDataPoint(x, y);
+              lastCoords = [x, y];
+            
+            active = false;
+          }
+          mouseMove = false;
+        };
+        
+        tmp.mousemove(collect).click(collect);
+
+        tmp[0]["ontouchmove"] = function(ev){  
+              var touch = ev.touches[0],  
+              // simulating a mousemove event           
+              simulatedEvent = document.createEvent("MouseEvent");  
+              simulatedEvent.initMouseEvent("mousemove", true, true, window, 1,  
+                      touch.screenX, touch.screenY,  
+                      touch.clientX, touch.clientY, false,  
+                      false, false, false, 0, null);  
+              // dispatching the simulated event              
+              touch.target.dispatchEvent(simulatedEvent);  
+              // we don't want to have the default iphone scrolling behaviour ontouchmove  
+              ev.preventDefault();  
+            };  
+        
+        
+        (function(fn){
+          setInterval(fn, 50);
+        }(activate));
+      })();
+
+
             });
       }(window.jQuery);
     </script>
