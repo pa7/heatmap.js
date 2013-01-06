@@ -79,7 +79,7 @@
         <div class="span4">
           <h2>heatmap.js' purpose</h2>
            <p>heatmap.js lets you easily create web heatmaps with JavaScript. The heatmaps are fully customizable - feel free to choose your own color gradient, change the opacity, datapoint radius and many more. Use it for A/B testing, visualizing map data or for whatever pops into your mind :)</p>
-          <p><a class="btn" href="#">Examples</a>&nbsp;<a class="btn" href="#">Showcases</a></p>
+          <p><a class="btn" href="examples.html">Examples</a>&nbsp;<a class="btn" href="showcases.html">Showcases</a></p>
        </div>
 
         <div class="span4">
@@ -115,7 +115,7 @@
     </div>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
-    <script type="text/javascript" src="../src/heatmap.js"></script>
+    <script type="text/javascript" src="src/heatmap.js"></script>
     <script type="text/javascript">
       !function($){
             $(function(){
@@ -147,25 +147,23 @@
           if(mouseOver && !mouseMove && lastCoords && !timer){
             timer = setInterval(simulateEv, 1000);      
           }
-        };
-        
-        $("#activatr").click(function(){
-          //$("control").style.display = "block";
+        },
+        letsgo = function(){
           $("#closer").show();
           heatmap2.toggleDisplay();
-        });
-        // i know i could write a single onclick handler and check whether it's displayed block or not :P
-        /*$("#toggle").onclick = function(){
-          $("control").style.display = "none";
-          heatmap2.toggleDisplay();
         };
-        */
+        
+        $("#activatr").click(letsgo);
+
+        if(window.location.hash == "#heat-it"){
+          letsgo();
+        }
+
         $("#closer").click(function(){
           $("#closer").hide();
           heatmap2.toggleDisplay();
         })
         $("#closer").mousemove(function(){
-          console.log('jo');
           mouseOver = false;
           if(timer){
             clearInterval(timer)
