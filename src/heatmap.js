@@ -395,8 +395,8 @@
                 if(me.get("debug"))
                     document.body.appendChild(acanvas);
                 
-                actx.shadowOffsetX = 1000; 
-                actx.shadowOffsetY = 1000; 
+                actx.shadowOffsetX = 15000; 
+                actx.shadowOffsetY = 15000; 
                 actx.shadowBlur = 15; 
         },
         initColorPalette: function(){
@@ -460,7 +460,7 @@
                     height = me.get("height"),
                     actx = me.get("actx"),
                     ctx = me.get("ctx"),
-                    x2 = radius * 3,
+                    x2 = radius * 2.5,
                     premultiplyAlpha = me.get("premultiplyAlpha"),
                     palette = me.get("gradient"),
                     opacity = me.get("opacity"),
@@ -557,11 +557,9 @@
                     xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
                 ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
-                ctx.shadowOffsetX = 1000;
-                ctx.shadowOffsetY = 1000;
-                ctx.shadowBlur = 15;
+
                 ctx.beginPath();
-                ctx.arc(x - 1000, y - 1000, radius, 0, Math.PI * 2, true);
+                ctx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
                 ctx.closePath();
                 ctx.fill();
                 if(colorize){
