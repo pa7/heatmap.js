@@ -460,7 +460,7 @@
                     height = me.get("height"),
                     actx = me.get("actx"),
                     ctx = me.get("ctx"),
-                    x2 = radius * 2.5,
+                    x2 = radius * 3,
                     premultiplyAlpha = me.get("premultiplyAlpha"),
                     palette = me.get("gradient"),
                     opacity = me.get("opacity"),
