@@ -558,9 +558,9 @@
 
                 ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
 
-                actx.shadowOffsetX = 15000; 
-                actx.shadowOffsetY = 15000; 
-                actx.shadowBlur = 15; 
+                ctx.shadowOffsetX = 15000; 
+                ctx.shadowOffsetY = 15000; 
+                ctx.shadowBlur = 15; 
 
                 ctx.beginPath();
                 ctx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
