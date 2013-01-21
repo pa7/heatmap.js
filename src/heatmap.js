@@ -345,7 +345,8 @@
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
                 me.set("debug", config.debug);
-
+		me.set("logscale", config["logscale"] ? true : false);
+		
                 if(config.legend){
                     var legendCfg = config.legend;
                     legendCfg.gradient = me.get("gradient");
@@ -554,9 +555,14 @@
                     max = me.get("max"),
                     bounds = me.get("bounds"),
                     xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
-                    xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
+		    xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0,
+		    logscale = me.get("logscale");
 
-                ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
+		if (logscale) {
+		  ctx.shadowColor = ('rgba(0,0,0,'+((count)?(Math.log(count)/Math.log(me.store.max)):'0.1')+')');
+		} else {
+		  ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
+		}
 
                 ctx.shadowOffsetX = 15000; 
                 ctx.shadowOffsetY = 15000; 
