@@ -67,7 +67,8 @@
             "element": tile,
             "visible": true,
             "opacity": options.opacity * 100,
-            "gradient": options.gradient
+            "gradient": options.gradient,
+            "logscale": options.logscale
         };
         tile.heatmap = h337.create(config);
 
