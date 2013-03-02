@@ -13,12 +13,11 @@
  L.TileLayer.HeatMap = L.TileLayer.Canvas.extend({
 	options: {
         debug: false,
-        /*
-         * [EXPERIMENTAL]
-         * true means that the maxValue is calculated per view.
-         * This leads to wrong reporoduction of colors if the map is moved!
-         */
-        useRelativeMaxValue: false
+        opacity: 0.9,  // opactity is between 0 and 1, not in percent
+        radius: {
+            value: 20,
+            absolute: false  // true: radius in meters, false: radius in pixels
+        }
 	},
 
 	initialize: function (options, data) {
@@ -29,8 +28,7 @@
             var ctx = {
                 canvas: tile,
                 tilePoint: tilePoint,
-                zoom: zoom,
-                heatmap: tile.heatmap
+                zoom: zoom
             };
 
             if (self.options.debug) {
@@ -64,6 +62,9 @@
         this._drawPoint(ctx, [0,0]);
     },
 
+    /*
+     * Used for debug
+     */
     _drawPoint: function (ctx, geom) {
         var p = this._tilePoint(ctx, geom);
         var c = ctx.dbgcanvas;
@@ -77,31 +78,13 @@
     },
 
     _createTileProto: function () {
-        var proto = this._tileProto = L.DomUtil.create('div', 'leaflet-tile');
+        var proto = this._canvasProto = L.DomUtil.create('div', 'leaflet-tile');
 
         var tileSize = this.options.tileSize;
         proto.style.width = tileSize+"px";
         proto.style.height = tileSize+"px";
         proto.width = tileSize;
         proto.height = tileSize;
-    },
-
-    _createTile: function () {
-        var tile = this._tileProto.cloneNode(false);
-        tile.onselectstart = tile.onmousemove = L.Util.falseFn;
-
-        var options = this.options;
-        var config = {
-            "radius": options.radius,
-            "element": tile,
-            "visible": true,
-            "opacity": options.opacity * 100,
-            "gradient": options.gradient,
-            "debug": options.debug
-        };
-        tile.heatmap = h337.create(config);
-
-        return tile;
     },
 
     /**
@@ -157,17 +140,25 @@
         };
     },
 
-    _getMaxValue: function() {
-        if (this.options.useRelativeMaxValue) {
-            var bounds = this._map.getBounds();
-            var maxValue = 0;
-            this._quad.retrieveInBounds(this._boundsToQuery(bounds)).forEach(function(obj) {
-                maxValue = Math.max(maxValue, obj.value);
-            });
-            return maxValue;
-        } else {
-            return this._maxValue;
-        }
+    _getLatRadius: function () {
+        return (this.options.radius.value / 40075017) * 360;
+    },
+
+    _getLngRadius: function (point) {
+        return this._getLatRadius() / Math.cos(L.LatLng.DEG_TO_RAD * point.lat);
+    },
+
+    /*
+     * The idea is to create two points and then get
+     * the distance between the two in order to know what
+     * the absolute radius in this tile could be.
+     */
+    projectLatlngs: function (point) {
+        var lngRadius = this._getLngRadius(point),
+            latlng2 = new L.LatLng(point.lat, point.lng - lngRadius, true),
+            p = this._map.latLngToLayerPoint(latlng2),
+            q = this._map.latLngToLayerPoint(point);
+        return Math.max(Math.round(q.x - p.x), 1);
     },
 
     _draw: function (ctx) {
@@ -175,16 +166,37 @@
             return;
         }
 
-        var self = this;
-        var localXY, value;
-        var pointsInTile = [];
+        var self = this,
+            options = this.options,
+            tile = ctx.canvas,
+            tileSize = options.tileSize,
+            radiusValue = this.options.radius.value;
 
-        var tileSize = this.options.tileSize;
-        var nwPoint = ctx.tilePoint.multiplyBy(tileSize);
-        var sePoint = nwPoint.add(new L.Point(tileSize, tileSize));
+        var localXY, value, pointsInTile = [];
+
+        var nwPoint = ctx.tilePoint.multiplyBy(tileSize),
+            sePoint = nwPoint.add(new L.Point(tileSize, tileSize));
+
+        // Set the radius for the tile, if necessary.
+        // The radius of a circle can be either absolute in pixels or in meters
+        // The radius in pixels is not the same on the whole map.
+        if (options.radius.absolute) {
+            var centerPoint = nwPoint.add(new L.Point(tileSize/2, tileSize/2));
+            var p = this._map.unproject(centerPoint);
+            radiusValue = this.projectLatlngs(p);
+        }
+
+        var heatmap = h337.create({
+            "radius": radiusValue,
+            "element": tile,
+            "visible": true,
+            "opacity": 100,  // we use leaflet's opacity for tiles
+            "gradient": options.gradient,
+            "debug": options.debug
+        });
 
         // padding
-        var pad = new L.Point(this._getMaxValue(), this._getMaxValue());
+        var pad = new L.Point(radiusValue, radiusValue);
         nwPoint = nwPoint.subtract(pad);
         sePoint = sePoint.add(pad);
 
@@ -199,7 +211,7 @@
             });
         });
 
-        ctx.heatmap.store.setDataSet({max: this._getMaxValue(), data: pointsInTile});
+        heatmap.store.setDataSet({max: this._maxValue, data: pointsInTile});
 
         return this;
     }
