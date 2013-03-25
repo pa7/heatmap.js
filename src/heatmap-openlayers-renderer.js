@@ -17,6 +17,15 @@
 OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
 
     /**
+     * APIProperty: weight
+     * {String||Function} Each feature weight, if string refers to the name of a
+     *     numeric attribute of the features, if function receives the feature
+     *     as argument and should return a number, if not every feature has a
+     *     weight equal to 0.
+     */
+    weight: null,
+
+    /**
      * APIProperty: heatmapConfig
      * {Object} See documentation at 
      *      https://github.com/pa7/heatmap.js/blob/master/README.md.
@@ -61,6 +70,17 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
             }, 
             this.heatmapConfig || {}
         );
+
+        var _weight = this.weight;
+        if (!_weight) {
+            this.weight = function() {
+                return 0;
+            };
+        } else if (typeof _weight === 'string') {
+            this.weight = function(feature) {
+                return feature.attributes[_weight] || 0; 
+            };
+        }
         var hm = h337.create(heatmapConfig);
         this.heatmap = hm;
         this.root = hm.get("canvas");
@@ -178,16 +198,16 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
 
     /**
      * Method: getLocalXY
-     * transform geographic xy into pixel xy
+     * Transform geographic coordinates into pixel xy
      *
      * Parameters: 
-     * point - {<OpenLayers.Geometry.Point>}
+     * lacation - {<OpenLayers.LonLat>}
      */
-    getLocalXY: function(point) {
+    getLocalXY: function(lacation) {
         var resolution = this.getResolution();
         var extent = this.extent;
-        var x = ((point.lon - this.featureDx) / resolution + (-extent.left / resolution));
-        var y = ((extent.top / resolution) - point.lat / resolution);
+        var x = ((lacation.lon - this.featureDx) / resolution + (-extent.left / resolution));
+        var y = ((extent.top / resolution) - lacation.lat / resolution);
         return [x, y];
     },
 
@@ -273,6 +293,7 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
                 feature = this.features[id][0];
                 features = feature.layer.features;
             } 
+            var weight = this.weight;
             for (var i = 0, len = features.length; i < len; i++) {
                 feature = features[i];
                 bounds = feature.geometry.getBounds();
@@ -281,7 +302,7 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
                 var p0 = pt[0];
                 var p1 = pt[1];
                 if(!isNaN(p0) && !isNaN(p1)) {
-                    var count = feature.attributes.count || 0;
+                    var count = weight(feature);
                     data.push({x: p0, y: p1, count: count});
                 }
                 max = count > max ? count : max;
