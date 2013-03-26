@@ -86,6 +86,7 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         this.root = hm.get("canvas");
         
         this.features = {};
+        this.max = 0;
     },
     
     /**
@@ -169,19 +170,31 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         if (feature.geometry) {
             style = this.applyDefaultSymbolizer(style || feature.style);
             // don't render if display none or feature outside extent
-            var bounds = feature.geometry.getBounds();
+            var weight,
+                bounds = feature.geometry.getBounds();
 
             var worldBounds;
             if (this.map.baseLayer && this.map.baseLayer.wrapDateLine) {
                 worldBounds = this.map.getMaxExtent();
             }
 
-            var intersects = bounds && bounds.intersectsBounds(this.extent, {worldBounds: worldBounds});
-
-            rendered = (style.display !== "none") && !!bounds && intersects;
+            rendered = (style.display !== "none");
+            if (rendered && bounds) {
+                rendered = bounds.intersectsBounds(
+                    this.extent, // TODO: use extent + heatmap radius
+                    {worldBounds: worldBounds}
+                );
+                // Get max weight of all features
+                weight = this.weight(feature);
+                if (this.max < weight) {
+                    this.max = weight;
+                }
+            } else {
+                rendered = false;
+            }
             if (rendered) {
                 // keep track of what we have rendered for redraw
-                this.features[feature.id] = [feature, style];
+                this.features[feature.id] = [feature, weight];
             }
             else {
                 // remove from features tracked for redraw
@@ -208,7 +221,7 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         var extent = this.extent;
         var x = ((lacation.lon - this.featureDx) / resolution + (-extent.left / resolution));
         var y = ((extent.top / resolution) - lacation.lat / resolution);
-        return [x, y];
+        return [Math.round(x), Math.round(y)];
     },
 
     /**
@@ -221,6 +234,7 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         hm.set("width", this.root.width);
         hm.clear();
         this.features = {};
+        this.max = 0;
     },
 
     /**
@@ -256,6 +270,8 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         for(var i=0; i<features.length; ++i) {
             delete this.features[features[i].id];
         }
+        // TODO TODO max!!!!
+        this.max = -1; // Max pending...
         this.redraw();
     },
 
@@ -284,6 +300,8 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
                               this.map.getMaxExtent();
             var data = [],
                 max = 0,
+                weight,
+                getWeight = this.weight
                 features = [];
             
             // What is the layer?, 
@@ -291,25 +309,19 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
             for (var id in this.features) {
                 if (!this.features.hasOwnProperty(id)) { continue; }
                 feature = this.features[id][0];
-                features = feature.layer.features;
-            } 
-            var weight = this.weight;
-            for (var i = 0, len = features.length; i < len; i++) {
-                feature = features[i];
                 bounds = feature.geometry.getBounds();
                 this.calculateFeatureDx(bounds, worldBounds);
                 var pt = this.getLocalXY(bounds.getCenterLonLat());
                 var p0 = pt[0];
                 var p1 = pt[1];
                 if(!isNaN(p0) && !isNaN(p1)) {
-                    var count = weight(feature);
-                    data.push({x: p0, y: p1, count: count});
+                    weight = getWeight(feature); // TODO: use this.features[id][1]?
+                    data.push({x: p0, y: p1, count: weight});
                 }
-                max = count > max ? count : max;
             }
             this.heatmap.store.setDataSet({
                 data: data,
-                max: max
+                max: this.max
             });
         }    
     },
