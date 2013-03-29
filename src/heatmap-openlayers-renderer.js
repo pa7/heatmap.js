@@ -288,9 +288,22 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         for(var i=0; i<features.length; ++i) {
             delete this.features[features[i].id];
         }
-        // TODO TODO max!!!!
-        this.max = -1; // Max pending...
-        this.redraw();
+        if (!this.locked && this.map) {
+            var layer = this.map.getLayer(this.container.id);
+            if (layer) {
+                var lFeatures = layer.features,
+                    weight,
+                    max = 0;
+                for (var i = 0, len = lFeatures.length; i < len; i++) {
+                    weight = this.weight(lFeatures[i]);
+                    if (max < weight) {
+                        max = weight;
+                    }
+                }
+                this.max = max;
+            }
+            this.redraw();
+        }
     },
 
     /**
