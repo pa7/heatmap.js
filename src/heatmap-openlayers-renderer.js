@@ -37,10 +37,18 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
 
     /**
      * Property: heatmap
-     * {Canvas} The heatmap.j object.
+     * {heatmap.js} The heatmap.js object.
      */
-    heatmap: null, 
-    
+    heatmap: null,
+
+    /**
+     * Property: extentHM
+     * Heatmap extent, increases <extend> with the radius so this prevents the
+     *     attenuation in areas near the edges.
+     * {<OpenLayers.Bounds>}
+     */
+    extentHM: null,
+
     /**
      * Property: features
      * {Object} Internal object of feature/style pairs for use in redrawing the layer.
@@ -104,6 +112,16 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
      */
     setExtent: function() {
         OpenLayers.Renderer.prototype.setExtent.apply(this, arguments);
+
+        var mapRadius = this.getResolution() * this.heatmap.get("radius"),
+            extent = this.extent;
+        this.extentHM = new OpenLayers.Bounds(
+            extent.left - mapRadius,
+            extent.bottom - mapRadius,
+            extent.right + mapRadius,
+            extent.top + mapRadius
+        );
+
         // always redraw features
         return false;
     },
@@ -181,7 +199,7 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
             rendered = (style.display !== "none");
             if (rendered && bounds) {
                 rendered = bounds.intersectsBounds(
-                    this.extent, // TODO: use extent + heatmap radius
+                    this.extentHM,
                     {worldBounds: worldBounds}
                 );
                 // Get max weight of all features
