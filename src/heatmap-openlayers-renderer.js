@@ -330,23 +330,24 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
                                              this.map.baseLayer.wrapDateLine) && 
                               this.map.getMaxExtent();
             var data = [],
-                max = 0,
+                item = 0,
                 weight,
-                getWeight = this.weight
+                getWeight = this.weight,
                 features = [];
             
             // What is the layer?, 
             //      we need to use all features although not in the map window.
             for (var id in this.features) {
                 if (!this.features.hasOwnProperty(id)) { continue; }
-                feature = this.features[id][0];
+                item = this.features[id];
+                feature = item[0];
                 bounds = feature.geometry.getBounds();
                 this.calculateFeatureDx(bounds, worldBounds);
                 var pt = this.getLocalXY(bounds.getCenterLonLat());
                 var p0 = pt[0];
                 var p1 = pt[1];
                 if(!isNaN(p0) && !isNaN(p1)) {
-                    weight = getWeight(feature); // TODO: use this.features[id][1]?
+                    weight = item[1];
                     data.push({x: p0, y: p1, count: weight});
                 }
             }
