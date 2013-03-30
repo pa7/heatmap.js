@@ -1,4 +1,10 @@
-/* Copyright (c) 2006-2013 by OpenLayers Contributors (see authors.txt for
+/* Copyright 2013 Xavier Mamano, http://github.com/jorix/OL-Ragbag
+ * Published under MIT license. All rights reserved.
+ *
+ * Based on lib/OpenLayers/Renderer/Canvas.js form:
+ *     https://github.com/openlayers/openlayers/blob/master
+ * with license:
+ * Copyright (c) 2006-2013 by OpenLayers Contributors (see authors.txt for
  * full list of contributors). Published under the 2-clause BSD license.
  * See license.txt in the OpenLayers distribution or repository for the
  * full text of the license. */
