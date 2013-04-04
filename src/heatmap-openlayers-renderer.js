@@ -32,6 +32,21 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
     weight: null,
 
     /**
+     * APIProperty: maxStart
+     * {Fload} Set to ensure maximum value not less than the indicated value.
+     *     Default is 0.
+     */
+    maxStart: 0,
+
+    /**
+     * APIProperty: updatableWeight
+     * {Fload} Set to true if the features can change the weight after added to
+     *     the layer. In this case it is necessary call drawFeature from the
+     *     layer to update the rendered feature.
+     */
+    updatableWeight: false,
+
+    /**
      * APIProperty: heatmapConfig
      * {Object} See documentation at 
      *      https://github.com/pa7/heatmap.js/blob/master/README.md.
@@ -69,6 +84,13 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
     pendingRedraw: false,
     
     /**
+     * Property: pendingMax
+     * {Boolean} The renderer needs calculate max to render features drawed
+     *     while the renderer was not locked.
+     */
+    pendingMax: false,
+
+    /**
      * Constructor: OpenLayers.Renderer.Heatmap
      *
      * Parameters:
@@ -98,9 +120,11 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         var hm = h337.create(heatmapConfig);
         this.heatmap = hm;
         this.root = hm.get("canvas");
-        
+
+        this.maxStart = this.maxStart || 0;
         this.features = {};
-        this.max = 0;
+        this.pendingMax = false;
+        this.max = this.maxStart;
     },
     
     /**
@@ -227,8 +251,12 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
             this.pendingRedraw = true;
         }
         if (this.pendingRedraw && !this.locked) {
+            if (this.updatableWeight && this.pendingMax) {
+                this.calculateMax();
+            }
             this.redraw();
             this.pendingRedraw = false;
+            this.pendingMax = true;
         }
         return rendered;
     },
@@ -258,7 +286,8 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         hm.set("width", this.root.width);
         hm.clear();
         this.features = {};
-        this.max = 0;
+        this.pendingMax = false;
+        this.max = this.maxStart;
     },
 
     /**
@@ -294,22 +323,32 @@ OpenLayers.Renderer.Heatmap = OpenLayers.Class(OpenLayers.Renderer, {
         for(var i=0; i<features.length; ++i) {
             delete this.features[features[i].id];
         }
-        if (!this.locked && this.map) {
+        if (!this.locked) {
+            this.calculateMax();
+            this.redraw();
+        }
+    },
+
+    /**
+     * Method: calculateMax
+     */
+    calculateMax: function() {
+        var max = this.maxStart;
+        if (this.map) {
             var layer = this.map.getLayer(this.container.id);
             if (layer) {
-                var lFeatures = layer.features,
-                    weight,
-                    max = 0;
-                for (var i = 0, len = lFeatures.length; i < len; i++) {
-                    weight = this.weight(lFeatures[i]);
+                var features = layer.features,
+                    weight;
+                for (var i = 0, len = features.length; i < len; i++) {
+                    weight = this.weight(features[i]);
                     if (max < weight) {
                         max = weight;
                     }
                 }
-                this.max = max;
             }
-            this.redraw();
         }
+        this.pendingMax = false;
+        this.max = max;
     },
 
     /**
