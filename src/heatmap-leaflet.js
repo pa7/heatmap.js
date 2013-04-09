@@ -168,6 +168,7 @@
 
         var heatmap = ctx.heatmap
         heatmap.clear();
+        this.setZIndex(10000000); 
 
         var pointsInTile = [];
         if (this._data.length > 0) {
