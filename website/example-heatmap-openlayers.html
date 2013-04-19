@@ -16,6 +16,9 @@
         padding-top: 60px;
         padding-bottom: 40px;
       }
+      #heatmapArea img {
+        max-width: none;
+      }
     </style>
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -130,7 +133,7 @@ window.onload = function(){
 
     while(datalen--){
         nudata.push({
-            lonlat: new OpenLayers.LonLat(data[datalen].lon, data[datalen].lat),
+            lonlat: new OpenLayers.LonLat(data[datalen].lng, data[datalen].lat),
             count: data[datalen].count
         });
     }
