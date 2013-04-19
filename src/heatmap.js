@@ -597,6 +597,24 @@
 
                 me.set("visible", !visible);
         },
+        isVisible: function(){
+			var me = this;
+			return me.get("visible");				  
+		},
+		show: function() {
+			var me = this,
+			canvas = me.get("canvas");
+			
+			canvas.style.display = "block";
+			me.set("visible", true);
+		},
+		hide: function() {
+			var me = this,
+			canvas = me.get("canvas");
+						  
+			canvas.style.display = "none";
+			me.set("visible", false);
+		},
         // dataURL export
         getImageData: function(){
                 return this.get("canvas").toDataURL();
