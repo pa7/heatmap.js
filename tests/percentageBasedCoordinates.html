@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<title>Heatmap.js Performance Test</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body, html {
+				margin:0;
+				padding:0;
+				font-family:Arial;
+			}
+			h1 {
+				margin-bottom:10px;
+                                font-size:24px;
+			}
+			#main {
+				position:relative;
+				width:940px;
+				padding:20px;
+				margin:auto;
+			}
+			#heatmapArea {
+				position:relative;
+				width:1000px;
+				height:600px;
+				border:1px solid black;
+                                background-color:rgba(0,0,0,0.4);
+
+                        }
+                        #result {
+                            margin-top:15px;
+                        }
+			</style>
+		<link rel="shortcut icon" type="image/png" href="http://www.patrick-wied.at/img/favicon.png" />
+	</head>
+	<body>
+		<div id="main">
+                    <h1>Testing heatmap.js performance for improving its rendering process</h1>
+		    <div id="heatmapArea">
+			
+		    </div>
+                    <div id="result"></div>
+		</div>
+		<script type="text/javascript" src="../src/heatmap.js"></script>
+                <script type="text/javascript" src="data.js"></script>
+		<script type="text/javascript">
+	
+	
+		window.onload = function(){
+                    
+                    var data = {
+						max: 2,
+						data: [
+							{x:0.25, y:0.25, count:1},
+							{x:0.5, y:0.5, count:2},
+							{x:0.75, y:0.75, count:1},
+							{x:0.75, y:0.25, count:1},
+							{x:0.25, y:0.75, count:1}
+						]},
+                        start = +new Date,
+                        heatmapInstance;
+                        
+                    heatmapInstance = h337.create({
+                        "element":document.getElementById("heatmapArea"), 
+                        "radius":25,
+                        "visible":true,
+                        "percentageBasedCoordinates":true,
+                        "legend": {
+                            "title": "Mouse Events",
+                            "position": "bl",
+                            "offset": 10
+                        }
+                    });
+
+                    heatmapInstance.store.setDataSet(data);    
+                    document.getElementById("result").innerHTML = "Creating the heatmap and rendering it took " + (((+new Date)-start)+'ms for ' + data.data.length + ' datapoints');
+                };
+		
+		</script>
+	</body>
+</html>
+
