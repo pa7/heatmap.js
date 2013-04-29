@@ -5,17 +5,26 @@
  * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
  * 
+ * Modified on Apr,29 2013 by Nicholas Bargovic
+ * - Added maxSize and maxTime options to the constructor.
+ * - Added removeDataPoints() and decayDataPoints() functions.
+ * - Modified setDataSet() to only allow max items if maxSize is specified.
+ * - Modified addDataPoint() to remove old items if using maxSize.
+ * 
  * Modified on Jun,06 2011 by Antonio Santiago (http://www.acuriousanimal.com)
  * - Heatmaps as independent map layer.
  * - Points based on OpenLayers.LonLat.
  * - Data initialization in constructor.
  * - Improved 'addDataPoint' to add new lonlat based points.
+ * 
  */ 
 OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	// the heatmap isn't a basic layer by default - you usually want to display the heatmap over another map ;)
 	isBaseLayer: false,
 	heatmap: null,
 	mapLayer: null,
+        maxSize: -1, //max elements to hold in the tmpData store
+        maxTime: -1, //time window to keep elements in tmpData store (in seconds)
 	// we store the lon lat data, because we have to redraw with new positions on zoomend|moveend
 	tmpData: {},
         initialize: function(name, map, mLayer, hmoptions, options){
@@ -68,6 +77,12 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 
         },
 	setDataSet: function(obj){
+            //trim the dataset to only allow the max items (if max is specified).
+            if (this.maxSize > 0){
+              while (obj.data.length > this.maxSize){
+                obj.data.shift();
+              }
+            }
 	    var set = {},
 		dataset = obj.data,
 		dlen = dataset.length,
@@ -119,7 +134,35 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 		}
 		this.heatmap.store.addDataPoint.apply(this.heatmap.store, args);
 	    }
+            // if maxSize is set, remove the oldest items if we are exceeding the max.
+            if( this.maxSize > 0 )
+            {
+               this.removeDataPoints();
+            }
 
+	},
+        removeDataPoints: function(){
+          while (this.tmpData.data.length > this.maxSize){
+            this.tmpData.data.shift();
+          }
+          this.updateLayer();
+        },
+        decayDataPoints: function(){
+            if( this.maxTime > 0 ){ 
+                var oldestTime = (Math.round(new Date().getTime() / 1000)) - this.maxTime;
+                var stop = false;
+                while(!stop && (this.tmpData.data.length > 0) ){
+                    //get the oldest data, see if its older then maxTime
+                    if( this.tmpData.data[0].time < oldestTime ){
+                            this.tmpData.data.shift();
+                    }
+                    //else stop
+                    else{
+                      stop = true;
+                    }
+                }
+            }
+            this.updateLayer();
 	},
 	toggle: function(){
 		this.heatmap.toggleDisplay();
