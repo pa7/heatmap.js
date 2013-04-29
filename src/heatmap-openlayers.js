@@ -117,7 +117,7 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	// same procedure as setDataSet
 	addDataPoint: function(lonlat){
 	    var pixel = this.roundPixels(this.mapLayer.getViewPortPxFromLonLat(lonlat)),
-                entry = {lonlat: lonlat},
+                entry = {lonlat: lonlat, time: Math.round(new Date().getTime() / 1000)},
                 args;
 
             if(arguments.length == 2){
