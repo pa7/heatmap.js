@@ -100,10 +100,11 @@ var map, layer, heatmap;
           heatmap.addDataPoint( item, 1 );
           heatmap.updateLayer();
       }
-       
+      
       function runDataDecay()
       {
           heatmap.decayDataPoints();
+          heatmap.updateLayer();
       }
       
       function init() { 
@@ -127,8 +128,9 @@ var map, layer, heatmap;
         //mock realtime data pushes.
         setInterval( addRandomDataPoint, 1500); 
         
-        //every 2 seconds remove data that is older than 5 seconds.
-        setInterval( runDataDecay, 2000);
+        //optionaly way to decay data on an interval.. 
+        //every 2 seconds remove data that is older than maxTime.
+        //setInterval( runDataDecay, 2000);
 }
 
 window.onload = function(){ 

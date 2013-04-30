@@ -53,6 +53,12 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	    map.events.register("moveend", this, handler);
         },
 	updateLayer: function(){
+              if( this.maxSize > 0 ){
+                 this.removeDataPoints();
+               }
+               if( this.maxTime > 0 ){
+                 this.decayDataPoints();
+               }
                 var pixelOffset = this.getPixelOffset(),
                     el = this.heatmap.get('element');
                 // if the pixeloffset e.g. for x was positive move the canvas element to the left by setting left:-offset.y px 
@@ -134,18 +140,11 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 		}
 		this.heatmap.store.addDataPoint.apply(this.heatmap.store, args);
 	    }
-            // if maxSize is set, remove the oldest items if we are exceeding the max.
-            if( this.maxSize > 0 )
-            {
-               this.removeDataPoints();
-            }
-
 	},
         removeDataPoints: function(){
           while (this.tmpData.data.length > this.maxSize){
             this.tmpData.data.shift();
           }
-          this.updateLayer();
         },
         decayDataPoints: function(){
             if( this.maxTime > 0 ){ 
@@ -162,7 +161,6 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
                     }
                 }
             }
-            this.updateLayer();
 	},
 	toggle: function(){
 		this.heatmap.toggleDisplay();
