@@ -163,6 +163,7 @@
                 title = config.title || "Legend",
                 position = config.position,
                 offset = config.offset || 10,
+                container = config.container,
                 gconfig = config.gradient,
                 labelsEl = document.createElement("ul"),
                 labelsHtml = "",
@@ -201,6 +202,7 @@
             element.appendChild(gradient);
             
             me.set("element", element);
+            me.set("container", container);
             me.set("labelsEl", labelsEl);
 
             me.update(1);
@@ -388,7 +390,9 @@
 
                 element.appendChild(canvas);
                 if(me.get("legend")){
-                    element.appendChild(me.get("legend").getElement());
+                    var legend = me.get("legend");
+                    var container = legend.get("container") || element;
+                    container.appendChild(legend.getElement());
                 }
                 
                 // debugging purposes only

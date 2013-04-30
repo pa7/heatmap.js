@@ -187,6 +187,7 @@
         }
 
         var heatmap = h337.create({
+            "legend": options.legend,
             "radius": radiusValue,
             "element": tile,
             "visible": true,
