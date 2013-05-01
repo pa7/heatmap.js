@@ -5,17 +5,27 @@
  * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
  * 
+ * Modified on May,01 2013 by Nicholas Bargovic
+ * - Added maxSize and maxTime options to the constructor.
+ * - Added removeDataPoints() and decayDataPoints() functions.
+ * - Modified setDataSet() to only allow max items if maxSize is specified.
+ * - Modified addDataPoint() to remove old items if using maxSize.
+ * 
  * Modified on Jun,06 2011 by Antonio Santiago (http://www.acuriousanimal.com)
  * - Heatmaps as independent map layer.
  * - Points based on OpenLayers.LonLat.
  * - Data initialization in constructor.
  * - Improved 'addDataPoint' to add new lonlat based points.
+ * 
  */ 
 OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	// the heatmap isn't a basic layer by default - you usually want to display the heatmap over another map ;)
 	isBaseLayer: false,
 	heatmap: null,
 	mapLayer: null,
+        alwaysInRange: true, //default to true so OpenLayers.Control.LayerSwitcher can toggle the layer.
+        maxSize: -1, //max elements to hold in the tmpData store
+        maxTime: -1, //time window to keep elements in tmpData store (in seconds)
 	// we store the lon lat data, because we have to redraw with new positions on zoomend|moveend
 	tmpData: {},
         initialize: function(name, map, mLayer, hmoptions, options){
@@ -44,6 +54,12 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	    map.events.register("moveend", this, handler);
         },
 	updateLayer: function(){
+              if( this.maxSize > 0 ){
+                 this.removeDataPoints();
+               }
+               if( this.maxTime > 0 ){
+                 this.decayDataPoints();
+               }
                 var pixelOffset = this.getPixelOffset(),
                     el = this.heatmap.get('element');
                 // if the pixeloffset e.g. for x was positive move the canvas element to the left by setting left:-offset.y px 
@@ -68,6 +84,12 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 
         },
 	setDataSet: function(obj){
+            //trim the dataset to only allow the max items (if max is specified).
+            if (this.maxSize > 0){
+              while (obj.data.length > this.maxSize){
+                obj.data.shift();
+              }
+            }
 	    var set = {},
 		dataset = obj.data,
 		dlen = dataset.length,
@@ -102,7 +124,7 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	// same procedure as setDataSet
 	addDataPoint: function(lonlat){
 	    var pixel = this.roundPixels(this.mapLayer.getViewPortPxFromLonLat(lonlat)),
-                entry = {lonlat: lonlat},
+                entry = {lonlat: lonlat, time: Math.round(new Date().getTime() / 1000)},
                 args;
 
             if(arguments.length == 2){
@@ -119,7 +141,27 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 		}
 		this.heatmap.store.addDataPoint.apply(this.heatmap.store, args);
 	    }
-
+	},
+        removeDataPoints: function(){
+          while (this.tmpData.data.length > this.maxSize){
+            this.tmpData.data.shift();
+          }
+        },
+        decayDataPoints: function(){
+            if( this.maxTime > 0 ){ 
+                var oldestTime = (Math.round(new Date().getTime() / 1000)) - this.maxTime;
+                var stop = false;
+                while(!stop && (this.tmpData.data.length > 0) ){
+                    //get the oldest data, see if its older then maxTime
+                    if( this.tmpData.data[0].time < oldestTime ){
+                            this.tmpData.data.shift();
+                    }
+                    //else stop
+                    else{
+                      stop = true;
+                    }
+                }
+            }
 	},
 	toggle: function(){
 		this.heatmap.toggleDisplay();

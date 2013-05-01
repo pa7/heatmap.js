@@ -1,0 +1,137 @@
+<html>
+<head>
+ <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+ <meta name="author" content="Nicholas Bargovic" />
+ <meta name="keywords" content="heatmap, realtime, decay, max size, javascript, canvas, html5" />
+<title>OpenLayers Heatmap Layer with a maximum size limit</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body, html {
+				margin:0;
+				padding:0;
+				font-family:Arial;
+			}
+			h1 {
+				margin-bottom:10px;
+			}
+			#main {
+				position:relative;
+				width:1020px;
+				padding:20px;
+				margin:auto;
+			}
+			#heatmapArea {
+				position:relative;
+				float:left;
+				width:800px;
+				height:600px;
+				border:1px dashed black;
+			}
+			#configArea {
+				position:relative;
+				float:left;
+				width:200px;
+				padding:15px;
+				padding-top:0;
+				padding-right:0;
+			}
+			.btn {
+				margin-top:25px;
+				padding:10px 20px 10px 20px;
+				-moz-border-radius:15px;
+				-o-border-radius:15px;
+				-webkit-border-radius:15px;
+				border-radius:15px;
+				border:2px solid black;
+				cursor:pointer;
+				color:white;
+				background-color:black;
+			}
+			#gen:hover{
+				background-color:grey;
+				color:black;
+			}
+			textarea{
+				width:260px;
+				padding:10px;
+				height:200px;
+			}
+			h2{
+				margin-top:0;
+			}
+		</style>
+<link rel="shortcut icon" type="image/png" href="http://www.patrick-wied.at/img/favicon.png" />
+
+
+</head>
+<body>
+<div id="main">
+			<h1>OpenLayers Heatmap Overlay</h1><h3>with maximum size limit</h3>
+			<a href="http://www.patrick-wied.at/static/heatmapjs/" title="heatmap.js">Back to the project page</a><br /><br />
+			<div id="heatmapArea">
+			
+			</div>
+			<div id="configArea">
+				<h2>Sidenotes</h2>
+				This is a demonstration of an OpenLayers heatmap overlay with the data being limited to a configurable max size (5 items). A mock realtime data push is used to add random data points.<br /><br />
+				<div id="tog" class="btn">Toggle HeatmapOverlay</div>
+			</div>
+			
+<div style="position:absolute;width:940px;top:750px;text-align:center;"><a href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</a> by <a href="http://www.patrick-wied.at" target="_blank">Patrick Wied</a></div>
+
+</div>
+<script src="http://openlayers.org/api/OpenLayers.js"></script>
+<script type="text/javascript" src="../../src/heatmap.js"></script>
+<script type="text/javascript" src="../../src/heatmap-openlayers.js"></script>
+<script type="text/javascript">
+var map, layer, heatmap;
+
+       function addRandomDataPoint(){
+          var randomData = Array( 
+              new OpenLayers.LonLat(-81.53028125, 28.32477358),
+              new OpenLayers.LonLat(107.64391, -6.89727),
+              new OpenLayers.LonLat(8.53021, 11.97719),
+              new OpenLayers.LonLat(-76.77431956, -6.59852763),
+              new OpenLayers.LonLat(-84.2578059, 39.7568396),
+              new OpenLayers.LonLat(-71.10109176, 42.33663211),
+              new OpenLayers.LonLat(10.75038792, 59.92852669)
+          );
+          var item = randomData[Math.floor(Math.random()*randomData.length)];
+          heatmap.addDataPoint( item, 1 );
+          heatmap.updateLayer();
+      }
+          
+      function init() { 
+        var dispProj = new OpenLayers.Projection("EPSG:4326");
+        var proj = new OpenLayers.Projection("EPSG:900913");
+        var map = new OpenLayers.Map("heatmapArea", { projection: proj, displayProjection: dispProj});  
+        var osm = new OpenLayers.Layer.OSM("OpenStreetMap");
+
+        map.addLayer(osm);
+ 
+        //create a heatmap, initializing the maxSize (5 items for demo purposes).
+        heatmap = new OpenLayers.Layer.Heatmap( "Heatmap Layer", map, osm, {visible: true, radius:10}, {maxSize:5, isBaseLayer: false, opacity: 0.3, projection: new OpenLayers.Projection(dispProj)});
+
+        map.addLayer(heatmap);
+        map.zoomToMaxExtent();
+        
+        var mapData = { max: 1 , data: [] };
+        heatmap.setDataSet(mapData);
+        heatmap.updateLayer();
+        
+        //mock realtime data pushes.
+        setInterval( addRandomDataPoint, 1500); 
+}
+
+window.onload = function(){ 
+    init(); 
+};
+
+document.getElementById("tog").onclick = function(){
+    heatmap.toggle();	
+};
+
+
+</script>
+
+</html>
