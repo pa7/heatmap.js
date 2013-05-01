@@ -5,7 +5,7 @@
  * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
  * 
- * Modified on Apr,29 2013 by Nicholas Bargovic
+ * Modified on May,01 2013 by Nicholas Bargovic
  * - Added maxSize and maxTime options to the constructor.
  * - Added removeDataPoints() and decayDataPoints() functions.
  * - Modified setDataSet() to only allow max items if maxSize is specified.
@@ -23,6 +23,7 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	isBaseLayer: false,
 	heatmap: null,
 	mapLayer: null,
+        alwaysInRange: true, //default to true so OpenLayers.Control.LayerSwitcher can toggle the layer.
         maxSize: -1, //max elements to hold in the tmpData store
         maxTime: -1, //time window to keep elements in tmpData store (in seconds)
 	// we store the lon lat data, because we have to redraw with new positions on zoomend|moveend
