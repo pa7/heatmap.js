@@ -21,14 +21,15 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css" />
-<!--[if lte IE 8]>
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" />
-<![endif]-->
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+		<!--[if lte IE 8]>
+		    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" />
+		<![endif]-->
         <script type="text/javascript" src="js/jquery.js"></script>
-    <script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet-src.js"></script>
-        <script type="text/javascript" src="src/heatmap.js"></script>
-        <script type="text/javascript" src="src/heatmap-leaflet.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet-src.js"></script>
+        <script type="text/javascript" src="../src/heatmap.js"></script>
+        <script type="text/javascript" src="../src/heatmap-leaflet.js"></script>
+		<script type="text/javascript" src="../src/QuadTree.js"></script>
 
         <script type="text/javascript" charset="utf-8">
             $(function() {
@@ -42,8 +43,11 @@
                 );
 
                 var heatmapLayer = L.TileLayer.heatMap({
-                    radius: 20,
-                    opacity: 0.8,
+                    // radius could be absolute or relative
+                    // absolute: radius in meters, relative: radius in pixels
+                    radius: { value: 15000, absolute: true },
+                    //radius: { value: 20, absolute: false },                    
+					opacity: 0.8,
                     gradient: {
                         0.45: "rgb(0,0,255)",
                         0.55: "rgb(0,255,255)",
@@ -53,8 +57,8 @@
                     }
                 });
 
-                heatmapLayer.addData(testData.data);
-
+                heatmapLayer.setData(testData.data);		
+				
                 var overlayMaps = {
                     'Heatmap': heatmapLayer
                 };
