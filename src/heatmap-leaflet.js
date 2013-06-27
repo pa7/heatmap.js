@@ -109,7 +109,10 @@
                 value: d.value
             });
         });
-        this.redraw();
+        
+        if(this._map){
+            this.redraw();
+        }
     },
 
     /**
