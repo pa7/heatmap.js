@@ -293,6 +293,7 @@
         // private variables
         var _ = {
             radius : 40,
+            blurRadius: 15,
             element : {},
             canvas : {},
             acanvas: {},
@@ -337,6 +338,7 @@
                     rout, rin;
 
                 me.set("radius", config["radius"] || 40);
+                me.set("blurRadius", config["blurRadius"] || 15);
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || false);
@@ -370,7 +372,8 @@
                     acanvas = document.createElement("canvas"),
                     ctx = canvas.getContext("2d"),
                     actx = acanvas.getContext("2d"),
-                    element = me.get("element");
+                    element = me.get("element"),
+                    blurRadius = me.get("blurRadius");
 
                 
                 me.initColorPalette();
@@ -397,7 +400,7 @@
                 
                 actx.shadowOffsetX = 15000; 
                 actx.shadowOffsetY = 15000; 
-                actx.shadowBlur = 15; 
+                actx.shadowBlur = blurRadius; 
         },
         initColorPalette: function(){
 
@@ -530,7 +533,7 @@
                     imageData[i-1]=palette[offset+2];
                     
                     if (premultiplyAlpha) {
-                    	// To fix browsers that premultiply incorrectly, we'll pass in a value scaled
+                        // To fix browsers that premultiply incorrectly, we'll pass in a value scaled
                     	// appropriately so when the multiplication happens the correct value will result.
                     	imageData[i-3] /= 255/finalAlpha;
                     	imageData[i-2] /= 255/finalAlpha;
@@ -550,6 +553,7 @@
                 // storing the variables because they will be often used
                 var me = this,
                     radius = me.get("radius"),
+                    blurRadius = me.get("blurRadius"),
                     ctx = me.get("actx"),
                     max = me.get("max"),
                     bounds = me.get("bounds"),
@@ -560,7 +564,7 @@
 
                 ctx.shadowOffsetX = 15000; 
                 ctx.shadowOffsetY = 15000; 
-                ctx.shadowBlur = 15; 
+                ctx.shadowBlur = blurRadius; 
 
                 ctx.beginPath();
                 ctx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
