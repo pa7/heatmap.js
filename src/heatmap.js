@@ -293,6 +293,7 @@
         // private variables
         var _ = {
             radius : 40,
+            blurRadius: 15,
             element : {},
             canvas : {},
             acanvas: {},
@@ -337,10 +338,11 @@
                     rout, rin;
 
                 me.set("radius", config["radius"] || 40);
+                me.set("blurRadius", config["blurRadius"] || 15);
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || false);
-                me.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});    // default is the common blue to red gradient
+                me.set("gradient", config.gradient || { 0.0: "rgba(000,000,255,0)", 0.2: "rgba(000,000,255,1)", 0.4: "rgba(000,255,255,1)", 0.6: "rgba(000,255,000,1)", 0.8: "rgba(255,255,000,1)", 1.0: "rgba(255,000,000,1)"});    // default is the common blue to red gradient
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
@@ -370,7 +372,8 @@
                     acanvas = document.createElement("canvas"),
                     ctx = canvas.getContext("2d"),
                     actx = acanvas.getContext("2d"),
-                    element = me.get("element");
+                    element = me.get("element"),
+                    blurRadius = me.get("blurRadius");
 
                 
                 me.initColorPalette();
@@ -397,7 +400,7 @@
                 
                 actx.shadowOffsetX = 15000; 
                 actx.shadowOffsetY = 15000; 
-                actx.shadowBlur = 15; 
+                actx.shadowBlur = blurRadius; 
         },
         initColorPalette: function(){
 
@@ -524,13 +527,13 @@
 
                     // we ve started with i=3
                     // set the new r, g and b values
-                    finalAlpha = (alpha < opacity)?alpha:opacity;
                     imageData[i-3]=palette[offset];
                     imageData[i-2]=palette[offset+1];
                     imageData[i-1]=palette[offset+2];
+                    finalAlpha = (palette[offset + 3] * (opacity / 255)) | 0;
                     
                     if (premultiplyAlpha) {
-                    	// To fix browsers that premultiply incorrectly, we'll pass in a value scaled
+                        // To fix browsers that premultiply incorrectly, we'll pass in a value scaled
                     	// appropriately so when the multiplication happens the correct value will result.
                     	imageData[i-3] /= 255/finalAlpha;
                     	imageData[i-2] /= 255/finalAlpha;
@@ -550,6 +553,7 @@
                 // storing the variables because they will be often used
                 var me = this,
                     radius = me.get("radius"),
+                    blurRadius = me.get("blurRadius"),
                     ctx = me.get("actx"),
                     max = me.get("max"),
                     bounds = me.get("bounds"),
@@ -560,7 +564,7 @@
 
                 ctx.shadowOffsetX = 15000; 
                 ctx.shadowOffsetY = 15000; 
-                ctx.shadowBlur = 15; 
+                ctx.shadowBlur = blurRadius; 
 
                 ctx.beginPath();
                 ctx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
