@@ -342,7 +342,7 @@
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || false);
-                me.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});    // default is the common blue to red gradient
+                me.set("gradient", config.gradient || { 0.0: "rgba(000,000,255,0)", 0.2: "rgba(000,000,255,1)", 0.4: "rgba(000,255,255,1)", 0.6: "rgba(000,255,000,1)", 0.8: "rgba(255,255,000,1)", 1.0: "rgba(255,000,000,1)"});    // default is the common blue to red gradient
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
@@ -527,10 +527,10 @@
 
                     // we ve started with i=3
                     // set the new r, g and b values
-                    finalAlpha = (alpha < opacity)?alpha:opacity;
                     imageData[i-3]=palette[offset];
                     imageData[i-2]=palette[offset+1];
                     imageData[i-1]=palette[offset+2];
+                    finalAlpha = (palette[offset + 3] * (opacity / 255)) | 0;
                     
                     if (premultiplyAlpha) {
                         // To fix browsers that premultiply incorrectly, we'll pass in a value scaled
