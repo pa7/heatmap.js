@@ -211,15 +211,23 @@
                 gradientConfig = this.config.gradient,
                 gradientArr = [];
 
+            var hasZeroStop = false;
+
             for(var key in gradientConfig){
                 if(gradientConfig.hasOwnProperty(key)){
+                    if(parseFloat(key)===0){
+                        hasZeroStop = true;
+                    }
                     gradientArr.push({ stop: key, value: gradientConfig[key] });
                 }
             }
             gradientArr.sort(function(a, b){
                 return (a.stop - b.stop);
             });
-            gradientArr.unshift({ stop: 0, value: 'rgba(0,0,0,0)' });
+
+            if(!hasZeroStop){
+                gradientArr.unshift({ stop: 0, value: 'rgba(0,0,0,0)' });
+            }
 
             me.set("gradientArr", gradientArr);
         },
