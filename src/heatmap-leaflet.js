@@ -170,7 +170,7 @@
             options = this.options,
             tile = ctx.canvas,
             tileSize = options.tileSize,
-            radiusValue = this.options.radius.value;
+            radiusValue = this.options.radius.value || 20;
 
         var localXY, value, pointsInTile = [];
 
