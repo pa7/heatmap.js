@@ -191,6 +191,7 @@
             "element": tile,
             "visible": true,
             "opacity": 100,  // we use leaflet's opacity for tiles
+            "minOpacity": options.minOpacity * 100,
             "gradient": options.gradient,
             "debug": options.debug
         });
