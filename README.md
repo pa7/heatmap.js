@@ -15,6 +15,7 @@ At the configuration object you can specify the following properties in order to
 - **visible** (optional) Boolean. Whether the heatmap is visible or not. Default is true
 - **gradient** (optional) Object. An object which contains colorstops from 0 to 1. Default is the standard heatmap gradient.
 - **opacity** (optional) Number [0-100]. Opacity of the heatmap measured in percent.
+- **minOpacity** (optional) Number [0-100]. Minimum opacity of the heatmap measured in percent. Default is 0 (transparent).
 
 Here is an example instanciation:
 

@@ -305,6 +305,7 @@
             max : false,
             gradient : false,
             opacity: 180,
+            minOpacity: 0,
             premultiplyAlpha: false,
             bounds: {
                 l: 1000,
@@ -342,6 +343,7 @@
                 me.set("max", config.max || false);
                 me.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});    // default is the common blue to red gradient
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
+                me.set("minOpacity", parseInt(255/(100/config.minOpacity), 10) || 0);
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
                 me.set("debug", config.debug);
@@ -464,6 +466,7 @@
                     premultiplyAlpha = me.get("premultiplyAlpha"),
                     palette = me.get("gradient"),
                     opacity = me.get("opacity"),
+                    minOpacity = me.get("minOpacity"),
                     bounds = me.get("bounds"),
                     left, top, bottom, right, 
                     image, imageData, length, alpha, offset, finalAlpha;
@@ -524,7 +527,14 @@
 
                     // we ve started with i=3
                     // set the new r, g and b values
-                    finalAlpha = (alpha < opacity)?alpha:opacity;
+                    if(alpha < minOpacity){
+                        finalAlpha = minOpacity;
+                    }else if(alpha > opacity){
+                        finalAlpha = opacity;
+                    }else{
+                        finalAlpha = alpha;
+                    }
+
                     imageData[i-3]=palette[offset];
                     imageData[i-2]=palette[offset+1];
                     imageData[i-1]=palette[offset+2];
@@ -537,7 +547,7 @@
                     	imageData[i-1] /= 255/finalAlpha;
                     }
                     
-                    // we want the heatmap to have a gradient from transparent to the colors
+                    // we want the heatmap to have a gradient from transparent (or minOpacity, if specified) to the colors.
                     // as long as alpha is lower than the defined opacity (maximum), we'll use the alpha value
                     imageData[i] = finalAlpha;
                 }
