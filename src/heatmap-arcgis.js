@@ -1,7 +1,7 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dijit/_WidgetBase",
-    "dojo/dom-construct",
     "dojo/dom",
     "dojo/query",
     "dojo/dom-style",
@@ -10,9 +10,8 @@ define([
     "esri/geometry/screenUtils",
     "esri/geometry/Point"
 ], function(
-    declare,
+    declare, lang,
     _WidgetBase,
-    domConstruct,
     dom,
     query,
     domStyle,
@@ -22,23 +21,13 @@ define([
     Point
 ) {
     return declare("modules.HeatmapLayer", [_WidgetBase, DynamicMapServiceLayer], {
-        // constructor
-        constructor: function(properties, srcNode) {
-            // map var
-            this._map = properties.map;
-            // last data storage
-            this.set("data", []);
-            // map node
-            this.domNode = dom.byId(srcNode);
-            // config
-            this.config = {
-                element: this.domNode,
-                width: this._map.width,
-                height: this._map.height,
+        options: {
+            useLocalMaximum: false,
+            map: null,
+            config:{
                 radius: 40,
                 debug: false,
                 visible: true,
-                useLocalMaximum: false,
                 gradient: {
                     0.45: "rgb(000,000,255)",
                     0.55: "rgb(000,255,255)",
@@ -46,19 +35,32 @@ define([
                     0.95: "rgb(255,255,000)",
                     1.00: "rgb(255,000,000)"
                 }
-            };
-            // mix in config for heatmap.js settings
-            declare.safeMixin(this.config, properties.config);
+            }
+        },
+        // constructor
+        constructor: function(options, srcNode) {
+            // last data storage
+            this.set("data", []);
+            // map node
+            this.domNode = dom.byId(srcNode);
+            // defaults
+            var defaults = lang.mixin({}, this.options, options);
+            // map var
+            this.set("map", defaults.map);
+            this.set("useLocalMaximum", defaults.useLocalMaximum);
+            defaults.config.height = this.get("map").height;
+            defaults.config.width = this.get("map").width;
+            defaults.config.element = this.domNode;
+            this.set("config", defaults.config)
             // create heatmap
-            this.heatMap = heatmapFactory.create(this.config);
+            this.heatMap = heatmapFactory.create(this.get("config"));
             // global maximum value
             this.set("globalMax", 0);
-            var _self = this;
             // connect on resize
             this._listeners = [];
-            var mapResize = on(this._map, "resize", function(extent, width, height) {
-                _self.resizeHeatmap(extent, width, height);
-            });
+            var mapResize = on(this.get("map"), "resize", lang.hitch(this, function(evt) {
+                this.resizeHeatmap(evt.width, evt.height);
+            }));
             this._listeners.push(mapResize);
             // heatlayer div styling
             domStyle.set(this.domNode, {
@@ -78,7 +80,7 @@ define([
             }
             this.inherited(arguments);
         },
-        resizeHeatmap: function(extent, width, height) {
+        resizeHeatmap: function(width, height) {
             // set heatmap data size
             this.heatMap.set("width", width);
             this.heatMap.set("height", height);
@@ -125,7 +127,7 @@ define([
                         for (yParsed in parsedData.data[xParsed]) {
                             if (parsedData.data[xParsed].hasOwnProperty(yParsed)) {
                                 // convert data point into screen geometry
-                                screenGeometry = screenUtils.toScreenGeometry(this._map.extent, this._map.width, this._map.height, parsedData.data[xParsed][yParsed].dataPoint);
+                                screenGeometry = screenUtils.toScreenGeometry(this.get("map").extent, this.get("map").width, this.get("map").height, parsedData.data[xParsed][yParsed].dataPoint);
                                 // push to heatmap plugin data array
                                 heatPluginData.data.push({
                                     x: screenGeometry.x,
@@ -151,21 +153,21 @@ define([
                     max: 0,
                     data: []
                 };
-                if (!this.config.useLocalMaximum) {
+                if (!this.get("useLocalMaximum")) {
                     parsedData.max = this.get("globalMax");
                 }
                 // for each data point
                 for (i = 0; i < features.length; i++) {
                     // create geometry point
-                    dataPoint = Point(features[i].geometry.x, features[i].geometry.y, this._map.spatialReference);
+                    dataPoint = Point(features[i].geometry.x, features[i].geometry.y, this.get("map").spatialReference);
                     // check point
                     var validPoint = false;
                     // if not using local max, point is valid
-                    if (!this.config.useLocalMaximum) {
+                    if (!this.get("useLocalMaximum")) {
                         validPoint = true;
                     }
                     // using local max, make sure point is within extent
-                    else if (this._map.extent.contains(dataPoint)) {
+                    else if (this.get("map").extent.contains(dataPoint)) {
                         validPoint = true;
                     }
                     if (validPoint) {
@@ -197,7 +199,7 @@ define([
                         if (parsedData.max < parsedData.data[dataPoint.x][dataPoint.y].count) {
                             // set max to this count
                             parsedData.max = parsedData.data[dataPoint.x][dataPoint.y].count;
-                            if (!this.config.useLocalMaximum) {
+                            if (!this.get("useLocalMaximum")) {
                                 this.set("globalMax", parsedData.data[dataPoint.x][dataPoint.y].count);
                             }
                         }
@@ -210,7 +212,7 @@ define([
         // set data function call
         setData: function(features) {
             // set width/height
-            this.resizeHeatmap(null, this._map.width, this._map.height);
+            this.resizeHeatmap(null, this.get("map").width, this.get("map").height);
             // store points
             this.set("data", features);
             // create data and then store it
