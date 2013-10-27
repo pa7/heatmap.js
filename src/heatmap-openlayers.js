@@ -121,6 +121,11 @@ OpenLayers.Layer.Heatmap = OpenLayers.Class(OpenLayers.Layer, {
 	    }
 
 	},
+	//changes the radius and repaints all points
+        updateRadius: function(r){
+           this.heatmap.setRadius(r);
+           this.heatmap.repaint();
+        },
 	toggle: function(){
 		this.heatmap.toggleDisplay();
 	},
