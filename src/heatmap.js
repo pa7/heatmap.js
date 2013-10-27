@@ -353,6 +353,9 @@
                 }
                 
         },
+        setRadius: function(radius){
+            this.set("radius", radius);
+        },
         resize: function () {
                 var me = this,
                     element = me.get("element"),
@@ -584,6 +587,21 @@
                         bounds['b'] = yc;
                     }
                 }
+        },
+        repaint: function(){
+            var me = this.store,
+                data = me.get("data"),
+                dlen = data.length;
+        
+            this.clear();
+        
+            while(dlen--){
+                var point = data[dlen];
+                this.drawAlpha(point.x, point.y, point.count, false);
+            }
+                
+            this.colorize();
+            this.store.set("data", data);
         },
         toggleDisplay: function(){
                 var me = this,
