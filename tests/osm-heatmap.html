@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <link type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+        <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+        <script type="text/javascript" src="../src/heatmap.js"></script>
+        <script type="text/javascript" src="../src/heatmap-openlayers.js"></script>
+        <script type="text/javascript" src="coordinates.js"></script>
+    </head>
+    <body>
+
+        <div id="heatmapArea" style="width: 450px; margin: 1em; height: 280px; cursor: pointer;"></div>
+
+        <div>
+            <p>
+                <input type="checkbox" id="btn-markers" value="ON" />
+                <label for="btn-markers">Markers</label>
+            </p>            
+            <p>
+                <label for="radius">Radius:</label>
+                <input type="text" id="radius" style="border: 0; color: #f6931f; font-weight: bold;" />
+            </p>
+            <p id="radius-slider" style="margin: 1em; width: 450px"></p>
+            <p>
+                <label for="intensity">Intensity:</label>
+                <input type="text" id="intensity" style="border: 0; color: #f6931f; font-weight: bold;" />
+            </p>
+            <p id="intensity-slider" style="margin: 1em; width: 450px"></p>
+        </div>
+
+        <script id="worker" type="text/js-worker">
+            onmessage = function (event){
+                var data = event.data
+                var len = data.length
+                while (len--) {
+                    var lonlat = data[len].lonlat;
+                    postMessage(lonlat);
+                }
+            }
+        </script>
+
+        <script type="text/javascript">
+            function add(lonlat, markers, icon){
+                var p = new OpenLayers.LonLat(lonlat.lon, lonlat.lat).transform(
+                        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                        map.getProjectionObject() // to Spherical Mercator Projection
+                    );
+                marker = new OpenLayers.Marker(p, icon);
+                markers.addMarker(marker);
+                
+            }
+            
+            $(document).ready(function() {
+
+                var transformedData = {max: testData.max, data: []},
+                data = testData.data,
+                        datalen = data.length,
+                        nudata = [];
+
+                /**
+                 * in order to use the OpenLayers Heatmap Layer we have to transform our data into 
+                 * { max: <max>, data: [{lonlat: <OpenLayers.LonLat>, count: <count>},...]}
+                 */
+                while (datalen--) {
+                    nudata.push({
+                        lonlat: new OpenLayers.LonLat(data[datalen].lon, data[datalen].lat),
+                        count: data[datalen].count
+                    });
+                }
+
+                transformedData.data = nudata;
+
+                map = new OpenLayers.Map('heatmapArea');
+                layer = new OpenLayers.Layer.OSM();
+
+                defaultRadius = 20;
+                // create heatmap layer
+                heatmap = new OpenLayers.Layer.Heatmap("Heatmap Layer",
+                        map, layer,
+                        {visible: true, radius: defaultRadius},
+                {projection: new OpenLayers.Projection("EPSG:4326")});
+
+                map.addLayers([layer, heatmap]);
+                map.zoomToMaxExtent();
+
+                heatmap.setDataSet(transformedData);
+                heatmap.setOpacity(0.33);
+
+                var size = new OpenLayers.Size(21, 25);
+                var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+                var icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
+                markers = new OpenLayers.Layer.Markers("Markers");
+
+                var blob = new Blob([document.querySelector('#worker').textContent]);
+                var worker = new Worker(window.URL.createObjectURL(blob));
+                worker.onmessage = function(e) {
+                    add(e.data, markers, icon.clone());
+                }
+                worker.postMessage(nudata);
+
+                //==============================================================
+                //values for info fields
+                $("#radius").val(defaultRadius);
+                $("#intensity").val(heatmap.opacity);
+                //the radius slider
+                $("#radius-slider").slider({
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    value: defaultRadius,
+                    slide: function(event, ui) {
+                        $("#radius").val(ui.value);
+                    },
+                    //trigger stop event for radius to avoid that the script becomes unresponsive
+                    stop: function(event, ui) {
+                        heatmap.updateRadius(ui.value);
+                    }
+                });
+                //the slider for the intensity
+                $("#intensity-slider").slider({
+                    min: 0.0,
+                    max: 1.0,
+                    step: 0.01,
+                    value: heatmap.opacity,
+                    slide: function(event, ui) {
+                        $("#intensity").val(ui.value);
+                        heatmap.setOpacity(ui.value);
+                    }
+                });
+            });
+
+            $("#btn-markers").button();
+            $("#btn-markers").change(function() {
+                if (this.checked) {
+                    map.addLayer(markers);
+                } else {
+                    map.removeLayer(markers);
+                }
+            });
+
+        </script>
+
+    </body>
+</html>
+
