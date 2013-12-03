@@ -61,7 +61,7 @@ module.exports = function(grunt) {
     },
     docco: {
       debug: {
-        src: ['src/*.js'],
+        src: ['src/**/*.js'],
         options: {
           output: 'docs/'
         }
