@@ -3,8 +3,9 @@
 // all values you provide in the heatmapinstance config will be merged into this object
 var HeatmapConfig = {
   defaultRadius: 40,
-  renderer: 'canvas2d',
-  gradientConfig: { 0.25: "rgb(0,0,255)", 0.35: "rgb(0,255,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"}
+  defaultRenderer: 'canvas2d',
+  defaultGradient: { 0.25: "rgb(0,0,255)", 0.35: "rgb(0,255,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
+  defaultMaxOpacity: 1
 };
 var Store = (function StoreClosure() {
 
@@ -20,28 +21,15 @@ var Store = (function StoreClosure() {
 
 
   Store.prototype = {
-    _organiseData: function(data) {
-      var store = this._data;
-      var radi = this._radi;
-      var max = this._max;
-      var min = this._min;
-      // holy crap it's 3am in the morning
-      var len = +!!data.length;
-
-      if (len === 0) {
-        var swp = [data];
-        data = swp;
-        len = 1;
-      }
-      // end of holy crap
-
-      for (var i = 0; i < len; i++) {
-
-        var point = data[i];
-        var count = point.count;
-        var radius = point['radius'] || defaultRadius;
-        var x = point.x;
-        var y = point.y;
+    _organiseData: function(dataPoint) {
+        var x = dataPoint['x'];
+        var y = dataPoint['y'];
+        var radi = this._radi;
+        var store = this._data;
+        var max = this._max;
+        var min = this._min;
+        var count = dataPoint.count;
+        var radius = dataPoint.radius || defaultRadius;
 
         if (!store[x]) {
           store[x] = [];
@@ -56,11 +44,10 @@ var Store = (function StoreClosure() {
         }
         if (store[x][y] > max) {
           this.setDataMax(store[x][y]);
-        } else {
-          this._coordinator.emit('renderpartial', { x: x, y: y, count: count, radius: radius, min: min, max: max });
+          return false;
+        } else{
+          return { x: x, y: y, count: count, radius: radius, min: min, max: max };
         }
-      }
-      
     },
     addData: function() {
       if (arguments[0].length > 0) {
@@ -71,30 +58,44 @@ var Store = (function StoreClosure() {
         }
       } else {
         // add to store  
-        this._organiseData(arguments[0]);
+        var organisedEntry = this._organiseData(arguments[0]);
+        if (organisedEntry) {
+          this._coordinator.emit('renderpartial', organisedEntry);
+        }
       }
     },
     setData: function(data) {
+      var dataPoints = data.data;
+      var pointsLen = dataPoints.length;
+
       this._max = data.max;
       this._min = data.min || 0;
-      _organiseData(data);
-      this._coordinator.emit('renderall', this.getData());
+      // reset data arrays
+      this._data = [];
+      this._radi = [];
+
+      for(var i = 0; i < pointsLen; i++) {
+        this._organiseData(dataPoints[i]);
+      }
+
+
+      this._coordinator.emit('renderall', this._getInternalData());
     },
     subtractData: function() {
 
     },
     setDataMax: function(max) {
       this._max = max;
-      this._coordinator.emit('renderall', this.getData());
+      this._coordinator.emit('renderall', this._getInternalData());
     },
     setDataMin: function(min) {
       this._min = min;
-      this._coordinator.emit('renderall', this.getData());
+      this._coordinator.emit('renderall', this._getInternalData());
     },
     setCoordinator: function(coordinator) {
       this._coordinator = coordinator;
     },
-    getData: function() {
+    _getInternalData: function() {
       return { 
         max: this._max,
         min: this._min, 
@@ -111,7 +112,7 @@ var Store = (function StoreClosure() {
 var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   
   var _initColorPalette = function(config) {
-    var gradientConfig = config.gradientConfig;
+    var gradientConfig = config.gradientConfig || config.defaultGradient;
     var paletteCanvas = document.createElement('canvas');
     var paletteCtx = paletteCanvas.getContext('2d');
 
@@ -137,19 +138,22 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     var computed = getComputedStyle(config.container);
 
-    this.width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
-    this.height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
+    this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
+    this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
 
     this.shadowCtx = shadowCanvas.getContext('2d');
     this.ctx = canvas.getContext('2d');
 
     canvas.style.cssText = shadowCanvas.style.cssText = 'position:absolute;left:0;top:0;';
     container.style.position = 'relative';
-
     container.appendChild(canvas);
-    //container.appendChild(shadowCanvas);
 
     this._palette = _initColorPalette(config);
+
+    this._opacity = (config.opacity || 0) * 255;
+    this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
+
+
   };
 
   var renderBoundaries = [1000, 1000, 0, 0];
@@ -161,7 +165,11 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     renderAll: function(data) {
       // reset render boundaries
       renderBoundaries = [1000, 1000, 0, 0];
+      this._clear();
       this._drawAlpha(data, true);
+    },
+    _clear: function() {
+      this.shadowCtx.clearRect(0, 0, this._width, this._height);
     },
     _drawAlpha: function(data, colorizeLater) {
       var min = data.min;
@@ -187,12 +195,29 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var rectY = y - radius;
 
 
-      var radialGradient = this.shadowCtx.createRadialGradient(x, y, radius/3.12, x, y, radius);
-      radialGradient.addColorStop(0, ['rgba(0,0,0, ', ((Math.abs(max-min)/count * 100) >> 0)/100, ')'].join(''));
+      var radialGradient = this.shadowCtx.createRadialGradient(x, y, radius/8, x, y, radius);
+      radialGradient.addColorStop(0, ['rgba(0,0,0, ', count/(Math.abs(max-min)), ')'].join(''));
       radialGradient.addColorStop(1, 'rgba(0,0,0,0)');
 
       this.shadowCtx.fillStyle = radialGradient;
-      this.shadowCtx.fillRect(rectX, rectY, radius*2, radius*2);
+      this.shadowCtx.fillRect(rectX, rectY, radius*2, radius*2); 
+      
+      /*
+      
+      old shadow-blur technique.
+
+      this.shadowCtx.shadowColor = ('rgba(0,0,0,'+((count)?(count/Math.abs(max-min)):'0.1')+')');
+
+      this.shadowCtx.shadowOffsetX = 15000;
+      this.shadowCtx.shadowOffsetY = 15000;
+      this.shadowCtx.shadowBlur = 15;
+
+      this.shadowCtx.beginPath();
+      this.shadowCtx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
+      this.shadowCtx.closePath();
+      this.shadowCtx.fill(); 
+
+      */
 
 
       if (!colorizeLater) {
@@ -205,17 +230,19 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
           renderBoundaries[1] = rectY;
         }
         if (rectX + 2*radius > renderBoundaries[2]) {
-          renderBoundaries[2] = rectX + 2 * radius;
+          renderBoundaries[2] = rectX + 2*radius;
         }
         if (rectY + 2*radius > renderBoundaries[3]) {
-          renderBoundaries[3] = rectY + 2 * radius;
+          renderBoundaries[3] = rectY + 2*radius;
         }
       }
     }
     },
     _colorize: function(x, y, width, height) {
-      var maxWidth = this.width;
-      var maxHeight = this.height;
+      var maxWidth = this._width;
+      var maxHeight = this._height;
+      var opacity = this._opacity;
+      var maxOpacity = this._maxOpacity;
 
       if (x < 0) {
         x = 0;
@@ -245,10 +272,21 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
           continue;
         }
 
+        var finalAlpha;
+        if (opacity > 0) {
+          finalAlpha = opacity;
+        } else {
+          if (alpha < maxOpacity) {
+            finalAlpha = alpha;
+          } else {
+            finalAlpha = maxOpacity;
+          }
+        }
+
         imgData[i-3] = palette[offset];
         imgData[i-2] = palette[offset + 1];
         imgData[i-1] = palette[offset + 2];
-        imgData[i] = 255;
+        imgData[i] = finalAlpha;
 
       }
 
@@ -266,7 +304,7 @@ var Renderer = (function RendererClosure() {
 
   var rendererFn = false;
 
-  if (HeatmapConfig['renderer'] === 'canvas2d') {
+  if (HeatmapConfig['defaultRenderer'] === 'canvas2d') {
     rendererFn = Canvas2dRenderer;
   }
 

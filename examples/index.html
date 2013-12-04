@@ -23,7 +23,26 @@
           container: document.getElementById('heatmapContainer')
         });
         window.h = heatmap;
-        heatmap.addData({ x: 100, y: 100, count:2, radius:30});
+
+        var generate = function() {
+        var max = 100;
+        var min = 0;
+        var t = [];
+
+        for (var i = 0; i < 100; i++) {
+          var x = (Math.random()*800) >> 0;
+          var y = (Math.random()*500) >> 0;
+          var c = (Math.random()*100) >> 0;
+
+          t.push({ x: x, y:y, count: c });
+          //heatmap.addData({ x: x, y:y, count: c, radius: r});
+        }
+        heatmap.setData({max: max, min: min, data: t});
+        };
+        generate();
+
+        document.getElementById('heatmapContainerWrapper').onclick = function() { generate(); };
+        //heatmap.setData({max: 10, min: 0, data:[ {x: 150, y: 150, count:4, radius:40}]})
       };
     </script>
   </body>
