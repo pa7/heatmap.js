@@ -2,10 +2,7 @@
 // this is the heatmap default config.
 // all values you provide in the heatmapinstance config will be merged into this object
 var HeatmapConfig = {
-  defaultRadius: 20,
+  defaultRadius: 40,
   renderer: 'canvas2d',
-  gradientConfig: {
-    0: 'rgb(0, 0, 255)',
-    1: 'rgb(255, 0, 0)'
-  }
+  gradientConfig: { 0.25: "rgb(0,0,255)", 0.35: "rgb(0,255,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"}
 };

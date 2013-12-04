@@ -16,6 +16,7 @@ var Store = (function StoreClosure() {
       var store = this._data;
       var radi = this._radi;
       var max = this._max;
+      var min = this._min;
       // holy crap it's 3am in the morning
       var len = +!!data.length;
 
@@ -41,14 +42,14 @@ var Store = (function StoreClosure() {
 
         if (!store[x][y]) {
           store[x][y] = count || 1;
-          radi[point] = radius;
+          radi[x][y] = radius;
         } else {
           store[x][y] += count;
         }
         if (store[x][y] > max) {
           this.setDataMax(store[x][y]);
         } else {
-          this._coordinator.emit('renderpartial', { x: x, y: y, count: count, radius: radius });
+          this._coordinator.emit('renderpartial', { x: x, y: y, count: count, radius: radius, min: min, max: max });
         }
       }
       
