@@ -13,6 +13,6 @@
     "grunt-docco": "0.3.0"
   },
   "buildFiles": [
-    "src/config.js", "src/data.js", "src/renderer/canvas2d.js", "src/renderer.js", "src/legend.js", "src/core.js"
+    "src/config.js", "src/data.js", "src/renderer/canvas2d.js", "src/renderer.js", "src/legend.js", "src/util.js", "src/core.js"
   ]
 }
