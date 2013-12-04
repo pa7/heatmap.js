@@ -4,7 +4,8 @@
 var HeatmapConfig = {
   defaultRadius: 20,
   renderer: 'canvas2d',
-  gradient: [
-
-  ]
+  gradientConfig: {
+    0: 'rgb(0, 0, 255)',
+    1: 'rgb(255, 0, 0)'
+  }
 };

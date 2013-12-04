@@ -78,6 +78,10 @@ var Store = (function StoreClosure() {
       this._max = max;
       this._coordinator.emit('renderall', this.getData());
     },
+    setDataMin: function(min) {
+      this._min = min;
+      this._coordinator.emit('renderall', this.getData());
+    },
     setCoordinator: function(coordinator) {
       this._coordinator = coordinator;
     },
