@@ -3,7 +3,7 @@ var Renderer = (function RendererClosure() {
 
   var rendererFn = false;
 
-  if (HeatmapConfig['renderer'] === 'canvas2d') {
+  if (HeatmapConfig['defaultRenderer'] === 'canvas2d') {
     rendererFn = Canvas2dRenderer;
   }
 

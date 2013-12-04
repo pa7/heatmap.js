@@ -2,7 +2,7 @@
 var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   
   var _initColorPalette = function(config) {
-    var gradientConfig = config.gradientConfig;
+    var gradientConfig = config.gradientConfig || config.defaultGradient;
     var paletteCanvas = document.createElement('canvas');
     var paletteCtx = paletteCanvas.getContext('2d');
 
@@ -28,19 +28,22 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     var computed = getComputedStyle(config.container);
 
-    this.width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
-    this.height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
+    this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
+    this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
 
     this.shadowCtx = shadowCanvas.getContext('2d');
     this.ctx = canvas.getContext('2d');
 
     canvas.style.cssText = shadowCanvas.style.cssText = 'position:absolute;left:0;top:0;';
     container.style.position = 'relative';
-
     container.appendChild(canvas);
-    //container.appendChild(shadowCanvas);
 
     this._palette = _initColorPalette(config);
+
+    this._opacity = (config.opacity || 0) * 255;
+    this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
+
+
   };
 
   var renderBoundaries = [1000, 1000, 0, 0];
@@ -52,7 +55,11 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     renderAll: function(data) {
       // reset render boundaries
       renderBoundaries = [1000, 1000, 0, 0];
+      this._clear();
       this._drawAlpha(data, true);
+    },
+    _clear: function() {
+      this.shadowCtx.clearRect(0, 0, this._width, this._height);
     },
     _drawAlpha: function(data, colorizeLater) {
       var min = data.min;
@@ -78,12 +85,29 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var rectY = y - radius;
 
 
-      var radialGradient = this.shadowCtx.createRadialGradient(x, y, radius/3.12, x, y, radius);
-      radialGradient.addColorStop(0, ['rgba(0,0,0, ', ((Math.abs(max-min)/count * 100) >> 0)/100, ')'].join(''));
+      var radialGradient = this.shadowCtx.createRadialGradient(x, y, radius/8, x, y, radius);
+      radialGradient.addColorStop(0, ['rgba(0,0,0, ', count/(Math.abs(max-min)), ')'].join(''));
       radialGradient.addColorStop(1, 'rgba(0,0,0,0)');
 
       this.shadowCtx.fillStyle = radialGradient;
-      this.shadowCtx.fillRect(rectX, rectY, radius*2, radius*2);
+      this.shadowCtx.fillRect(rectX, rectY, radius*2, radius*2); 
+      
+      /*
+      
+      old shadow-blur technique.
+
+      this.shadowCtx.shadowColor = ('rgba(0,0,0,'+((count)?(count/Math.abs(max-min)):'0.1')+')');
+
+      this.shadowCtx.shadowOffsetX = 15000;
+      this.shadowCtx.shadowOffsetY = 15000;
+      this.shadowCtx.shadowBlur = 15;
+
+      this.shadowCtx.beginPath();
+      this.shadowCtx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
+      this.shadowCtx.closePath();
+      this.shadowCtx.fill(); 
+
+      */
 
 
       if (!colorizeLater) {
@@ -96,17 +120,19 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
           renderBoundaries[1] = rectY;
         }
         if (rectX + 2*radius > renderBoundaries[2]) {
-          renderBoundaries[2] = rectX + 2 * radius;
+          renderBoundaries[2] = rectX + 2*radius;
         }
         if (rectY + 2*radius > renderBoundaries[3]) {
-          renderBoundaries[3] = rectY + 2 * radius;
+          renderBoundaries[3] = rectY + 2*radius;
         }
       }
     }
     },
     _colorize: function(x, y, width, height) {
-      var maxWidth = this.width;
-      var maxHeight = this.height;
+      var maxWidth = this._width;
+      var maxHeight = this._height;
+      var opacity = this._opacity;
+      var maxOpacity = this._maxOpacity;
 
       if (x < 0) {
         x = 0;
@@ -136,10 +162,21 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
           continue;
         }
 
+        var finalAlpha;
+        if (opacity > 0) {
+          finalAlpha = opacity;
+        } else {
+          if (alpha < maxOpacity) {
+            finalAlpha = alpha;
+          } else {
+            finalAlpha = maxOpacity;
+          }
+        }
+
         imgData[i-3] = palette[offset];
         imgData[i-2] = palette[offset + 1];
         imgData[i-1] = palette[offset + 2];
-        imgData[i] = 255;
+        imgData[i] = finalAlpha;
 
       }
 
