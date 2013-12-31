@@ -516,6 +516,7 @@
                 for(var i=3; i < length; i+=4){
 
                     // [0] -> r, [1] -> g, [2] -> b, [3] -> alpha
+                    imageData[i] = Math.min(imageData[i], imageData[i-2]);
                     alpha = imageData[i],
                     offset = alpha*4;
 
@@ -556,7 +557,7 @@
                     xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
                     xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
-                ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
+                ctx.shadowColor = ('rgba(0,'+Math.round(((count)?(255*count/me.store.max):0))+',0,'+((count)?(count/me.store.max):'0')+')');
 
                 ctx.shadowOffsetX = 15000; 
                 ctx.shadowOffsetY = 15000; 
