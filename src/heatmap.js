@@ -32,7 +32,7 @@
         this.set = function(key, value){
             _[key] = value;
         };
-    }
+    };
 
     store.prototype = {
         // function for adding datapoints to the store
@@ -53,7 +53,7 @@
 
             // if count parameter is set increment by count otherwise by 1
             data[x][y]+=(arguments.length<3)?1:arguments[2];
-            
+
             me.set("data", data);
             // do we have a new maximum?
             if(me.max < data[x][y]){
@@ -75,7 +75,7 @@
             this.max = obj.max;
             // if a legend is set, update it
             heatmap.get("legend") && heatmap.get("legend").update(obj.max);
-            
+
             if(internal != null && internal){
                 for(var one in d){
                     // jump over undefined indexes
@@ -85,7 +85,7 @@
                         if(two === undefined)
                             continue;
                         // if both indexes are defined, push the values into the array
-                        heatmap.drawAlpha(one, two, d[one][two], false);   
+                        heatmap.drawAlpha(one, two, d[one][two], false);
                     }
                 }
             }else{
@@ -167,9 +167,9 @@
                 labelsEl = document.createElement("ul"),
                 labelsHtml = "",
                 grad, element, gradient, positionCss = "";
- 
+
             me.processGradientObject();
-            
+
             // Positioning
 
             // top or bottom
@@ -191,7 +191,7 @@
             element.innerHTML = "<h3 style='padding:0;margin:0;text-align:center;font-size:16px;'>"+title+"</h3>";
             // create gradient in canvas
             labelsEl.style.cssText = "position:relative;font-size:12px;display:block;list-style:none;list-style-type:none;margin:0;height:15px;";
-            
+
 
             // create gradient element
             gradient = document.createElement("div");
@@ -199,7 +199,7 @@
 
             element.appendChild(labelsEl);
             element.appendChild(gradient);
-            
+
             me.set("element", element);
             me.set("labelsEl", labelsEl);
 
@@ -244,7 +244,7 @@
             ctx.fillRect(0,5,256,10);
             ctx.strokeStyle = "black";
             ctx.beginPath();
- 
+
             for(var i = 0; i < length; i++){
                 ctx.moveTo(((1/(length-1)*i*256) >> 0)+.5, 0);
                 ctx.lineTo(((1/(length-1)*i*256) >> 0)+.5, (i==0)?15:5);
@@ -253,7 +253,7 @@
             ctx.lineTo(255.5, 15);
             ctx.moveTo(255.5, 4.5);
             ctx.lineTo(0, 4.5);
-            
+
             ctx.stroke();
 
             // we re-use the context for measuring the legends label widths
@@ -276,14 +276,14 @@
                 labelText = max*gradient[i].stop >> 0;
                 offset = (ctx.measureText(labelText).width/2) >> 0;
 
-                if(i == 0){
+                if(i === 0){
                     offset = 0;
                 }
                 if(i == gradient.length-1){
                     offset *= 2;
                 }
                 labelsHtml += '<li style="position:absolute;left:'+(((((1/(gradient.length-1)*i*256) || 0)) >> 0)-offset+.5)+'px">'+labelText+'</li>';
-            }       
+            }
             labels.innerHTML = labelsHtml;
         }
     };
@@ -336,7 +336,7 @@
                 var me = this,
                     rout, rin;
 
-                me.set("radius", config["radius"] || 40);
+                me.set("radius", config.radius || 40);
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
                 me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || false);
@@ -351,7 +351,7 @@
                     legendCfg.gradient = me.get("gradient");
                     me.set("legend", new legend(legendCfg));
                 }
-                
+
         },
         resize: function () {
                 var me = this,
@@ -372,7 +372,7 @@
                     actx = acanvas.getContext("2d"),
                     element = me.get("element");
 
-                
+
                 me.initColorPalette();
 
                 me.set("canvas", canvas);
@@ -382,7 +382,7 @@
 
                 me.resize();
                 canvas.style.cssText = acanvas.style.cssText = "position:absolute;top:0;left:0;z-index:10000000;";
-                
+
                 if(!me.get("visible"))
                     canvas.style.display = "none";
 
@@ -390,14 +390,14 @@
                 if(me.get("legend")){
                     element.appendChild(me.get("legend").getElement());
                 }
-                
+
                 // debugging purposes only
                 if(me.get("debug"))
                     document.body.appendChild(acanvas);
-                
-                actx.shadowOffsetX = 15000; 
-                actx.shadowOffsetY = 15000; 
-                actx.shadowBlur = 15; 
+
+                actx.shadowOffsetX = 15000;
+                actx.shadowOffsetY = 15000;
+                actx.shadowBlur = 15;
         },
         initColorPalette: function(){
 
@@ -420,7 +420,7 @@
             ctx.putImageData(testData, 0, 0);
             testData = ctx.getImageData(0,0,1,1);
             me.set("premultiplyAlpha", (testData.data[0] < 60 || testData.data[0] > 70));
-            
+
             for(var x in gradient){
                 grad.addColorStop(x, gradient[x]);
             }
@@ -465,9 +465,9 @@
                     palette = me.get("gradient"),
                     opacity = me.get("opacity"),
                     bounds = me.get("bounds"),
-                    left, top, bottom, right, 
+                    left, top, bottom, right,
                     image, imageData, length, alpha, offset, finalAlpha;
-                
+
                 if(x != null && y != null){
                     if(x+x2>width){
                         x=width-x2;
@@ -487,26 +487,26 @@
                     bottom = y + x2;
 
                 }else{
-                    if(bounds['l'] < 0){
+                    if(bounds.l < 0){
                         left = 0;
                     }else{
-                        left = bounds['l'];
+                        left = bounds.l;
                     }
-                    if(bounds['r'] > width){
+                    if(bounds.r > width){
                         right = width;
                     }else{
-                        right = bounds['r'];
+                        right = bounds.r;
                     }
-                    if(bounds['t'] < 0){
+                    if(bounds.t < 0){
                         top = 0;
                     }else{
-                        top = bounds['t'];
+                        top = bounds.t;
                     }
-                    if(bounds['b'] > height){
+                    if(bounds.b > height){
                         bottom = height;
                     }else{
                         bottom = bounds['b'];
-                    }    
+                    }
                 }
 
                 image = actx.getImageData(left, top, right-left, bottom-top);
@@ -528,7 +528,7 @@
                     imageData[i-3]=palette[offset];
                     imageData[i-2]=palette[offset+1];
                     imageData[i-1]=palette[offset+2];
-                    
+
                     if (premultiplyAlpha) {
                     	// To fix browsers that premultiply incorrectly, we'll pass in a value scaled
                     	// appropriately so when the multiplication happens the correct value will result.
@@ -536,7 +536,7 @@
                     	imageData[i-2] /= 255/finalAlpha;
                     	imageData[i-1] /= 255/finalAlpha;
                     }
-                    
+
                     // we want the heatmap to have a gradient from transparent to the colors
                     // as long as alpha is lower than the defined opacity (maximum), we'll use the alpha value
                     imageData[i] = finalAlpha;
@@ -558,9 +558,9 @@
 
                 ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
 
-                ctx.shadowOffsetX = 15000; 
-                ctx.shadowOffsetY = 15000; 
-                ctx.shadowBlur = 15; 
+                ctx.shadowOffsetX = 15000;
+                ctx.shadowOffsetY = 15000;
+                ctx.shadowBlur = 15;
 
                 ctx.beginPath();
                 ctx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
@@ -571,17 +571,17 @@
                     me.colorize(xb,yb);
                 }else{
                     // or update the boundaries for the area that then should be colorized
-                    if(xb < bounds["l"]){
-                        bounds["l"] = xb;
+                    if(xb < bounds.l){
+                        bounds.l = xb;
                     }
-                    if(yb < bounds["t"]){
-                        bounds["t"] = yb;
+                    if(yb < bounds.t){
+                        bounds.t = yb;
                     }
-                    if(xc > bounds['r']){
-                        bounds['r'] = xc;
+                    if(xc > bounds.r){
+                        bounds.r = xc;
                     }
-                    if(yc > bounds['b']){
-                        bounds['b'] = yc;
+                    if(yc > bounds.b){
+                        bounds.b = yc;
                     }
                 }
         },
@@ -621,7 +621,7 @@
     return {
             create: function(config){
                 return new heatmap(config);
-            }, 
+            },
             util: {
                 mousePosition: function(ev){
                     // this doesn't work right
