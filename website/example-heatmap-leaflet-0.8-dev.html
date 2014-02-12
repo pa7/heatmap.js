@@ -1,40 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>heatmap.js | Examples: Leaflet Heatmap Layer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <meta name="description" content="heatmap.js example showing a static leaflet heatmap layer">
-    <meta name="keywords" content="leaflet heatmap, leaflet heatmap layer">
-    <meta name="author" content="Patrick Wied">
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/prettify.css" rel="stylesheet">
+    <head>
+        <meta charset="utf-8">
+        <title>heatmap.js | Examples: Leaflet v0.8-dev Heatmap Layer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="index, follow">
+        <meta name="description" content="heatmap.js example showing a static leaflet heatmap layer">
+        <meta name="keywords" content="leaflet heatmap, leaflet heatmap layer">
+        <meta name="author" content="Patrick Wied">
+        <link href="css/bootstrap.css" rel="stylesheet">
+        <link href="css/prettify.css" rel="stylesheet">
 
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-    </style>
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css" />
-<!--[if lte IE 8]>
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" />
-<![endif]-->
+        <style type="text/css">
+          body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+          }
+        </style>
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <link rel="stylesheet" href="js/leaflet-0.8-dev/leaflet.css" />
         <script type="text/javascript" src="js/jquery.js"></script>
         <script src="src/QuadTree.js"></script>
-    <script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet-src.js"></script>
+        <script src="js/leaflet-0.8-dev/leaflet-src.js"></script>
         <script type="text/javascript" src="src/heatmap.js"></script>
-        <script type="text/javascript" src="src/heatmap-leaflet.js"></script>
+        <script type="text/javascript" src="src/heatmap-leaflet-0.8-dev.js"></script>
 
         <script type="text/javascript" charset="utf-8">
             $(function() {
                 window.prettyPrint && prettyPrint();
-
+                
                 var baseLayer = L.tileLayer(
                     'http://{s}.tile.cloudmade.com/ad132e106cd246ec961bbdfbe0228fe8/997/256/{z}/{x}/{y}.png',{
                         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
@@ -42,7 +39,7 @@
                     }
                 );
 
-                var heatmapLayer = L.TileLayer.heatMap({
+                var heatmapLayer = L.GridLayer.heatMap({
                     radius: {
                         value: 20,
                         absolute:false
@@ -57,21 +54,24 @@
                     }
                 });
 
-                heatmapLayer.setData(testData.data);
-
+                // Todo: Fix controls with leaflet 0.8-dev
+                /*
                 var overlayMaps = {
                     'Heatmap': heatmapLayer
                 };
 
                 var controls = L.control.layers(null, overlayMaps, {collapsed: false});
+                */
 
                 var map = new L.Map('heatmapArea', {
                     center: new L.LatLng(51.505, -0.09),
                     zoom: 6,
-                    layers: [baseLayer, heatmapLayer]
+                    layers: [baseLayer]
                 });
 
-                controls.addTo(map);
+                heatmapLayer.addTo(map);
+                heatmapLayer.setData(testData.data);
+                //controls.addTo(map);
 
                 // make accessible for debugging
                 layer = heatmapLayer;
@@ -143,10 +143,10 @@
                     <li>
                         <a href="example-heatmap-arcgis.html" title="arcgis heatmap example">ArcGIS Layer</a>
                     </li>
-                    <li class="active">
+                    <li>
                         <a href="example-heatmap-leaflet.html" title="leaflet heatmap example">Leaflet Layer</a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="example-heatmap-leaflet-0.8-dev.html" title="leaflet heatmap example">Leaflet v0.8-dev Layer</a>
                     </li>
                 </ul>
@@ -168,15 +168,12 @@
 &lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
-        &lt;link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css" /&gt;
-&lt;!--[if lte IE 8]&gt;
-&lt;link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" /&gt;
-&lt;![endif]--&gt;
+        &lt;link rel="stylesheet" href="js/leaflet-0.8-dev/leaflet.css" /&gt;
         &lt;script type="text/javascript" src="js/jquery.js"&gt;&lt;/script&gt;
         &lt;script src="src/QuadTree.js"&gt;&lt;/script&gt;
-    &lt;script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet-src.js"&gt;&lt;/script&gt;
+        &lt;script src="js/leaflet-0.8-dev/leaflet.js"&gt;&lt;/script&gt;
         &lt;script type="text/javascript" src="src/heatmap.js"&gt;&lt;/script&gt;
-        &lt;script type="text/javascript" src="src/heatmap-leaflet.js"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript" src="src/heatmap-leaflet-0.8-dev.js"&gt;&lt;/script&gt;
 
         &lt;script type="text/javascript" charset="utf-8"&gt;
             $(function() {
@@ -188,7 +185,7 @@
                     }
                 );
 
-                var heatmapLayer = L.TileLayer.heatMap({
+                var heatmapLayer = L.GridLayer.heatMap({
                     radius: {
                         value: 20,
                         absolute:false
@@ -203,21 +200,24 @@
                     }
                 });
 
-                heatmapLayer.setData(testData.data);
-
+                // Todo: Fix controls with leaflet 0.8-dev
+                /*
                 var overlayMaps = {
                     'Heatmap': heatmapLayer
                 };
 
                 var controls = L.control.layers(null, overlayMaps, {collapsed: false});
+                */
 
                 var map = new L.Map('heatmapArea', {
                     center: new L.LatLng(51.505, -0.09),
                     zoom: 6,
-                    layers: [baseLayer, heatmapLayer]
+                    layers: [baseLayer]
                 });
 
-                controls.addTo(map);
+                heatmapLayer.addTo(map);
+                heatmapLayer.setData(testData.data);
+                //controls.addTo(map);
 
                 // make accessible for debugging
                 layer = heatmapLayer;
