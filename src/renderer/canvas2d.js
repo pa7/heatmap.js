@@ -1,7 +1,7 @@
 
 var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   
-  var _initColorPalette = function(config) {
+  var _getColorPalette = function(config) {
     var gradientConfig = config.gradientConfig || config.defaultGradient;
     var paletteCanvas = document.createElement('canvas');
     var paletteCtx = paletteCanvas.getContext('2d');
@@ -20,11 +20,66 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     return paletteCtx.getImageData(0, 0, 256, 1).data;
   };
 
+  var _getPointTemplate = function(radius, blur) {
+    var tplCanvas = document.createElement('canvas');
+    var tplCtx = tplCanvas.getContext('2d');
+    var blur = blur || 50;
+    var x = radius + blur;
+    var y = radius + blur;
+    tplCanvas.width = tplCanvas.height = radius*2 + blur*2;
+
+    tplCtx.shadowColor = 'black';
+    tplCtx.shadowOffsetX = 15000;
+    tplCtx.shadowOffsetY = 15000;
+    tplCtx.shadowBlur = blur;
+    tplCtx.beginPath();
+    tplCtx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
+    tplCtx.closePath();
+    tplCtx.fill();
+
+    return tplCanvas;
+  };
+
+  var _prepareData = function(data) {
+    var renderData = [];
+    var min = data.min;
+    var max = data.max;
+    var radi = data.radi;
+    var data = data.data;
+    
+    var xValues = Object.keys(data);
+    var xValuesLen = xValues.length;
+
+    while(xValuesLen--) {
+      var xValue = xValues[xValuesLen];
+      var yValues = Object.keys(data[xValue]);
+      var yValuesLen = yValues.length;
+      while(yValuesLen--) {
+        var yValue = yValues[yValuesLen];
+        var count = data[xValue][yValue];
+        var radius = radi[xValue][yValue];
+        renderData.push({
+          x: xValue,
+          y: yValue,
+          count: count,
+          radius: radius
+        });
+      }
+    }
+
+    return {
+      min: min,
+      max: max,
+      data: renderData
+    };
+  };
+
 
   function Canvas2dRenderer(config) {
     var container = config.container;
     var shadowCanvas = document.createElement('canvas');
     var canvas = document.createElement('canvas');
+    var renderBoundaries = this._renderBoundaries = [1000, 1000, 0, 0];
 
     var computed = getComputedStyle(config.container);
 
@@ -38,97 +93,87 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     container.style.position = 'relative';
     container.appendChild(canvas);
 
-    this._palette = _initColorPalette(config);
+    this._palette = _getColorPalette(config);
+    this._templates = {};
 
     this._opacity = (config.opacity || 0) * 255;
     this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
-
-
   };
-
-  var renderBoundaries = [1000, 1000, 0, 0];
 
   Canvas2dRenderer.prototype = {
     renderPartial: function(data) {
-      this._drawAlpha(data, false);
+      this._drawAlpha(data);
+      this._colorize();
     },
     renderAll: function(data) {
       // reset render boundaries
-      renderBoundaries = [1000, 1000, 0, 0];
       this._clear();
-      this._drawAlpha(data, true);
+      this._drawAlpha(_prepareData(data));
+      this._colorize();
+    },
+    updateGradient: function(config) {
+      this._palette = _getColorPalette(config);
     },
     _clear: function() {
       this.shadowCtx.clearRect(0, 0, this._width, this._height);
     },
-    _drawAlpha: function(data, colorizeLater) {
+    _drawAlpha: function(data) {
       var min = data.min;
       var max = data.max;
+      var data = data.data || [];
+      var dataLen = data.length;
 
-      if (data['data']) {
-        for (var key in data.data) {
-          var list = data.data[key];
-          for (var key2 in list) {
-            var point = { x: key, y: key2, min: min, max: max, radius: data.radi[key][key2], count: list[key2] };
-            this._drawAlpha(point, true);
+
+      while(dataLen--) {
+
+        var point = data[dataLen];
+
+        var x = point.x;
+        var y = point.y;
+        var radius = point.radius;
+        var count = point.count;
+        var blur = 15;
+        var rectX = x - radius - blur;
+        var rectY = y - radius - blur;
+        var shadowCtx = this.shadowCtx;
+
+        if (radius < blur) {
+          blur = radius/1.5;
+        }
+
+        var tpl;
+        if (!this._templates[radius]) {
+          this._templates[radius] = tpl = _getPointTemplate(radius, blur);
+        } else {
+          tpl = this._templates[radius];
+        }
+
+        // resource intensive :(
+        //shadowCtx.globalCompositeOperation = 'multiply';
+        shadowCtx.globalAlpha = count/(Math.abs(max-min));
+        shadowCtx.drawImage(tpl, rectX, rectY);
+
+        // update renderBoundaries
+        if (rectX < this._renderBoundaries[0]) {
+            this._renderBoundaries[0] = rectX;
+          } 
+          if (rectY < this._renderBoundaries[1]) {
+            this._renderBoundaries[1] = rectY;
           }
-        }
-        this._colorize(renderBoundaries[0], renderBoundaries[1], renderBoundaries[2] - renderBoundaries[0], renderBoundaries[3] - renderBoundaries[1]);
-        return;
-      } else {
+          if (rectX + 2*radius > this._renderBoundaries[2]) {
+            this._renderBoundaries[2] = rectX + 2*radius + 2*blur;
+          }
+          if (rectY + 2*radius > this._renderBoundaries[3]) {
+            this._renderBoundaries[3] = rectY + 2*radius + 2*blur;
+          }
 
-      var x = data.x;
-      var y = data.y;
-      var radius = data.radius;
-      var count = data.count;
-      var rectX = x - radius;
-      var rectY = y - radius;
-
-
-      var radialGradient = this.shadowCtx.createRadialGradient(x, y, radius/8, x, y, radius);
-      radialGradient.addColorStop(0, ['rgba(0,0,0, ', count/(Math.abs(max-min)), ')'].join(''));
-      radialGradient.addColorStop(1, 'rgba(0,0,0,0)');
-
-      this.shadowCtx.fillStyle = radialGradient;
-      this.shadowCtx.fillRect(rectX, rectY, radius*2, radius*2); 
-      
-      /*
-      
-      old shadow-blur technique.
-
-      this.shadowCtx.shadowColor = ('rgba(0,0,0,'+((count)?(count/Math.abs(max-min)):'0.1')+')');
-
-      this.shadowCtx.shadowOffsetX = 15000;
-      this.shadowCtx.shadowOffsetY = 15000;
-      this.shadowCtx.shadowBlur = 15;
-
-      this.shadowCtx.beginPath();
-      this.shadowCtx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
-      this.shadowCtx.closePath();
-      this.shadowCtx.fill(); 
-
-      */
-
-
-      if (!colorizeLater) {
-        this._colorize(rectX, rectY, data['radius'] * 2, data['radius'] * 2);
-      } else {
-        if (rectX < renderBoundaries[0]) {
-          renderBoundaries[0] = rectX;
-        } 
-        if (rectY < renderBoundaries[1]) {
-          renderBoundaries[1] = rectY;
-        }
-        if (rectX + 2*radius > renderBoundaries[2]) {
-          renderBoundaries[2] = rectX + 2*radius;
-        }
-        if (rectY + 2*radius > renderBoundaries[3]) {
-          renderBoundaries[3] = rectY + 2*radius;
-        }
       }
-    }
     },
-    _colorize: function(x, y, width, height) {
+    _colorize: function() {
+      var x = this._renderBoundaries[0];
+      var y = this._renderBoundaries[1];
+      var width = this._renderBoundaries[2] - x;
+      var height = this._renderBoundaries[3] - y;
       var maxWidth = this._width;
       var maxHeight = this._height;
       var opacity = this._opacity;
@@ -182,6 +227,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
       img.data = imgData;
       this.ctx.putImageData(img, x, y);
+
+      this._renderBoundaries = [1000, 1000, 0, 0];
 
     }
   };

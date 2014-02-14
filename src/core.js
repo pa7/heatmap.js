@@ -46,7 +46,7 @@ var Heatmap = (function HeatmapClosure() {
 
 
   function Heatmap() {
-    var config = Util.merge(HeatmapConfig, arguments[0] || {});
+    var config = this._config = Util.merge(HeatmapConfig, arguments[0] || {});
     this._coordinator = new Coordinator();
     this._renderer = new Renderer(config);
     this._store = new Store(config);
@@ -57,18 +57,34 @@ var Heatmap = (function HeatmapClosure() {
   Heatmap.prototype = {
     addData: function() {
       this._store.addData.apply(this._store, arguments);
+      return this;
     },
     subtractData: function() {
       this._store.subtractData.apply(this._store, arguments);
+      return this;
     },
     setData: function() {
       this._store.setData.apply(this._store, arguments);
+      return this;
     },
     setDataMax: function() {
       this._store.setDataMax.apply(this._store, arguments);
+      return this;
     },
     setDataMin: function() {
       this._store.setDataMin.apply(this._store, arguments);
+      return this;
+    },
+    configure: function(config) {
+      this._config = Util.merge(this._config, config);
+      if (config['gradientConfig']) {
+        this._renderer.updateGradient(this._config);
+      }
+      return this;
+    },
+    repaint: function() {
+      this._coordinator.emit('renderall', this._store._getInternalData());
+      return this;
     }
   };
 

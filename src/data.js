@@ -33,11 +33,19 @@ var Store = (function StoreClosure() {
         } else {
           store[x][y] += count;
         }
+
         if (store[x][y] > max) {
           this.setDataMax(store[x][y]);
           return false;
         } else{
-          return { x: x, y: y, count: count, radius: radius, min: min, max: max };
+          return { 
+            x: x, 
+            y: y,
+            count: count, 
+            radius: radius,
+            min: min,
+            max: max 
+          };
         }
     },
     addData: function() {
@@ -51,9 +59,14 @@ var Store = (function StoreClosure() {
         // add to store  
         var organisedEntry = this._organiseData(arguments[0]);
         if (organisedEntry) {
-          this._coordinator.emit('renderpartial', organisedEntry);
+          this._coordinator.emit('renderpartial', {
+            min: this._min,
+            max: this._max,
+            data: [organisedEntry]
+          });
         }
       }
+      return this;
     },
     setData: function(data) {
       var dataPoints = data.data;
@@ -69,8 +82,8 @@ var Store = (function StoreClosure() {
         this._organiseData(dataPoints[i]);
       }
 
-
       this._coordinator.emit('renderall', this._getInternalData());
+      return this;
     },
     subtractData: function() {
 
@@ -78,10 +91,12 @@ var Store = (function StoreClosure() {
     setDataMax: function(max) {
       this._max = max;
       this._coordinator.emit('renderall', this._getInternalData());
+      return this;
     },
     setDataMin: function(min) {
       this._min = min;
       this._coordinator.emit('renderall', this._getInternalData());
+      return this;
     },
     setCoordinator: function(coordinator) {
       this._coordinator = coordinator;
