@@ -312,7 +312,8 @@
                 t: 1000,
                 b: 0
             },
-            debug: false
+            debug: false,
+            css: ""
         };
         // heatmap store containing the datapoints and information about the maximum
         // accessible via instance.store
@@ -345,6 +346,7 @@
                 me.set("width", config.width || 0);
                 me.set("height", config.height || 0);
                 me.set("debug", config.debug);
+                me.set("css", config.css || "position:absolute;top:0;left:0;z-index:10000000;");
 
                 if(config.legend){
                     var legendCfg = config.legend;
@@ -381,7 +383,7 @@
                 me.set("actx", actx);
 
                 me.resize();
-                canvas.style.cssText = acanvas.style.cssText = "position:absolute;top:0;left:0;z-index:10000000;";
+                canvas.style.cssText = acanvas.style.cssText = me.get("css");
                 
                 if(!me.get("visible"))
                     canvas.style.display = "none";
