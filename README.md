@@ -30,7 +30,7 @@ var config = {
 var heatmap = heatmapFactory.create(config);
 ```
 
-After creating the heatmap object you can set a dataset (import), add single datapoints and export the datapoints:
+After creating the heatmap object you can set a dataset (import), add single datapoints, generate random points, and export the datapoints:
 
 ```javascript
 // set a dataset
@@ -51,6 +51,7 @@ A store has the following functions:
 
 - **setDataSet(Object)** void. This initializes the heatmap with a dataset. The dataset object has to have the following structure: {max: <maximum count>, data:[{x: <dataPointX>, y: <dataPointY>, count: <valueAtXY>},...]}
 - **addDataPoint(Number, Number, [Number])** void. Adds a single datapoint to the store. First parameter is x, second parameter is y. Third parameter is the value, if not specified 1 will be used.
+- **generateRandomDataSet(Number)** void. Generates a random heatmap with the number of points specified as the parameter
 - **exportdataSet()** Object. Returns the store's data as an object with the same structure that the import object at setDataSet has.
 
 ## License
