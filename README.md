@@ -39,6 +39,9 @@ heatmap.store.setDataSet({ max: 10, data: [{x: 10, y: 20, count: 5}, ...]});
 // add a single datapoint
 heatmap.store.addDataPoint(10, 20);
 
+// generate random heatmap with 'x' number of points
+heatmap.store.generateRandomDataSet(400);
+
 // export the dataset
 var dataSet = heatmap.store.exportDataSet();
 ```
