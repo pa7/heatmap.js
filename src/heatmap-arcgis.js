@@ -1,3 +1,5 @@
+/* global heatmapFactory */
+
 define([
     "dojo/_base/declare",
     "dojo/_base/lang",
@@ -51,7 +53,7 @@ define([
             defaults.config.height = this.get("map").height;
             defaults.config.width = this.get("map").width;
             defaults.config.element = this.domNode;
-            this.set("config", defaults.config)
+            this.set("config", defaults.config);
             // create heatmap
             this.heatMap = heatmapFactory.create(this.get("config"));
             // global maximum value
@@ -212,7 +214,7 @@ define([
         // set data function call
         setData: function(features) {
             // set width/height
-            this.resizeHeatmap(null, this.get("map").width, this.get("map").height);
+            this.resizeHeatmap(this.get("map").width, this.get("map").height);
             // store points
             this.set("data", features);
             // create data and then store it
