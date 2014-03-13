@@ -10,8 +10,8 @@
         <title>heatmap.js ArcGIS JavaScript API Heatmap Layer</title>
         <link rel="shortcut icon"
         type="image/png" href="http://www.patrick-wied.at/img/favicon.png" />
-        <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.2/js/dojo/dijit/themes/claro/claro.css">
-		<link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.2/js/esri/css/esri.css" />
+        <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.7/js/dojo/dijit/themes/claro/claro.css">
+		<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.7/js/esri/css/esri.css" />
         <style>
             body, html {
                 margin:0;
@@ -79,132 +79,12 @@
                 box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.1);
             }
         </style>
-        <script type="text/javascript">
-            var djConfig = {
-                parseOnLoad: true
-            };
-        </script>
-        <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.2"></script>
-        <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.2/js/esri/dijit/css/Popup.css"
-        />
-        <script type="text/javascript" src="../../src/heatmap.js"></script>
-        <script type="text/javascript" src="../../src/heatmap-arcgis.js"></script>
-        <script type="text/javascript">
-            dojo.require("esri.map");
-            dojo.require("esri.layers.FeatureLayer");
-
-            // Variables
-            var map;
-            var heatLayer;
-            var featureLayer;
-
-            // get the features within the current extent from the feature layer
-            function getFeatures() {
-                // set up query
-                var query = new esri.tasks.Query();
-                // only within extent
-                query.geometry = map.extent;
-                // give me all of them!
-                query.where = "1=1";
-                // make sure I get them back in my spatial reference
-                query.outSpatialReference = map.spatialReference;
-                // get em!
-                featureLayer.queryFeatures(query, function (featureSet) {
-                    var data = [];
-                    // if we get results back
-                    if (featureSet && featureSet.features && featureSet.features.length > 0) {
-                        // set data to features
-                        data = featureSet.features;
-                    }
-                    // set heatmap data
-                    heatLayer.setData(data);
-                });
-            }
-
-            // Init
-            function init() {
-                // initial extent of map
-                var initExtent = new esri.geometry.Extent({
-                    xmax: -13624229.32056175,
-                    xmin: -13625120.886837104,
-                    ymax: 4548374.604660432,
-                    ymin: 4547966.144290476,
-                    "spatialReference": {
-                        "wkid": 102100
-                    }
-                });
-                // create map
-                map = new esri.Map("map", {
-                    extent: initExtent,
-                    sliderStyle: "small"
-                });
-                //Add the topographic layer to the map. View the ArcGIS Online site for services http://arcgisonline/home/search.html?t=content&f=typekeywords:service
-                var basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer");
-                map.addLayer(basemap);
-                // once map is loaded
-                dojo.connect(map, 'onLoad', function (theMap) {
-                    //resize the map when the browser resizes
-                    dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
-                    // create heat layer
-                    heatLayer = new HeatmapLayer({
-                        /* config: {
-                            "useLocalMaximum": true,
-                            "radius": 90,
-                            "gradient": {
-                                0.45: "rgb(000,000,255)",
-                                0.55: "rgb(000,255,255)",
-                                0.65: "rgb(000,255,000)",
-                                0.95: "rgb(255,255,000)",
-                                1.00: "rgb(255,000,000)"
-                            }
-                        }, */
-                        "map": map,
-                        "domNodeId": "heatLayer",
-                        "opacity": 0.85
-                    });
-                    // add heat layer to map
-                    map.addLayer(heatLayer);
-                    // resize map
-                    map.resize();
-                    // create feature layer to get the points from
-                    featureLayer = new esri.layers.FeatureLayer("http://servicesbeta.esri.com/arcgis/rest/services/SanFrancisco/SFStreetTreesRendered/MapServer/0", {
-                        mode: esri.layers.FeatureLayer.MODE_ONDEMAND,
-                        visible: false
-                    });
-                    map.addLayer(featureLayer);
-                    // get features from this layer
-                    getFeatures();
-                    // on map extent change
-                    dojo.connect(map, "onExtentChange", function (extent) {
-                        // get features
-                        getFeatures();
-                    });
-                    dojo.connect(dojo.byId('tog'), "onclick", function () {
-                        if (heatLayer.visible) {
-                            heatLayer.hide();
-                        } else {
-                            heatLayer.show();
-                        }
-                    });
-                    dojo.connect(dojo.byId('tog2'), "onclick", function () {
-                        if (featureLayer.visible) {
-                            featureLayer.hide();
-                        } else {
-                            featureLayer.show();
-                        }
-                    });
-                });
-            }
-            // call init on load of dojo
-            dojo.addOnLoad(init);
-        </script>
+        <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.7/js/esri/dijit/css/Popup.css"/>
     </head>
-
     <body class="claro">
         <div id="main">
             	<h1>ArcGIS JavaScript API Heatmap Overlay</h1>
-	<a href="http://www.patrick-wied.at/static/heatmapjs/" title="heatmap.js">Back to the project page</a>
-
+	<a href="http://www.arcgis.com/home/item.html?id=3a6d8158252e4b96a8ecfb8b912df78d">Download code</a>.
             <br
             />
             <br />
@@ -222,12 +102,268 @@ This is a demonstration of a canvas heatmap overlay with the <a href="http://hel
                 target="_blank">Feature layer</a>.
                 <div id="tog" class="btn">Toggle HeatmapOverlay</div>
                 <div id="tog2" class="btn">Toggle Tree Points</div>
+                <div id="tog3" class="btn">Local Max Off</div>
             </div>
-            <div style="position:absolute;width:940px;top:750px;text-align:center;"><a href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</a> by
+            <div style="text-align:center;"><a href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</a> by
                 <a
                 href="http://www.patrick-wied.at" target="_blank">Patrick Wied</a>
             </div>
         </div>
-    </body>
+        <div style="clear:both;"></div>
+        <div style="width:1020px; padding:20px; margin:auto;">
+             <h2>Description</h2>
 
+            <p>This is a custom DynamicMapServiceLayer for Heatmap.js to work with the
+                ArcGIS Javascript API.</p>
+             <h2>Instructions</h2>
+
+            <ol>
+                <li>Include the heatmap.js in your HTML document and require "modules/HeatmapLayer" <pre>
+        &lt;script type=&quot;text/javascript&quot; src=&quot;src/heatmap.js&quot;&gt;&lt;/script&gt;
+        </pre>
+
+                </li>
+                <li>Add a div with an ID to hold he canvas element <pre>&lt;div id=&quot;heatLayer&quot;&gt;&lt;/div&gt;</pre>
+
+                </li>
+                <li>Create the heatmap with it's settings and assign it to a global variable. <pre>
+        // create heat layer
+            heatLayer = new HeatmapLayer({
+                config: {
+                    "useLocalMaximum": false,
+                    "radius": 40,
+                    "gradient": {
+                        0.45: "rgb(000,000,255)",
+                        0.55: "rgb(000,255,255)",
+                        0.65: "rgb(000,255,000)",
+                        0.95: "rgb(255,255,000)",
+                        1.00: "rgb(255,000,000)"
+                    }
+                },
+                "map": map,
+                "opacity": 0.85
+            }, "heatLayer");
+        </pre>
+
+                </li>
+                <li>Add the heatLayer to the map. <pre>
+        map.addLayer(heatLayer);
+        </pre>
+
+                </li>
+                <li>Now you just need to add data points to the heatmap. In the example above,
+                    I am adding features from a feature layer of trees. Here's an example with
+                    two features. <pre>
+        var data = [
+            {
+                attributes: {},
+                geometry: {
+                    spatialReference: {wkid: 102100}
+                    type: "point"
+                    x: -13625078.0408
+                    y: 4548494.332400002
+                }
+            },
+            {
+                attributes: {},
+                geometry: {
+                    spatialReference: {wkid: 102100}
+                    type: "point"
+                    x: -13625078.0408
+                    y: 4548494.332400002
+                }
+            }
+        ];
+        </pre>
+ <pre>
+        heatLayer.setData(data);
+        </pre>
+
+                </li>
+                <li>I created a function that executes on map pan that gets all the features
+                    from a featureLayer within the map's extent.
+<pre>
+function getFeatures() {
+    // set up query
+    var q = new Query();
+    // only within extent
+    q.geometry = map.extent;
+    // give me all of them!
+    q.where = "1=1";
+    // make sure I get them back in my spatial reference
+    q.outSpatialReference = map.spatialReference;
+    // get em!
+    featureLayer.queryFeatures(q, function (featureSet) {
+        var data = [];
+        // if we get results back
+        if (featureSet && featureSet.features && featureSet.features.length > 0) {
+            // set data to features
+            data = featureSet.features;
+        }
+        // set heatmap data
+        heatLayer.setData(data);
+    });
+}
+</pre>
+
+                </li>
+            </ol>
+             <h2>Dependencies</h2>
+
+            <ul>
+                <li>HTML5 Canvas
+                    <iframe src="http://caniuse.com/canvas/embed/" width="1020"
+                    scrolling="no" frameborder="0" height="400"></iframe>
+                </li>
+                <li> <a href="http://www.patrick-wied.at/static/heatmapjs/">Heatmap.js</a>
+
+                </li>
+            </ul>
+        </div>
+    </body>
+    <script type="text/javascript">
+        // get current path
+            var pathRegex = new RegExp(/\/[^\/]+$/);
+            var locationPath = location.pathname.replace(pathRegex, '');
+            // Dojo Config
+            var dojoConfig = {
+                parseOnLoad: true,
+                packages: [
+                    {
+                        name: "modules",
+                        location: locationPath + '../../../src'
+                    }
+                ]
+            };
+        </script>
+        <script type="text/javascript" src="http://js.arcgis.com/3.7/"></script>
+        <script type="text/javascript" src="../../heatmap.js"></script>
+        <script type="text/javascript">
+        require([
+            "dojo/_base/lang",
+            "esri/map",
+            "dojo/on",
+            "dojo/dom",
+            "esri/layers/FeatureLayer",
+            "modules/heatmap-arcgis",
+            "esri/tasks/query",
+            "esri/geometry/Extent",
+            "dojo/domReady!"
+        ], function(
+            lang,
+            Map,
+            on,
+            dom,
+            FeatureLayer,
+            HeatmapLayer,
+            Query,
+            Extent
+        ){
+            
+            // Variables
+            var map;
+            var heatLayer;
+            var featureLayer;
+
+            // get the features within the current extent from the feature layer
+            function getFeatures() {
+                // set up query
+                var q = new Query();
+                // only within extent
+                q.geometry = map.extent;
+                // give me all of them!
+                q.where = "1=1";
+                // make sure I get them back in my spatial reference
+                q.outSpatialReference = map.spatialReference;
+                // get em!
+                featureLayer.queryFeatures(q, function (featureSet) {
+                    var data = [];
+                    // if we get results back
+                    if (featureSet && featureSet.features && featureSet.features.length > 0) {
+                        // set data to features
+                        data = featureSet.features;
+                    }
+                    // set heatmap data
+                    heatLayer.setData(data);
+                });
+            }
+
+       
+            // initial extent of map
+            var initExtent = new Extent({
+                xmax: -13624229.32056175,
+                xmin: -13625120.886837104,
+                ymax: 4548374.604660432,
+                ymin: 4547966.144290476,
+                "spatialReference": {
+                    "wkid": 102100
+                }
+            });
+            // create map
+            map = new Map("map", {
+                extent: initExtent,
+                sliderStyle: "small",
+                basemap: "streets"
+            });
+            
+            
+            
+     
+            // create heat layer
+            heatLayer = new HeatmapLayer({
+                config: {
+                    "useLocalMaximum": false,
+                    "radius": 40,
+                    "gradient": {
+                        0.45: "rgb(000,000,255)",
+                        0.55: "rgb(000,255,255)",
+                        0.65: "rgb(000,255,000)",
+                        0.95: "rgb(255,255,000)",
+                        1.00: "rgb(255,000,000)"
+                    }
+                },
+                "map": map,
+                "opacity": 0.85
+            }, "heatLayer");
+            
+            
+            // add heat layer to map
+            map.addLayer(heatLayer);
+            // resize map
+            map.resize();
+            // create feature layer to get the points from
+            featureLayer = new FeatureLayer("http://servicesbeta.esri.com/arcgis/rest/services/SanFrancisco/SFStreetTreesRendered/MapServer/0", {
+                mode: FeatureLayer.MODE_ONDEMAND,
+                visible: false
+            });
+            map.addLayer(featureLayer);
+            // get features from this layer
+            getFeatures();
+            // on map extent change
+            on(map, "extent-change", getFeatures);
+            on(dom.byId('tog'), "click", function () {
+                if (heatLayer.visible) {
+                    heatLayer.hide();
+                } else {
+                    heatLayer.show();
+                }
+            });
+            on(dom.byId('tog2'), "click", function () {
+                if (featureLayer.visible) {
+                    featureLayer.hide();
+                } else {
+                    featureLayer.show();
+                }
+            });
+            on(dom.byId('tog3'), "click", function () {
+                if (heatLayer.config.useLocalMaximum) {
+                    this.innerHTML = 'Local Max Off';
+                    heatLayer.config.useLocalMaximum = false;
+                } else {
+                    this.innerHTML = 'Local Max On';
+                    heatLayer.config.useLocalMaximum = true;
+                }
+            });
+        });
+    </script>
 </html>
