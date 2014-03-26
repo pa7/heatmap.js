@@ -67,7 +67,6 @@
         setDataSet: function(obj, internal){
             var me = this,
                 heatmap = me.get("heatmap"),
-                data = [],
                 d = obj.data,
                 dlen = d.length;
             // clear the heatmap before the data set gets drawn
@@ -92,14 +91,7 @@
                 while(dlen--){
                     var point = d[dlen];
                     heatmap.drawAlpha(point.x, point.y, point.count, false);
-                    if(!data[point.x])
-                        data[point.x] = [];
-
-                    if(!data[point.x][point.y])
-                        data[point.x][point.y] = 0;
-
-                    data[point.x][point.y] = point.count;
-                }
+                    }
             }
             heatmap.colorize();
             this.set("data", d);
