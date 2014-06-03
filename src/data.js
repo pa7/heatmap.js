@@ -90,8 +90,8 @@ var Store = (function StoreClosure() {
       this._coordinator.emit('renderall', this._getInternalData());
       return this;
     },
-    subtractData: function() {
-
+    removeData: function() {
+      // TODO: implement
     },
     setDataMax: function(max) {
       this._max = max;

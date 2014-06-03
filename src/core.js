@@ -70,8 +70,8 @@ var Heatmap = (function HeatmapClosure() {
       this._store.addData.apply(this._store, arguments);
       return this;
     },
-    subtractData: function() {
-      this._store.subtractData.apply(this._store, arguments);
+    removeData: function() {
+      this._store.removeData.apply(this._store, arguments);
       return this;
     },
     setData: function() {
