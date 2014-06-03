@@ -5,7 +5,8 @@ var HeatmapConfig = {
   defaultRadius: 40,
   defaultRenderer: 'canvas2d',
   defaultGradient: { 0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
-  defaultMaxOpacity: 1
+  defaultMaxOpacity: 1,
+  plugins: {}
 };
 var Store = (function StoreClosure() {
 
@@ -21,7 +22,8 @@ var Store = (function StoreClosure() {
 
 
   Store.prototype = {
-    _organiseData: function(dataPoint) {
+    // when reRender = false -> called from setData, omits renderall event
+    _organiseData: function(dataPoint, reRender) {
         var x = dataPoint['x'];
         var y = dataPoint['y'];
         var radi = this._radi;
@@ -44,7 +46,11 @@ var Store = (function StoreClosure() {
         }
 
         if (store[x][y] > max) {
-          this.setDataMax(store[x][y]);
+          if (!reRender) {
+            this._max = store[x][y];
+          } else {
+            this.setDataMax(store[x][y]);
+          }
           return false;
         } else{
           return { 
@@ -88,7 +94,7 @@ var Store = (function StoreClosure() {
       this._radi = [];
 
       for(var i = 0; i < pointsLen; i++) {
-        this._organiseData(dataPoints[i]);
+        this._organiseData(dataPoints[i], false);
       }
 
       this._coordinator.emit('renderall', this._getInternalData());
@@ -233,8 +239,16 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     renderAll: function(data) {
       // reset render boundaries
       this._clear();
-      this._drawAlpha(_prepareData(data));
+      var x = +new Date;
+      var xdata = _prepareData(data);
+      var yy = +new Date;
+      this._drawAlpha(xdata);
+      var y = +new Date;
       this._colorize();
+      var z = +new Date;
+      console.log('prepData: ', yy-x, 'ms');
+      console.log('drawAlpha: ', y-yy, 'ms');
+      console.log('colorize: ', z-y, 'ms');
     },
     updateGradient: function(config) {
       this._palette = _getColorPalette(config);
@@ -438,9 +452,20 @@ var Heatmap = (function HeatmapClosure() {
   function Heatmap() {
     var config = this._config = Util.merge(HeatmapConfig, arguments[0] || {});
     this._coordinator = new Coordinator();
-    this._renderer = new Renderer(config);
-    this._store = new Store(config);
-
+    if (config['plugin']) {
+      var pluginToLoad = config['plugin'];
+      if (!HeatmapConfig.plugins[pluginToLoad]) {
+        throw new Error('Plugin \''+ pluginToLoad + '\' not found. Maybe it was not registered.');
+      } else {
+        var plugin = HeatmapConfig.plugins[pluginToLoad];
+        // set plugin renderer and store
+        this._renderer = plugin.renderer;
+        this._store = plugin.store;
+      }
+    } else {
+      this._renderer = new Renderer(config);
+      this._store = new Store(config);
+    }
     _connect(this);
   };
 
@@ -487,6 +512,9 @@ var Heatmap = (function HeatmapClosure() {
 var heatmapFactory = {
   create: function(config) {
     return new Heatmap(config);
+  },
+  register: function(pluginKey, plugin) {
+    HeatmapConfig.plugins[pluginKey] = plugin;
   }
 };
 

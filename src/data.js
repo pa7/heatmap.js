@@ -12,7 +12,8 @@ var Store = (function StoreClosure() {
 
 
   Store.prototype = {
-    _organiseData: function(dataPoint) {
+    // when reRender = false -> called from setData, omits renderall event
+    _organiseData: function(dataPoint, reRender) {
         var x = dataPoint['x'];
         var y = dataPoint['y'];
         var radi = this._radi;
@@ -35,7 +36,11 @@ var Store = (function StoreClosure() {
         }
 
         if (store[x][y] > max) {
-          this.setDataMax(store[x][y]);
+          if (!reRender) {
+            this._max = store[x][y];
+          } else {
+            this.setDataMax(store[x][y]);
+          }
           return false;
         } else{
           return { 
@@ -79,7 +84,7 @@ var Store = (function StoreClosure() {
       this._radi = [];
 
       for(var i = 0; i < pointsLen; i++) {
-        this._organiseData(dataPoints[i]);
+        this._organiseData(dataPoints[i], false);
       }
 
       this._coordinator.emit('renderall', this._getInternalData());

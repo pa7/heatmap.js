@@ -48,9 +48,20 @@ var Heatmap = (function HeatmapClosure() {
   function Heatmap() {
     var config = this._config = Util.merge(HeatmapConfig, arguments[0] || {});
     this._coordinator = new Coordinator();
-    this._renderer = new Renderer(config);
-    this._store = new Store(config);
-
+    if (config['plugin']) {
+      var pluginToLoad = config['plugin'];
+      if (!HeatmapConfig.plugins[pluginToLoad]) {
+        throw new Error('Plugin \''+ pluginToLoad + '\' not found. Maybe it was not registered.');
+      } else {
+        var plugin = HeatmapConfig.plugins[pluginToLoad];
+        // set plugin renderer and store
+        this._renderer = plugin.renderer;
+        this._store = plugin.store;
+      }
+    } else {
+      this._renderer = new Renderer(config);
+      this._store = new Store(config);
+    }
     _connect(this);
   };
 
@@ -97,6 +108,9 @@ var Heatmap = (function HeatmapClosure() {
 var heatmapFactory = {
   create: function(config) {
     return new Heatmap(config);
+  },
+  register: function(pluginKey, plugin) {
+    HeatmapConfig.plugins[pluginKey] = plugin;
   }
 };
 
