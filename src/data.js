@@ -113,6 +113,10 @@ var Store = (function StoreClosure() {
         data: this._data,
         radi: this._radi 
       };
+    },
+    getData: function() {
+      // TODO: "unorganize" the data
+      return _getInternalData();
     }
   };
 

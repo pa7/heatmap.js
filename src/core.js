@@ -96,6 +96,12 @@ var Heatmap = (function HeatmapClosure() {
     repaint: function() {
       this._coordinator.emit('renderall', this._store._getInternalData());
       return this;
+    },
+    getData: function() {
+      return this._store.getData();
+    },
+    getDataURL: function() {
+      return this._renderer.getDataURL();
     }
   };
 
