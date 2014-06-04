@@ -2,7 +2,7 @@
 var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   
   var _getColorPalette = function(config) {
-    var gradientConfig = config.gradientConfig || config.defaultGradient;
+    var gradientConfig = config.gradient || config.defaultGradient;
     var paletteCanvas = document.createElement('canvas');
     var paletteCtx = paletteCanvas.getContext('2d');
 
@@ -153,7 +153,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         } else {
           tpl = this._templates[radius];
         }
-        
+
         shadowCtx.globalAlpha = count/(Math.abs(max-min));
         shadowCtx.drawImage(tpl, rectX, rectY);
 
