@@ -88,6 +88,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     var computed = getComputedStyle(config.container);
 
+
     this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
     this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
 
@@ -102,6 +103,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     this._templates = {};
 
     this._blur = (config.blur == 0)?0:(config.blur || config.defaultBlur);
+
+    if (config.backgroundColor) {
+      canvas.style.backgroundColor = config.backgroundColor;
+    }
 
     this._opacity = (config.opacity || 0) * 255;
     this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
