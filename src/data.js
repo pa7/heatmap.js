@@ -8,15 +8,15 @@ var Store = (function StoreClosure() {
     this._max = 1;
 
     if (config["radius"]) {
-      this.cfgRadius = config["radius"];
+      this._cfgRadius = config["radius"];
     }
   };
 
   var defaultRadius = HeatmapConfig.defaultRadius;
 
   Store.prototype = {
-    // when reRender = false -> called from setData, omits renderall event
-    _organiseData: function(dataPoint, reRender) {
+    // when forceRender = false -> called from setData, omits renderall event
+    _organiseData: function(dataPoint, forceRender) {
         var x = dataPoint['x'];
         var y = dataPoint['y'];
         var radi = this._radi;
@@ -24,7 +24,7 @@ var Store = (function StoreClosure() {
         var max = this._max;
         var min = this._min;
         var count = dataPoint.count;
-        var radius = dataPoint.radius || this.cfgRadius || defaultRadius;
+        var radius = dataPoint.radius || this._cfgRadius || defaultRadius;
 
         if (!store[x]) {
           store[x] = [];
@@ -39,7 +39,7 @@ var Store = (function StoreClosure() {
         }
 
         if (store[x][y] > max) {
-          if (!reRender) {
+          if (!forceRender) {
             this._max = store[x][y];
           } else {
             this.setDataMax(store[x][y]);
@@ -56,6 +56,12 @@ var Store = (function StoreClosure() {
           };
         }
     },
+    _onExtremaChange: function() {
+      this._coordinator.emit('extremachange', {
+        min: this._min,
+        max: this._max
+      });
+    },
     addData: function() {
       if (arguments[0].length > 0) {
         var dataArr = arguments[0];
@@ -65,7 +71,7 @@ var Store = (function StoreClosure() {
         }
       } else {
         // add to store  
-        var organisedEntry = this._organiseData(arguments[0]);
+        var organisedEntry = this._organiseData(arguments[0], true);
         if (organisedEntry) {
           this._coordinator.emit('renderpartial', {
             min: this._min,
@@ -89,7 +95,8 @@ var Store = (function StoreClosure() {
       for(var i = 0; i < pointsLen; i++) {
         this._organiseData(dataPoints[i], false);
       }
-
+      
+      this._onExtremaChange();
       this._coordinator.emit('renderall', this._getInternalData());
       return this;
     },
@@ -98,11 +105,13 @@ var Store = (function StoreClosure() {
     },
     setDataMax: function(max) {
       this._max = max;
+      this._onExtremaChange();
       this._coordinator.emit('renderall', this._getInternalData());
       return this;
     },
     setDataMin: function(min) {
       this._min = min;
+      this._onExtremaChange();
       this._coordinator.emit('renderall', this._getInternalData());
       return this;
     },
@@ -118,8 +127,13 @@ var Store = (function StoreClosure() {
       };
     },
     getData: function() {
-      // TODO: "unorganize" the data
-      return this._getInternalData();
+      var unorganizedData = [];
+
+      return {
+        max: this._max,
+        min: this._min,
+        data: unorganizedData
+      }
     }
   };
 

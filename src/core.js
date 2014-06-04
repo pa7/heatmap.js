@@ -41,6 +41,14 @@ var Heatmap = (function HeatmapClosure() {
 
     coordinator.on('renderpartial', renderer.renderPartial, renderer);
     coordinator.on('renderall', renderer.renderAll, renderer);
+    coordinator.on('extremachange', function(data) {
+      scope._config.onExtremaChange &&
+      scope._config.onExtremaChange({
+        min: data.min,
+        max: data.max,
+        gradient: scope._config['gradient'] || scope._config['defaultGradient']
+      });
+    });
     store.setCoordinator(coordinator);
   };
 
@@ -71,7 +79,7 @@ var Heatmap = (function HeatmapClosure() {
       return this;
     },
     removeData: function() {
-      this._store.removeData.apply(this._store, arguments);
+      this._store.removeData && this._store.removeData.apply(this._store, arguments);
       return this;
     },
     setData: function() {
