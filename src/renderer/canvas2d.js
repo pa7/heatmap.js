@@ -20,22 +20,27 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     return paletteCtx.getImageData(0, 0, 256, 1).data;
   };
 
-  var _getPointTemplate = function(radius, blur) {
+  var _getPointTemplate = function(radius, blurFactor) {
     var tplCanvas = document.createElement('canvas');
     var tplCtx = tplCanvas.getContext('2d');
-    var blur = blur || 50;
-    var x = radius + blur;
-    var y = radius + blur;
-    tplCanvas.width = tplCanvas.height = radius*2 + blur*2;
+    var x = radius;
+    var y = radius;
+    tplCanvas.width = tplCanvas.height = radius*2;
 
-    tplCtx.shadowColor = 'black';
-    tplCtx.shadowOffsetX = 15000;
-    tplCtx.shadowOffsetY = 15000;
-    tplCtx.shadowBlur = blur;
-    tplCtx.beginPath();
-    tplCtx.arc(x - 15000, y - 15000, radius, 0, Math.PI * 2, true);
-    tplCtx.closePath();
-    tplCtx.fill();
+    if (blurFactor == 1) {
+      tplCtx.beginPath();
+      tplCtx.arc(x, y, radius, 0, 2 * Math.PI, false);
+      tplCtx.fillStyle = 'rgba(0,0,0,1)';
+      tplCtx.fill();
+    } else {
+      var gradient = tplCtx.createRadialGradient(x, y, radius*blurFactor, x, y, radius);
+      gradient.addColorStop(0, 'rgba(0,0,0,1)');
+      gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      tplCtx.fillStyle = gradient;
+      tplCtx.fillRect(0, 0, 2*radius, 2*radius);
+    }
+    
+    
 
     return tplCanvas;
   };
@@ -78,7 +83,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   function Canvas2dRenderer(config) {
     var container = config.container;
     var shadowCanvas = document.createElement('canvas');
-    var canvas = document.createElement('canvas');
+    var canvas = this.canvas = document.createElement('canvas');
     var renderBoundaries = this._renderBoundaries = [1000, 1000, 0, 0];
 
     var computed = getComputedStyle(config.container);
@@ -95,6 +100,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     this._palette = _getColorPalette(config);
     this._templates = {};
+
+    this._blur = (config.blur == 0)?0:(config.blur || config.defaultBlur);
 
     this._opacity = (config.opacity || 0) * 255;
     this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
@@ -122,7 +129,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var max = data.max;
       var data = data.data || [];
       var dataLen = data.length;
-
+      // on a point basis?
+      var blur = 1 - this._blur;
 
       while(dataLen--) {
 
@@ -132,14 +140,12 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var y = point.y;
         var radius = point.radius;
         var count = point.count;
-        var blur = 15;
-        var rectX = x - radius - blur;
-        var rectY = y - radius - blur;
+        var rectX = x - radius;
+        var rectY = y - radius;
         var shadowCtx = this.shadowCtx;
 
-        if (radius < blur) {
-          blur = radius/1.5;
-        }
+
+
 
         var tpl;
         if (!this._templates[radius]) {
@@ -147,9 +153,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         } else {
           tpl = this._templates[radius];
         }
-
-        // resource intensive :(
-        //shadowCtx.globalCompositeOperation = 'multiply';
+        
         shadowCtx.globalAlpha = count/(Math.abs(max-min));
         shadowCtx.drawImage(tpl, rectX, rectY);
 
@@ -161,10 +165,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
             this._renderBoundaries[1] = rectY;
           }
           if (rectX + 2*radius > this._renderBoundaries[2]) {
-            this._renderBoundaries[2] = rectX + 2*radius + 2*blur;
+            this._renderBoundaries[2] = rectX + 2*radius;
           }
           if (rectY + 2*radius > this._renderBoundaries[3]) {
-            this._renderBoundaries[3] = rectY + 2*radius + 2*blur;
+            this._renderBoundaries[3] = rectY + 2*radius;
           }
 
       }
@@ -230,6 +234,9 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
       this._renderBoundaries = [1000, 1000, 0, 0];
 
+    },
+    getDataURL: function() {
+      return this.canvas.toDataURL();
     }
   };
 

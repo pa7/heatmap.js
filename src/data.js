@@ -1,15 +1,18 @@
 var Store = (function StoreClosure() {
 
-  var Store = function Store() {
+  var Store = function Store(config) {
     this._coordinator = {};
     this._data = [];
     this._radi = [];
     this._min = 0;
     this._max = 1;
+
+    if (config["radius"]) {
+      this.cfgRadius = config["radius"];
+    }
   };
 
   var defaultRadius = HeatmapConfig.defaultRadius;
-
 
   Store.prototype = {
     // when reRender = false -> called from setData, omits renderall event
@@ -21,7 +24,7 @@ var Store = (function StoreClosure() {
         var max = this._max;
         var min = this._min;
         var count = dataPoint.count;
-        var radius = dataPoint.radius || defaultRadius;
+        var radius = dataPoint.radius || this.cfgRadius || defaultRadius;
 
         if (!store[x]) {
           store[x] = [];
@@ -116,7 +119,7 @@ var Store = (function StoreClosure() {
     },
     getData: function() {
       // TODO: "unorganize" the data
-      return _getInternalData();
+      return this._getInternalData();
     }
   };
 
