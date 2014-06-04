@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>heatmap.js | Create HTML5 Heatmaps with Canvas and JavaScript</title>
+    <style>
+      body, html { margin:0; padding:0; height:100%;}
+      #heatmapContainerWrapper { width:100%; height:100%; position:absolute; }
+      #heatmapContainer { width:100%; height:100%;}
+      h1 { position:absolute; background:white; padding:10px;}
+    </style>
+    <script src="/build/heatmap.js"></script>
+  </head>
+  <body>
+    <div id="heatmapContainerWrapper">
+      <div id="heatmapContainer">
+
+      </div>
+      <h1>heatmap.js Mousemove Example</h1>
+    </div>
+    <script>
+      window.onload = function() {
+        var heatmap = h337.create({
+          container: document.getElementById('heatmapContainer'),
+          maxOpacity: .6,
+          radius: 50,
+          blur: .90
+        });
+        var heatmapContainer = document.getElementById('heatmapContainerWrapper');
+
+        heatmapContainer.onmousemove = heatmapContainer.ontouchmove = function(e) {
+          var x = e.layerX;
+          var y = e.layerY;
+          if (e.touches) {
+            x = e.touches[0].pageX;
+            y = e.touches[0].pageY;
+          }
+          
+          heatmap.addData({ x: x, y: y, count: 1 });
+
+        };
+
+        heatmapContainer.onclick = function(e) {
+          var x = e.layerX;
+          var y = e.layerY;
+          heatmap.addData({ x: x, y: y, count: 1 });
+        };
+
+      };
+    </script>
+  </body>
+</html>
