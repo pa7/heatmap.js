@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>heatmap.js | Create HTML5 Heatmaps with Canvas and JavaScript</title>
+    <style>
+      body, html, h2 { margin:0; padding:0; height:100%;}
+      #heatmapContainerWrapper { width:100%; height:100%; position:absolute; background:rgba(0,0,0,.1); }
+      #heatmapContainer { width:100%; height:100%;}
+      #heatmapLegend { background:white; position:absolute; bottom:0; right:0; padding:10px; }
+      #min { float:left; }
+      #max { float:right; }
+      h1 { position:absolute; background:white; padding:10px;}
+    </style>
+    <script src="/build/heatmap.js"></script>
+  </head>
+  <body>
+    <div id="heatmapContainerWrapper">
+      <div id="heatmapContainer">
+
+      </div>
+      <div id="heatmapLegend">
+        <h2>Descriptive Legend Title</h2>
+        <br />
+        <span id="min"></span>
+        <span id="max"></span>
+        <img id="gradient" src="" style="width:100%" />
+      </div>
+    </div>
+        <h1>Heatmap.js Standard Example</h1>
+    <script>
+      window.onload = function() {
+
+        function $(id) {
+          return document.getElementById(id);
+        };
+
+        /*  legend code */
+
+        var legendCanvas = document.createElement('canvas');
+        legendCanvas.width = 100;
+        legendCanvas.height = 10;
+
+        var legendCtx = legendCanvas.getContext('2d');
+        var gradientCfg = {};
+
+        function updateLegend(data) {
+          $('min').innerHTML = data.min;
+          $('max').innerHTML = data.max;
+          // regenerate gradient image
+          if (data.gradient != gradientCfg) {
+            gradientCfg = data.gradient;
+            var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
+            for (var key in gradientCfg) {
+              gradient.addColorStop(key, gradientCfg[key]);
+            }
+
+            legendCtx.fillStyle = gradient;
+            legendCtx.fillRect(0, 0, 100, 10);
+            $('gradient').src = legendCanvas.toDataURL();
+          }
+        };
+        /* legend code end */
+
+
+
+        var heatmap = h337.create({
+          container: document.getElementById('heatmapContainer'),
+          maxOpacity: .5,
+          radius: 10,
+          blur: .75,
+          onExtremaChange: function onExtremaChange(data) {
+            updateLegend(data);
+          }
+        });
+
+        window.h = heatmap;
+        var width = (+window.getComputedStyle(document.body).width.replace(/px/,''));
+        var height = (+window.getComputedStyle(document.body).height.replace(/px/,''));
+
+        var generate = function() {
+        var max = 100;
+        var min = 0;
+        var t = [];
+
+
+        for (var i = 0; i < 1000; i++) {
+          var x = (Math.random()* width) >> 0;
+          var y = (Math.random()* height) >> 0;
+          var c = (Math.random()* max) >> 0;
+          var r = (Math.random()* 100) >> 0;
+
+          t.push({ x: x, y:y, count: c, radius: r });
+        }
+        var init = +new Date;
+        heatmap.setData({
+          min: min,
+          max: max,
+          data: t
+        });
+        console.log('took ', (+new Date) - init, 'ms');
+        };
+        generate();
+
+        document.getElementById('heatmapContainerWrapper').onclick = function() { console.log(h.getData()); };
+        //heatmap.setData({max: 10, min: 0, data:[ {x: 150, y: 150, count:4, radius:40}]})
+        //setInterval(function() {
+        //  generate();
+        //}, 100);
+      };
+    </script>
+  </body>
+</html>
