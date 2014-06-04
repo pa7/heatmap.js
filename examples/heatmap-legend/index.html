@@ -27,7 +27,7 @@
         <img id="gradient" src="" style="width:100%" />
       </div>
     </div>
-        <h1>Heatmap.js Standard Example</h1>
+        <h1>Heatmap.js Legend Example</h1>
     <script>
       window.onload = function() {
 
@@ -79,16 +79,16 @@
         var height = (+window.getComputedStyle(document.body).height.replace(/px/,''));
 
         var generate = function() {
-        var max = 100;
+        var max = (Math.random() * 100) >> 0;
         var min = 0;
         var t = [];
 
 
-        for (var i = 0; i < 1000; i++) {
+        for (var i = 0; i < 10000; i++) {
           var x = (Math.random()* width) >> 0;
           var y = (Math.random()* height) >> 0;
           var c = (Math.random()* max) >> 0;
-          var r = (Math.random()* 100) >> 0;
+          var r = (Math.random()* 40) >> 0;
 
           t.push({ x: x, y:y, count: c, radius: r });
         }
@@ -102,7 +102,7 @@
         };
         generate();
 
-        document.getElementById('heatmapContainerWrapper').onclick = function() { console.log(h.getData()); };
+        document.getElementById('heatmapContainerWrapper').onclick = function() { generate(); };
         //heatmap.setData({max: 10, min: 0, data:[ {x: 150, y: 150, count:4, radius:40}]})
         //setInterval(function() {
         //  generate();
