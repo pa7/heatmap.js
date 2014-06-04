@@ -97,7 +97,7 @@ var Heatmap = (function HeatmapClosure() {
     configure: function(config) {
       this._config = Util.merge(this._config, config);
       if (config['gradientConfig']) {
-        this._renderer.updateGradient(this._config);
+        this._renderer.updateGradient && this._renderer.updateGradient(this._config);
       }
       return this;
     },

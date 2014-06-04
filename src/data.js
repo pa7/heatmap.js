@@ -56,6 +56,29 @@ var Store = (function StoreClosure() {
           };
         }
     },
+    _unOrganizeData: function() {
+      var unorganizedData = [];
+      var data = this._data;
+      var radi = this._radi;
+
+      for (var x in data) {
+        for (var y in data[x]) {
+
+          unorganizedData.push({
+            x: x,
+            y: y,
+            radius: radi[x][y],
+            count: data[x][y]
+          });
+
+        }
+      }
+      return {
+        min: this._min,
+        max: this._max,
+        data: unorganizedData
+      };
+    },
     _onExtremaChange: function() {
       this._coordinator.emit('extremachange', {
         min: this._min,
@@ -127,13 +150,7 @@ var Store = (function StoreClosure() {
       };
     },
     getData: function() {
-      var unorganizedData = [];
-
-      return {
-        max: this._max,
-        min: this._min,
-        data: unorganizedData
-      }
+      return this._unOrganizeData();
     }
   };
 
