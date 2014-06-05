@@ -130,8 +130,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       this.shadowCtx.clearRect(0, 0, this._width, this._height);
     },
     _drawAlpha: function(data) {
-      var min = data.min;
-      var max = data.max;
+      var min = this._min = data.min;
+      var max = this._max = data.max;
       var data = data.data || [];
       var dataLen = data.length;
       // on a point basis?
@@ -239,6 +239,18 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
       this._renderBoundaries = [1000, 1000, 0, 0];
 
+    },
+    getValueAt: function(point) {
+      var value;
+      var shadowCtx = this.shadowCtx;
+      var img = shadowCtx.getImageData(point.x, point.y, 1, 1);
+      var data = img.data[3];
+      var max = this._max;
+      var min = this._min;
+
+      value = (Math.abs(max-min) * (data/255)) >> 0;
+
+      return value;
     },
     getDataURL: function() {
       return this.canvas.toDataURL();
