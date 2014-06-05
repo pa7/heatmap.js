@@ -110,6 +110,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     this._opacity = (config.opacity || 0) * 255;
     this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
+    this._minOpacity = (config.minOpacity || config.defaultMinOpacity) * 255;
   };
 
   Canvas2dRenderer.prototype = {
@@ -187,6 +188,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var maxHeight = this._height;
       var opacity = this._opacity;
       var maxOpacity = this._maxOpacity;
+      var minOpacity = this._minOpacity;
 
       if (x < 0) {
         x = 0;
@@ -221,7 +223,11 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
           finalAlpha = opacity;
         } else {
           if (alpha < maxOpacity) {
-            finalAlpha = alpha;
+            if (alpha < minOpacity) {
+              finalAlpha = minOpacity;
+            } else {
+              finalAlpha = alpha;
+            }
           } else {
             finalAlpha = maxOpacity;
           }
