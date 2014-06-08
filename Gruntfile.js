@@ -58,14 +58,6 @@ module.exports = function(grunt) {
         files: packagejson.buildFiles,
         tasks: ['concat', 'uglify']
       }
-    },
-    docco: {
-      debug: {
-        src: ['src/**/*.js'],
-        options: {
-          output: 'docs/'
-        }
-      }
     }
   });
 
@@ -74,10 +66,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-docco');
 
   // Default task.
   grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'watch']);
-  grunt.registerTask('docs', ['docco']);
 
 };
