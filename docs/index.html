@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>heatmap.js Documentation</title>
+    <link rel="stylesheet" href="assets/css/docs.css" />
+    <link rel="stylesheet" href="assets/css/prism.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1>heatmap.js Documentation</h1>
+      <div id="message">
+        <h3 id="activate-msg">What is it about the colors in the overview?</h3>
+        <div id="msg-content">
+          <div class="msg">
+            The colors in the overview is a priorization of API functionality: <br /><strong><u>red</u> **hot docs** ;-)</strong>:  most commonly used functions <br /><strong class="avg-doc"><u>green</u></strong>: used for customized implementation<br /><strong class="cold-doc"><u>blue</u></strong>: rarely used functionality
+          </div>
+          <div id="btn-confirm">got it, thank you</div>
+        </div>
+      </div>
+      <section id="index">
+        <div id="index-h337">
+        <h2>h337</h2>
+        <ul>
+          <li class="hot-doc"><a href="#h337-create">create(configObject)</a></li>
+          <li class="avg-doc"><a href="#">register(pluginKey, plugin)</a></li>
+        </ul>
+        </div>
+        <div id="index-heatmapInstance">
+        <h2>heatmapInstance</h2>
+        <ul>
+          <li class="hot-doc"><a href="#">addData(object|array)</a></li>
+          <li class="hot-doc"><a href="#">setData(object)</a></li>
+          <li class="cold-doc"><a href="#">setDataMax(number)</a></li>
+          <li class="cold-doc"><a href="#">setDataMin(number)</a></li>
+          <li class="avg-doc"><a href="#">configure(configObject)</a></li>
+          <li class="avg-doc"><a href="#">getValueAt(object)</a></li>
+          <li class="hot-doc"><a href="#">getData()</a></li>
+          <li class="avg-doc"><a href="#">getDataURL()</a></li>
+          <li class="cold-doc"><a href="#">repaint()</a></li>
+        </ul>
+        </div>
+
+      </section>
+      <section>
+        <h2>h337</h2>
+        <div class="description">
+          h337 is the name of the global object registered by heatmap.js. You can use it to create heatmap instances
+        </div>
+        <div class="functions">
+          <div class="fn">
+            <h3>h337.create(object)</h3>
+            <div class="description">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis accumsan mi quis tortor cursus lobortis. Nulla vestibulum orci <strong>urna, vitae tincidunt</strong> nulla lobortis a. Nunc rutrum porttitor enim at pretium. Pellentesque in adipiscing leo. Etiam sagittis bibendum condimentum. Quisque vel placerat diam, et sollicitudin arcu. Maecenas mattis at ante vitae imperdiet. Aenean facilisis molestie dui non imperdiet. Aliquam et pretium diam, ac porttitor eros. Quisque diam ante, tincidunt non metus quis, euismod imperdiet nisi. Duis ut est id tortor consectetur tristique. Proin eu lectus a urna sollicitudin venenatis. Ut ante ante, dapibus et eros vitae, ultricies hendrerit magna. Nullam semper dolor nec purus condimentum ultrici
+              <pre><code class="language-javascript">
+var x = function() {
+  console.log('this is a test!');
+};
+              </code></pre>
+            </div>
+          </div>
+          <div class="fn">
+            <h3>h337.register(pluginKey, plugin)</h3>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2>heatmapInstance</h2>
+        <div class="description">
+          A heatmapInstance is returned by h337.create.
+        </div>
+        <div class="functions">
+          <div class="fn">
+            <h3>heatmapInstance.addData(object|array)</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+          <div class="fn">
+            <h3>heatmapInstance.setData(object)</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+          <div class="fn">
+            <h3>heatmapInstance.setDataMax(number)</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+          <div class="fn">
+            <h3>heatmapInstance.setDataMin(number)</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+          <div class="fn cold-doc">
+            <h3>heatmapInstance.configure(object)</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+          <div class="fn avg-doc">
+            <h3>heatmapInstance.getValueAt(object)</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+          <div class="fn avg-doc">
+            <h3>heatmapInstance.getData()</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+          <div class="fn avg-doc">
+            <h3>heatmapInstance.getDataURL()</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+          <div class="fn cold-doc">
+            <h3>heatmapInstance.repaint()</h3>
+            <div class="description">
+              Oh hello there!
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script src="assets/js/prism.js"></script>
+    <script>
+      var docs = (function() {
+
+        //delete localStorage['readTheDocs'];
+
+        function $(id) {
+          return document.getElementById(id);
+        };
+
+        function initializeDocs () {
+          var showMessage = false;
+
+          if (!localStorage['readTheDocs']) {
+            showMessage = true;
+          }
+          $('btn-confirm').onclick = function() {
+              localStorage['readTheDocs'] = true;
+              $('msg-content').classList.add('animate');
+              $('msg-content').classList.add('hide');
+          };
+          if (!showMessage) {
+            $('msg-content').classList.add('hide');
+            // dirty hack ;-)
+            setTimeout(function() { $('msg-content').classList.add('animate'); }, 100);
+          }
+
+          $('activate-msg').onclick = function() {
+            $('msg-content').classList.remove('hide');
+          }
+
+
+          // initialize and add feedback buttons
+
+        };
+
+
+        return {
+          init: initializeDocs
+        }
+      }());
+      window.onload = function() {
+        docs.init();
+      };
+    </script>
+  </body>
+</html>
