@@ -61,12 +61,12 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var yValuesLen = yValues.length;
       while(yValuesLen--) {
         var yValue = yValues[yValuesLen];
-        var count = data[xValue][yValue];
+        var value = data[xValue][yValue];
         var radius = radi[xValue][yValue];
         renderData.push({
           x: xValue,
           y: yValue,
-          count: count,
+          value: value,
           radius: radius
         });
       }
@@ -83,11 +83,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   function Canvas2dRenderer(config) {
     var container = config.container;
     var shadowCanvas = document.createElement('canvas');
-    var canvas = this.canvas = document.createElement('canvas');
+    var canvas = this.canvas = config.canvas || document.createElement('canvas');
     var renderBoundaries = this._renderBoundaries = [1000, 1000, 0, 0];
 
-    var computed = getComputedStyle(config.container);
-
+    var computed = getComputedStyle(config.container) || {};
 
     this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
     this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
@@ -145,7 +144,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var x = point.x;
         var y = point.y;
         var radius = point.radius;
-        var count = point.count;
+        var value = point.value;
         var rectX = x - radius;
         var rectY = y - radius;
         var shadowCtx = this.shadowCtx;
@@ -160,7 +159,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
           tpl = this._templates[radius];
         }
 
-        shadowCtx.globalAlpha = count/(Math.abs(max-min));
+        shadowCtx.globalAlpha = value/(Math.abs(max-min));
         shadowCtx.drawImage(tpl, rectX, rectY);
 
         // update renderBoundaries

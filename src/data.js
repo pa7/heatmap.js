@@ -6,6 +6,9 @@ var Store = (function StoreClosure() {
     this._radi = [];
     this._min = 0;
     this._max = 1;
+    this._xField = config['xField'] || config.defaultXField;
+    this._yField = config['yField'] || config.defaultYField;
+    this._valueField = config['valueField'] || config.defaultValueField;
 
     if (config["radius"]) {
       this._cfgRadius = config["radius"];
@@ -17,13 +20,13 @@ var Store = (function StoreClosure() {
   Store.prototype = {
     // when forceRender = false -> called from setData, omits renderall event
     _organiseData: function(dataPoint, forceRender) {
-        var x = dataPoint['x'];
-        var y = dataPoint['y'];
+        var x = dataPoint[this._xField];
+        var y = dataPoint[this._yField];
         var radi = this._radi;
         var store = this._data;
         var max = this._max;
         var min = this._min;
-        var count = dataPoint.count;
+        var value = dataPoint[this._valueField];
         var radius = dataPoint.radius || this._cfgRadius || defaultRadius;
 
         if (!store[x]) {
@@ -32,10 +35,10 @@ var Store = (function StoreClosure() {
         }
 
         if (!store[x][y]) {
-          store[x][y] = count || 1;
+          store[x][y] = value || 1;
           radi[x][y] = radius;
         } else {
-          store[x][y] += count;
+          store[x][y] += value;
         }
 
         if (store[x][y] > max) {
@@ -49,7 +52,7 @@ var Store = (function StoreClosure() {
           return { 
             x: x, 
             y: y,
-            count: count, 
+            value: value, 
             radius: radius,
             min: min,
             max: max 
@@ -68,7 +71,7 @@ var Store = (function StoreClosure() {
             x: x,
             y: y,
             radius: radi[x][y],
-            count: data[x][y]
+            value: data[x][y]
           });
 
         }
