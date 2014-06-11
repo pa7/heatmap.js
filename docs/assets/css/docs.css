@@ -85,12 +85,13 @@ section { margin-bottom:60px; }
   width: 75%;
   margin: auto;
   margin-top: 30px;
-  background: rgb(236, 236, 236);
+  background: rgba(0,0,0,.06);
+  box-shadow: 0 0 2px black;
   padding-left:20px;
   padding-right:20px; 
   margin-bottom:50px;
 }
-#message h3 { padding:20px; font-weight:normal; cursor:pointer;}
+#message h3 { padding:20px; padding-left:0; font-weight:normal; cursor:pointer;}
 #msg-content {
   height:230px; padding-top:0; padding-bottom:0; opacity:1;
 }
@@ -121,3 +122,4 @@ margin-top: 15px;
 #btn-confirm:hover {
   background: #f65656;
 }
+.description ul li { margin-bottom:15px; margin-top:10px; }

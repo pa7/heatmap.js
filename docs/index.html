@@ -52,15 +52,20 @@
             <h3 id="h337-create">h337.create(configObject)</h3>
             <div class="description">
               Returns a <strong>heatmapInstance</strong>.<br /><br />
-              Use h337.create to create heatmap instances. A Heatmap can be customized with the configObject. <br />The configObject is required. <br /><br/><strong><u>Possible configuration properties:</u></strong><br />
+              Use h337.create to create heatmap instances. A Heatmap can be customized with the configObject. <br />The configObject parameter is required. <br /><br/><strong><u>Possible configuration properties:</u></strong><br />
               <ul>
-                <li><strong>container</strong> (DOMNode) *required* <br /> A DOM node where the heatmap canvas should be appended to (the heatmap will adapt to the node's size)</li>
-                <li><strong>radius</strong><br />tbd</li>
-                <li><strong>opacity</strong><br />tbd</li>
-                <li><strong>maxOpacity</strong><br />tbd</li>
-                <li><strong>minOpacity</strong><br />tbd</li>
-                <li><strong class="hot-doc highlight">onExtremaChange</strong> function callback<br />tbd</li>
-                <li><strong>blur</strong><br />tbd</li>
+                <li><strong>backgroundColor</strong> (string) *optional*<br />
+                 A background color string in form of hexcode, color name, or rgb(a)</li>
+                <li><strong>container</strong> (DOMNode) *required* <br /> A DOM node where the heatmap canvas should be appended to (heatmap will adapt to the node's size)</li>
+                <li><strong>radius</strong> (number) *optional*<br />The radius each datapoint will have (if not specified on the datapoint itself)</li>
+                <li><strong>opacity</strong> (number) [0,1] *optional* default = .6<br />A global opacity for the whole heatmap. This overrides maxOpacity and minOpacity if set!</li>
+                <li><strong>maxOpacity</strong> (number) [0,1] *optional*<br />The maximal opacity the highest value in the heatmap will have. (will be overridden if opacity set)</li>
+                <li><strong>minOpacity</strong>(number) [0,1] *optional*<br />The minimum opacity the lowest value in the heatmap will have (will be overridden if opacity set)</li>
+                <li><strong>onExtremaChange</strong> function callback<br />Pass a callback to receive extrema change updates. Useful for DOM legends.</li>
+                <li><strong>blur</strong> (number) [0,1] *optional* default = 0.85<br />The blur factor that will be applied to all datapoints. The higher the blur factor is the smoother the gradients will be</li>
+                <li><strong>xField</strong> (string) *optional* default = "x"<br />The property name of your x coordinate in a datapoint</li>
+                <li><strong>yField</strong> (string) *optional* default = "y"<br />The property name of your y coordinate in a datapoint</li>
+                <li><strong>valueField</strong> (string) *optional* default = "value"<br />The property name of your y coordinate in a datapoint</li>
               </ul>
               <h4>Example configurations</h4>
               Simple configuration with standard gradient
