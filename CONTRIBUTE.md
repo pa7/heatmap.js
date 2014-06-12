@@ -16,7 +16,15 @@ Spaces! 2 spaces.
 
 ### Checkout repository
 
+### Install
+
+`npm install`
+
 ### Create a new feature branch
+
+### Run watcher
+
+`grunt`
 
 ### Add your code
 
