@@ -6,7 +6,11 @@ var HeatmapConfig = {
   defaultRenderer: 'canvas2d',
   defaultGradient: { 0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
   defaultMaxOpacity: 1,
-  defaultBlur: .85, 
+  defaultMinOpacity: 0,
+  defaultBlur: .85,
+  defaultXField: 'x',
+  defaultYField: 'y',
+  defaultValueField: 'value', 
   plugins: {}
 };
 var Store = (function StoreClosure() {
@@ -17,6 +21,9 @@ var Store = (function StoreClosure() {
     this._radi = [];
     this._min = 0;
     this._max = 1;
+    this._xField = config['xField'] || config.defaultXField;
+    this._yField = config['yField'] || config.defaultYField;
+    this._valueField = config['valueField'] || config.defaultValueField;
 
     if (config["radius"]) {
       this._cfgRadius = config["radius"];
@@ -28,13 +35,13 @@ var Store = (function StoreClosure() {
   Store.prototype = {
     // when forceRender = false -> called from setData, omits renderall event
     _organiseData: function(dataPoint, forceRender) {
-        var x = dataPoint['x'];
-        var y = dataPoint['y'];
+        var x = dataPoint[this._xField];
+        var y = dataPoint[this._yField];
         var radi = this._radi;
         var store = this._data;
         var max = this._max;
         var min = this._min;
-        var count = dataPoint.count;
+        var value = dataPoint[this._valueField];
         var radius = dataPoint.radius || this._cfgRadius || defaultRadius;
 
         if (!store[x]) {
@@ -43,10 +50,10 @@ var Store = (function StoreClosure() {
         }
 
         if (!store[x][y]) {
-          store[x][y] = count || 1;
+          store[x][y] = value || 1;
           radi[x][y] = radius;
         } else {
-          store[x][y] += count;
+          store[x][y] += value;
         }
 
         if (store[x][y] > max) {
@@ -60,7 +67,7 @@ var Store = (function StoreClosure() {
           return { 
             x: x, 
             y: y,
-            count: count, 
+            value: value, 
             radius: radius,
             min: min,
             max: max 
@@ -79,7 +86,7 @@ var Store = (function StoreClosure() {
             x: x,
             y: y,
             radius: radi[x][y],
-            count: data[x][y]
+            value: data[x][y]
           });
 
         }
@@ -269,12 +276,12 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var yValuesLen = yValues.length;
       while(yValuesLen--) {
         var yValue = yValues[yValuesLen];
-        var count = data[xValue][yValue];
+        var value = data[xValue][yValue];
         var radius = radi[xValue][yValue];
         renderData.push({
           x: xValue,
           y: yValue,
-          count: count,
+          value: value,
           radius: radius
         });
       }
@@ -291,11 +298,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   function Canvas2dRenderer(config) {
     var container = config.container;
     var shadowCanvas = document.createElement('canvas');
-    var canvas = this.canvas = document.createElement('canvas');
+    var canvas = this.canvas = config.canvas || document.createElement('canvas');
     var renderBoundaries = this._renderBoundaries = [1000, 1000, 0, 0];
 
-    var computed = getComputedStyle(config.container);
-
+    var computed = getComputedStyle(config.container) || {};
 
     this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
     this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
@@ -318,6 +324,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     this._opacity = (config.opacity || 0) * 255;
     this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
+    this._minOpacity = (config.minOpacity || config.defaultMinOpacity) * 255;
   };
 
   Canvas2dRenderer.prototype = {
@@ -352,7 +359,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var x = point.x;
         var y = point.y;
         var radius = point.radius;
-        var count = point.count;
+        var value = point.value;
         var rectX = x - radius;
         var rectY = y - radius;
         var shadowCtx = this.shadowCtx;
@@ -367,7 +374,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
           tpl = this._templates[radius];
         }
 
-        shadowCtx.globalAlpha = count/(Math.abs(max-min));
+        shadowCtx.globalAlpha = value/(Math.abs(max-min));
         shadowCtx.drawImage(tpl, rectX, rectY);
 
         // update renderBoundaries
@@ -395,6 +402,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var maxHeight = this._height;
       var opacity = this._opacity;
       var maxOpacity = this._maxOpacity;
+      var minOpacity = this._minOpacity;
 
       if (x < 0) {
         x = 0;
@@ -429,7 +437,11 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
           finalAlpha = opacity;
         } else {
           if (alpha < maxOpacity) {
-            finalAlpha = alpha;
+            if (alpha < minOpacity) {
+              finalAlpha = minOpacity;
+            } else {
+              finalAlpha = alpha;
+            }
           } else {
             finalAlpha = maxOpacity;
           }
