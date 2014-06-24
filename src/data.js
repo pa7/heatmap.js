@@ -26,7 +26,7 @@ var Store = (function StoreClosure() {
         var store = this._data;
         var max = this._max;
         var min = this._min;
-        var value = dataPoint[this._valueField];
+        var value = dataPoint[this._valueField] || 1;
         var radius = dataPoint.radius || this._cfgRadius || defaultRadius;
 
         if (!store[x]) {
@@ -35,7 +35,7 @@ var Store = (function StoreClosure() {
         }
 
         if (!store[x][y]) {
-          store[x][y] = value || 1;
+          store[x][y] = value;
           radi[x][y] = radius;
         } else {
           store[x][y] += value;
