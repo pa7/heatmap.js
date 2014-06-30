@@ -147,10 +147,12 @@ HeatmapOverlay.prototype.update = function() {
   var layerOffset = layerProjection.fromLatLngToDivPixel(topLeft);
   var radiusMultiplier = this.cfg.scaleRadius ? scale : 1;
   var localMax = 0;
+  var valueField = this.cfg.valueField;
 
 
   while (len--) {
     var entry = this.data[len];
+    var value = entry[valueField];
     var latlng = entry.latlng;
 
 
@@ -159,13 +161,14 @@ HeatmapOverlay.prototype.update = function() {
       continue;
     }
     // local max is the maximum within current bounds
-    if (entry.value > localMax) {
-      localMax = entry.value;
+    if (value > localMax) {
+      localMax = value;
     }
 
     var point = this.pixelTransform(layerProjection.fromLatLngToDivPixel(latlng));
-    var latlngPoint = { x: Math.round(point.x - layerOffset.x), y: Math.round(point.y - layerOffset.y), value: entry.value };
-    
+    var latlngPoint = { x: Math.round(point.x - layerOffset.x), y: Math.round(point.y - layerOffset.y) };
+    latlngPoint[valueField] = value;
+
     var radius;
 
     if (entry.radius) {
@@ -205,16 +208,23 @@ HeatmapOverlay.prototype.pixelTransform = function(point) {
 HeatmapOverlay.prototype.setData = function(data) { 
   this.max = data.max;
 
+  var latField = this.cfg.latField || 'lat';
+  var lngField = this.cfg.lngField || 'lng';
+  var valueField = this.cfg.valueField || 'value';
+
   // transform data to latlngs
   var data = data.data;
   var len = data.length;
   var d = [];
+
   while (len--) {
-    var latlng = new google.maps.LatLng(data[len].lat, data[len].lng);
-    d.push({ latlng: latlng, value: data[len].count });
+    var entry = data[len];
+    var latlng = new google.maps.LatLng(entry[latField], entry[lngField]);
+    var dataObj = { latlng: latlng };
+    dataObj[valueField] = entry[valueField];
+    d.push(dataObj);
   }
   this.data = d;
-
   this.update();
 };
 
