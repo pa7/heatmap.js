@@ -82,9 +82,9 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   function Canvas2dRenderer(config) {
     var container = config.container;
-    var shadowCanvas = document.createElement('canvas');
+    var shadowCanvas = this.shadowCanvas = document.createElement('canvas');
     var canvas = this.canvas = config.canvas || document.createElement('canvas');
-    var renderBoundaries = this._renderBoundaries = [1000, 1000, 0, 0];
+    var renderBoundaries = this._renderBoundaries = [10000, 10000, 0, 0];
 
     var computed = getComputedStyle(config.container) || {};
 
@@ -118,6 +118,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       this._colorize();
     },
     renderAll: function(data) {
+
       // reset render boundaries
       this._clear();
       this._drawAlpha(_prepareData(data));
@@ -126,8 +127,15 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     updateGradient: function(config) {
       this._palette = _getColorPalette(config);
     },
+    setDimensions: function(width, height) {
+      this._width = width;
+      this._height = height;
+      this.canvas.width = this.shadowCanvas.width = width;
+      this.canvas.height = this.shadowCanvas.height = height;
+    },
     _clear: function() {
       this.shadowCtx.clearRect(0, 0, this._width, this._height);
+      this.ctx.clearRect(0, 0, this._width, this._height);
     },
     _drawAlpha: function(data) {
       var min = this._min = data.min;
