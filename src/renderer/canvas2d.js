@@ -94,7 +94,11 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     this.shadowCtx = shadowCanvas.getContext('2d');
     this.ctx = canvas.getContext('2d');
 
+    // @TODO:
+    // conditional wrapper
+
     canvas.style.cssText = shadowCanvas.style.cssText = 'position:absolute;left:0;top:0;';
+
     container.style.position = 'relative';
     container.appendChild(canvas);
 
