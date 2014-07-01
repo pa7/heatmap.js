@@ -12,16 +12,16 @@
     </style>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script src="/build/heatmap.js"></script>
-    <script src="/plugins/heatmap-gmaps.js"></script>
+    <script src="/plugins/gmaps-heatmap.js"></script>
   </head>
   <body>
-    <h1>gmaps heatmap.js overlay</h1>
+    <h1>Gmaps Heatmap Overlay Example</h1>
     <div id="map-canvas"></div>
     
     <script>
         // map center
-        var myLatlng = new google.maps.LatLng(48.3333, 16.35);
-        // map options
+        var myLatlng = new google.maps.LatLng(25.6586, -80.3568);
+        // map options,
         var myOptions = {
           zoom: 3,
           center: myLatlng
@@ -32,7 +32,7 @@
         heatmap = new HeatmapOverlay(map, 
           {
             // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-            "radius": 1,
+            "radius": 2,
             "maxOpacity": 1, 
             // scales the radius based on map zoom
             "scaleRadius": true, 
