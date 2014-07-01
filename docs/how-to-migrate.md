@@ -22,7 +22,6 @@ With the new heatmap.js v2.0 the opacity config property is affecting the global
 var cfg = {
    "maxOpacity": .8
 }
-
 ```
 
 Also, opacity, maxOpacity, and minOpacity should now be a decimal number within [0,1].
@@ -41,7 +40,6 @@ heatmap.setData({
    max: 10,
    data: [datapoint]
 });
-
 ```
 
 Also, as you probably have noticed: the count property of a datapoint is now called value by default BUT for migration sake you can tell heatmap.js to use "count" as a valueField:
@@ -62,12 +60,11 @@ heatmap.setData({
    max: 10,
    data: [datapoint]
 });
-
 ```
 
 ---
 
-## Summary
+# Summary
 
 Old configuration example:
 
@@ -81,7 +78,6 @@ var cfg = {
 var heatmap = h337.create(cfg);
 
 heatmap.store.setDataSet(data);
-
 ```
 
 turns into new configuration:
@@ -96,7 +92,6 @@ var cfg = {
 var heatmap = h337.create(cfg);
 
 heatmap.setData(data);
-
 ```
 
-Have a look at the documentation (it's inside the repo) to see the full API.
+Have a look at the documentation (it's inside the repo at /docs/) to see the full API
