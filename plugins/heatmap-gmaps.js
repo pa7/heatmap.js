@@ -1,7 +1,7 @@
 /*
 * heatmap.js gmaps overlay
 *
-* Copyright (c) 2011, Patrick Wied (http://www.patrick-wied.at)
+* Copyright (c) 2014, Patrick Wied (http://www.patrick-wied.at)
 * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
 * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
 */
@@ -222,11 +222,35 @@ HeatmapOverlay.prototype.setData = function(data) {
     var latlng = new google.maps.LatLng(entry[latField], entry[lngField]);
     var dataObj = { latlng: latlng };
     dataObj[valueField] = entry[valueField];
+    if (entry.radius) {
+      dataObj.radius = entry.radius;
+    }
     d.push(dataObj);
   }
   this.data = d;
   this.update();
 };
-
-HeatmapOverlay.prototype.addData = function() { };
+// experimential. not ready yet.
+HeatmapOverlay.prototype.addData = function(pointOrArray) {
+  if (pointOrArray.length > 0) {
+      var len = pointOrArray.length;
+      while(len--) {
+        this.addData(pointOrArray[len]);
+      }
+    } else {
+      var latField = this.cfg.latField || 'lat';
+      var lngField = this.cfg.lngField || 'lng';
+      var valueField = this.cfg.valueField || 'value';
+      var entry = pointOrArray;
+      var latlng = new google.maps.LatLng(entry[latField], entry[lngField]);
+      var dataObj = { latlng: latlng };
+      
+      dataObj[valueField] = entry[valueField];
+      if (entry.radius) {
+        dataObj.radius = entry.radius;
+      }
+      this.data.push(dataObj);
+      this.update();
+    }
+};
 
