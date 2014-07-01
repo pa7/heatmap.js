@@ -1,5 +1,5 @@
 /*
-* heatmap.js gmaps overlay
+* Leaflet Heatmap Overlay
 *
 * Copyright (c) 2014, Patrick Wied (http://www.patrick-wied.at)
 * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
