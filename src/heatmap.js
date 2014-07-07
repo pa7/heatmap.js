@@ -556,7 +556,7 @@
                     xb = x - (1.5 * radius) >> 0, yb = y - (1.5 * radius) >> 0,
                     xc = x + (1.5 * radius) >> 0, yc = y + (1.5 * radius) >> 0;
 
-                ctx.shadowColor = ('rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');
+                ctx.shadowColor = ('rgba(0,0,0,'+Math.max(((count)?(count/me.store.max):0.1), 0.1)+')');
 
                 ctx.shadowOffsetX = 15000; 
                 ctx.shadowOffsetY = 15000; 
