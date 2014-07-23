@@ -29,8 +29,10 @@ var HeatmapOverlay = L.Class.extend({
     this._resetOrigin();
 
     map.getPanes().overlayPane.appendChild(this._el);
-
-    this._heatmap = h337.create(this.cfg);
+    
+    if(this._heatmap === undefined) {
+      this._heatmap = h337.create(this.cfg);
+    }
     // on zoom, reset origin
     map.on('viewreset', this._resetOrigin, this);
     // redraw whenever dragend
