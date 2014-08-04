@@ -1,8 +1,8 @@
 {
   "name": "heatmap.js",
-  "version": "0.1.0",
-  "description": "heatmaps",
-  "homepage": "https://github.com/pa7/heatmap.js",
+  "version": "2.0.0",
+  "description": "Dynamic JavaScript Heatmaps for the Web",
+  "homepage": "http://www.patrick-wied.at/static/heatmapjs/",
   "devDependencies": {
     "grunt": ">= 0.4.1",
     "coffee-script": ">= 1.6.3",
