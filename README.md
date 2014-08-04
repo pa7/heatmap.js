@@ -1,6 +1,6 @@
 # heatmap.js v2.0.0
 
-Dynamic Heatmaps for the Web
+Dynamic Heatmaps for the Web. Get the latest release [here](https://github.com/pa7/heatmap.js/releases)
 
 
 ## Examples
