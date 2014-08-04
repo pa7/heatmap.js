@@ -6,11 +6,11 @@ module.exports = function(grunt) {
   grunt.initConfig({
     // Metadata.
     pkg: packagejson,
-    banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - last build: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n',
+    banner: '/*\n * <%= pkg.title || pkg.name %> v<%= pkg.version %> | JavaScript Heatmap Library\n *\n * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.\n * Dual licensed under MIT and Beerware license \n *\n * :: <%= grunt.template.today("yyyy-mm-dd HH:MM") %>\n */\n',
     // Task configuration.
     concat: {
       options: {
-        banner: ';(function(global){ ',
+        banner: '<%= banner %>'+';(function(global){ ',
         footer: '\n\n})(this || window);'
       },
       dist: {
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: packagejson.buildFiles,
-        tasks: ['concat', 'uglify']
+        tasks: ['concat', 'jshint', 'uglify']
       }
     }
   });
@@ -69,5 +69,4 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'watch']);
-
 };
