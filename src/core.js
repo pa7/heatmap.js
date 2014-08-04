@@ -73,6 +73,8 @@ var Heatmap = (function HeatmapClosure() {
     _connect(this);
   };
 
+  // @TODO:
+  // add API documentation
   Heatmap.prototype = {
     addData: function() {
       this._store.addData.apply(this._store, arguments);
