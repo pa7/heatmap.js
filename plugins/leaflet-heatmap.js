@@ -12,6 +12,7 @@ var HeatmapOverlay = L.Class.extend({
     this.cfg = config;
     this._el = L.DomUtil.create('div', 'leaflet-zoom-hide');
     this._data = [];
+    this._max = 1;
     this.cfg.container = this._el;
   },
 
@@ -30,7 +31,10 @@ var HeatmapOverlay = L.Class.extend({
 
     map.getPanes().overlayPane.appendChild(this._el);
 
-    this._heatmap = h337.create(this.cfg);
+    if (!this._heatmap) {
+      this._heatmap = h337.create(this.cfg);
+    } 
+
     // on zoom, reset origin
     map.on('viewreset', this._resetOrigin, this);
     // redraw whenever dragend
@@ -114,7 +118,7 @@ var HeatmapOverlay = L.Class.extend({
     this._heatmap.setData(generatedData);
   },
   setData: function(data) {
-    this._max = data.max;
+    this._max = data.max || this._max;
     var latField = this.cfg.latField || 'lat';
     var lngField = this.cfg.lngField || 'lng';
     var valueField = this.cfg.valueField || 'value';
@@ -154,6 +158,8 @@ var HeatmapOverlay = L.Class.extend({
       var dataObj = { latlng: latlng };
       
       dataObj[valueField] = entry[valueField];
+      this._max = Math.max(this._max, dataObj[valueField]);
+
       if (entry.radius) {
         dataObj.radius = entry.radius;
       }

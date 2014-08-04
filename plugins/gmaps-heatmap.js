@@ -60,7 +60,10 @@ HeatmapOverlay.prototype.onAdd = function(){
     'bounds_changed',
     this.draw
   );
-  this.heatmap = h337.create(this.cfg);
+ 
+  if (!this.heatmap) {
+    this.heatmap = h337.create(this.cfg);
+  }
   this.draw();
 };
 
@@ -249,6 +252,7 @@ HeatmapOverlay.prototype.addData = function(pointOrArray) {
       if (entry.radius) {
         dataObj.radius = entry.radius;
       }
+      this.max = Math.max(this.max, dataObj[valueField]);
       this.data.push(dataObj);
       this.update();
     }
