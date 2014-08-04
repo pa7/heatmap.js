@@ -46,7 +46,7 @@ HeatmapOverlay.prototype.initialize = function(cfg) {
   container.style.cssText = 'width:' + width +'px;height:' + height+'px;';
 
   this.data = [];
-  this.max = 0;
+  this.max = 1;
 
   cfg.container = container;
 };
