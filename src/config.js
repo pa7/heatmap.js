@@ -1,6 +1,5 @@
 
-// this is the heatmap default config.
-// all values you provide in the heatmapinstance config will be merged into this object
+// Heatmap Config stores default values and will be merged with instance config
 var HeatmapConfig = {
   defaultRadius: 40,
   defaultRenderer: 'canvas2d',
