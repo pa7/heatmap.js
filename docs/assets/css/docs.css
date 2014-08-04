@@ -1,5 +1,11 @@
-body, h1, h2, h3 { margin:0; padding:0; }
-body { font-family:Helvetica Neue; font-size:18px; }
+html { 
+        color: #333;
+        font-family: sans-serif;
+        font-size: 16pt;
+        font-weight: 100;
+        line-height: 1.4em;
+      }
+      html, body, p, div { margin:0; padding:0; }
 .hot-doc {
   background:#f65656;
 }
@@ -10,9 +16,11 @@ body { font-family:Helvetica Neue; font-size:18px; }
   background:#4C94FF;
 }
 .wrapper {
+  width:auto;
   position:relative;
   max-width:900px;
   margin:auto;
+  padding-top:25px;
 }
 .description {
   padding:10px;
@@ -20,7 +28,6 @@ body { font-family:Helvetica Neue; font-size:18px; }
 }
 strong.highlight { 
   padding: 4px;
-  border-radius: 4px;
   font-weight: normal;  
   color:white;  
 }
@@ -34,12 +41,11 @@ strong.highlight {
   font-size:22px;
   letter-spacing:1px;
   font-weight:bold;
-  background: -webkit-linear-gradient(white, rgba(0, 0, 0, 0.11));
-  background: -moz-linear-gradient(rgba(255,255,255,.35), rgba(0, 0, 0, 0.11));
+  background:rgba(0, 0, 0, 0.11);
 }
       
-h2 { font-size:40px; padding-left:10px; }
-h1 { font-size:60px;  text-align:center; margin-top:30px;}
+h2 { padding-left:10px; }
+h1 {  text-align:center; margin-top:30px;}
 ul {
   list-style: none;
   margin:0;
@@ -73,11 +79,12 @@ li a { color:white; letter-spacing:1px;}
   color: black;
   display:inline-table;
   box-shadow: 0 0 1px black;
-  width:48%;
+  width:45%;
   margin-right:1%;
-  border-radius:5px;
+
   overflow:hidden;
 }
+#index-heatmapInstance { width:51% !important;}
 #index { width:65%; margin:auto; margin-top:30px; margin-bottom:50px; }
 section { margin-bottom:60px; }
 #message { 
@@ -91,7 +98,7 @@ section { margin-bottom:60px; }
   padding-right:20px; 
   margin-bottom:50px;
 }
-#message h3 { padding:20px; padding-left:0; font-weight:normal; cursor:pointer;}
+#message h3 {  padding-left:0; font-weight:normal; cursor:pointer;}
 #msg-content {
   height:230px; padding-top:0; padding-bottom:0; opacity:1;
 }
@@ -103,12 +110,11 @@ section { margin-bottom:60px; }
 #msg-content.hide{ height:0; padding-left:20px; padding-right:20px; opacity:0; }
 .msg { padding:10px;background:white; line-height:32px;}
 #btn-confirm {
-  padding: 15px;
+  padding: 10px;
 text-align: center;
 background: #54cb44;
 margin: auto;
 color: white;
-border-radius: 10px;
 cursor: pointer;
 -webkit-transition: 0.7s all ease;
 -moz-transition:.7 all ease;
@@ -123,3 +129,8 @@ margin-top: 15px;
   background: #f65656;
 }
 .description ul li { margin-bottom:15px; margin-top:10px; }
+
+
+@media(max-width:800px) {
+  #message { display:none; }
+}
