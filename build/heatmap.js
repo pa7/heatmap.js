@@ -2,9 +2,9 @@
  * heatmap.js v2.0.0 | JavaScript Heatmap Library
  *
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
- * Dual licensed under MIT for university & OSS, and commercial license for commercial projects 
+ * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-08-04 23:57
+ * :: 2014-08-05 01:00
  */
 ;(function(global){ 
 // this is the heatmap default config.
@@ -311,6 +311,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     var computed = getComputedStyle(config.container) || {};
 
+    canvas.className = 'heatmap-canvas';
+    
     this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
     this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
 
