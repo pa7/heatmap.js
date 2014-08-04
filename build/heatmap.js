@@ -1,3 +1,11 @@
+/*
+ * heatmap.js v2.0.0 | JavaScript Heatmap Library
+ *
+ * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
+ * Dual licensed under MIT for university & OSS, and commercial license for commercial projects 
+ *
+ * :: 2014-08-04 23:57
+ */
 ;(function(global){ 
 // this is the heatmap default config.
 // all values you provide in the heatmapinstance config will be merged into this object
@@ -320,15 +328,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     this._palette = _getColorPalette(config);
     this._templates = {};
 
-    this._blur = (config.blur == 0)?0:(config.blur || config.defaultBlur);
-
-    if (config.backgroundColor) {
-      canvas.style.backgroundColor = config.backgroundColor;
-    }
-
-    this._opacity = (config.opacity || 0) * 255;
-    this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
-    this._minOpacity = (config.minOpacity || config.defaultMinOpacity) * 255;
+    this._setStyles(config);
   };
 
   Canvas2dRenderer.prototype = {
@@ -337,14 +337,19 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       this._colorize();
     },
     renderAll: function(data) {
-
       // reset render boundaries
       this._clear();
       this._drawAlpha(_prepareData(data));
       this._colorize();
     },
-    updateGradient: function(config) {
+    _updateGradient: function(config) {
       this._palette = _getColorPalette(config);
+    },
+    updateConfig: function(config) {
+      if (config['gradient']) {
+        this._updateGradient(config);
+      }
+      this._setStyles(config);
     },
     setDimensions: function(width, height) {
       this._width = width;
@@ -355,6 +360,17 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     _clear: function() {
       this.shadowCtx.clearRect(0, 0, this._width, this._height);
       this.ctx.clearRect(0, 0, this._width, this._height);
+    },
+    _setStyles: function(config) {
+      this._blur = (config.blur == 0)?0:(config.blur || config.defaultBlur);
+
+      if (config.backgroundColor) {
+        this.canvas.style.backgroundColor = config.backgroundColor;
+      }
+
+      this._opacity = (config.opacity || 0) * 255;
+      this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
+      this._minOpacity = (config.minOpacity || config.defaultMinOpacity) * 255;
     },
     _drawAlpha: function(data) {
       var min = this._min = data.min;
@@ -593,6 +609,8 @@ var Heatmap = (function HeatmapClosure() {
     _connect(this);
   };
 
+  // @TODO:
+  // add API documentation
   Heatmap.prototype = {
     addData: function() {
       this._store.addData.apply(this._store, arguments);
@@ -616,9 +634,8 @@ var Heatmap = (function HeatmapClosure() {
     },
     configure: function(config) {
       this._config = Util.merge(this._config, config);
-      if (config['gradientConfig']) {
-        this._renderer.updateGradient && this._renderer.updateGradient(this._config);
-      }
+      this._renderer.updateConfig(this._config);
+      this._coordinator.emit('renderall', this._store._getInternalData());
       return this;
     },
     repaint: function() {
