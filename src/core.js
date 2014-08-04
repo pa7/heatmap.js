@@ -96,9 +96,8 @@ var Heatmap = (function HeatmapClosure() {
     },
     configure: function(config) {
       this._config = Util.merge(this._config, config);
-      if (config['gradientConfig']) {
-        this._renderer.updateGradient && this._renderer.updateGradient(this._config);
-      }
+      this._renderer.updateConfig(this._config);
+      this._coordinator.emit('renderall', this._store._getInternalData());
       return this;
     },
     repaint: function() {

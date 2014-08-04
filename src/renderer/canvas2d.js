@@ -105,15 +105,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     this._palette = _getColorPalette(config);
     this._templates = {};
 
-    this._blur = (config.blur == 0)?0:(config.blur || config.defaultBlur);
-
-    if (config.backgroundColor) {
-      canvas.style.backgroundColor = config.backgroundColor;
-    }
-
-    this._opacity = (config.opacity || 0) * 255;
-    this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
-    this._minOpacity = (config.minOpacity || config.defaultMinOpacity) * 255;
+    this._setStyles(config);
   };
 
   Canvas2dRenderer.prototype = {
@@ -122,14 +114,19 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       this._colorize();
     },
     renderAll: function(data) {
-
       // reset render boundaries
       this._clear();
       this._drawAlpha(_prepareData(data));
       this._colorize();
     },
-    updateGradient: function(config) {
+    _updateGradient: function(config) {
       this._palette = _getColorPalette(config);
+    },
+    updateConfig: function(config) {
+      if (config['gradient']) {
+        this._updateGradient(config);
+      }
+      this._setStyles(config);
     },
     setDimensions: function(width, height) {
       this._width = width;
@@ -140,6 +137,17 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     _clear: function() {
       this.shadowCtx.clearRect(0, 0, this._width, this._height);
       this.ctx.clearRect(0, 0, this._width, this._height);
+    },
+    _setStyles: function(config) {
+      this._blur = (config.blur == 0)?0:(config.blur || config.defaultBlur);
+
+      if (config.backgroundColor) {
+        this.canvas.style.backgroundColor = config.backgroundColor;
+      }
+
+      this._opacity = (config.opacity || 0) * 255;
+      this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
+      this._minOpacity = (config.minOpacity || config.defaultMinOpacity) * 255;
     },
     _drawAlpha: function(data) {
       var min = this._min = data.min;
