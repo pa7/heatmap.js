@@ -112,8 +112,7 @@ var Store = (function StoreClosure() {
       var dataPoints = data.data;
       var pointsLen = dataPoints.length;
 
-      this._max = data.max;
-      this._min = data.min || 0;
+
       // reset data arrays
       this._data = [];
       this._radi = [];
@@ -121,6 +120,8 @@ var Store = (function StoreClosure() {
       for(var i = 0; i < pointsLen; i++) {
         this._organiseData(dataPoints[i], false);
       }
+      this._max = data.max;
+      this._min = data.min || 0;
       
       this._onExtremaChange();
       this._coordinator.emit('renderall', this._getInternalData());

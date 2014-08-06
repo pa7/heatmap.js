@@ -89,7 +89,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     var computed = getComputedStyle(config.container) || {};
 
     canvas.className = 'heatmap-canvas';
-    
+
     this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
     this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
 
@@ -166,7 +166,9 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var x = point.x;
         var y = point.y;
         var radius = point.radius;
-        var value = point.value;
+        // if value is bigger than max
+        // use max as value
+        var value = Math.min(point.value, max);
         var rectX = x - radius;
         var rectY = y - radius;
         var shadowCtx = this.shadowCtx;
@@ -182,6 +184,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         }
 
         shadowCtx.globalAlpha = value/(Math.abs(max-min));
+
         shadowCtx.drawImage(tpl, rectX, rectY);
 
         // update renderBoundaries
