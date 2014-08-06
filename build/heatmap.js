@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-08-05 01:42
+ * :: 2014-08-06 04:39
  */
 ;(function(global){ 
 // Heatmap Config stores default values and will be merged with instance config
@@ -134,8 +134,7 @@ var Store = (function StoreClosure() {
       var dataPoints = data.data;
       var pointsLen = dataPoints.length;
 
-      this._max = data.max;
-      this._min = data.min || 0;
+
       // reset data arrays
       this._data = [];
       this._radi = [];
@@ -143,6 +142,8 @@ var Store = (function StoreClosure() {
       for(var i = 0; i < pointsLen; i++) {
         this._organiseData(dataPoints[i], false);
       }
+      this._max = data.max;
+      this._min = data.min || 0;
       
       this._onExtremaChange();
       this._coordinator.emit('renderall', this._getInternalData());
@@ -311,7 +312,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     var computed = getComputedStyle(config.container) || {};
 
     canvas.className = 'heatmap-canvas';
-    
+
     this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
     this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
 
@@ -388,7 +389,9 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var x = point.x;
         var y = point.y;
         var radius = point.radius;
-        var value = point.value;
+        // if value is bigger than max
+        // use max as value
+        var value = Math.min(point.value, max);
         var rectX = x - radius;
         var rectY = y - radius;
         var shadowCtx = this.shadowCtx;
@@ -404,6 +407,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         }
 
         shadowCtx.globalAlpha = value/(Math.abs(max-min));
+
         shadowCtx.drawImage(tpl, rectX, rectY);
 
         // update renderBoundaries
