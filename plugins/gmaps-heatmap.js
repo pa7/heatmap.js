@@ -47,6 +47,7 @@ HeatmapOverlay.prototype.initialize = function(cfg) {
 
   this.data = [];
   this.max = 1;
+  this.min = 0;
 
   cfg.container = container;
 };
@@ -142,7 +143,7 @@ HeatmapOverlay.prototype.update = function() {
     return;
   }
 
-  var generatedData = { max: this.max };
+  var generatedData = { max: this.max, min: this.min };
   var latLngPoints = [];
   // iterate through data 
   var len = this.data.length;
@@ -150,6 +151,7 @@ HeatmapOverlay.prototype.update = function() {
   var layerOffset = layerProjection.fromLatLngToDivPixel(topLeft);
   var radiusMultiplier = this.cfg.scaleRadius ? scale : 1;
   var localMax = 0;
+  var localMin = 0;
   var valueField = this.cfg.valueField;
 
 
@@ -164,9 +166,8 @@ HeatmapOverlay.prototype.update = function() {
       continue;
     }
     // local max is the maximum within current bounds
-    if (value > localMax) {
-      localMax = value;
-    }
+    localMax = Math.max(value, localMax);
+    localMin = Math.min(value, localMin);
 
     var point = this.pixelTransform(layerProjection.fromLatLngToDivPixel(latlng));
     var latlngPoint = { x: Math.round(point.x - layerOffset.x), y: Math.round(point.y - layerOffset.y) };
@@ -184,6 +185,7 @@ HeatmapOverlay.prototype.update = function() {
   }
   if (this.cfg.useLocalExtrema) {
     generatedData.max = localMax;
+    generatedData.min = localMin;
   }
 
   generatedData.data = latLngPoints;
@@ -210,6 +212,7 @@ HeatmapOverlay.prototype.pixelTransform = function(point) {
 
 HeatmapOverlay.prototype.setData = function(data) { 
   this.max = data.max;
+  this.min = data.min;
 
   var latField = this.cfg.latField || 'lat';
   var lngField = this.cfg.lngField || 'lng';
@@ -253,6 +256,7 @@ HeatmapOverlay.prototype.addData = function(pointOrArray) {
         dataObj.radius = entry.radius;
       }
       this.max = Math.max(this.max, dataObj[valueField]);
+      this.min = Math.min(this.min, dataObj[valueField]);
       this.data.push(dataObj);
       this.update();
     }
