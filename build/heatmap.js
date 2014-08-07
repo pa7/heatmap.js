@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-08-06 04:39
+ * :: 2014-08-07 18:25
  */
 ;(function(global){ 
 // Heatmap Config stores default values and will be merged with instance config
