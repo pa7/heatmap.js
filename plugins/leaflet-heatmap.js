@@ -13,6 +13,7 @@ var HeatmapOverlay = L.Class.extend({
     this._el = L.DomUtil.create('div', 'leaflet-zoom-hide');
     this._data = [];
     this._max = 1;
+    this._min = 0;
     this.cfg.container = this._el;
   },
 
@@ -73,10 +74,11 @@ var HeatmapOverlay = L.Class.extend({
       return;
     }
 
-    var generatedData = { max: this._max };
+    var generatedData = { max: this._max, min: this._min };
     var latLngPoints = [];
     var radiusMultiplier = this.cfg.scaleRadius ? scale : 1;
     var localMax = 0;
+    var localMin = 0;
     var valueField = this.cfg.valueField;
     var len = this._data.length;
   
@@ -91,9 +93,8 @@ var HeatmapOverlay = L.Class.extend({
         continue;
       }
       // local max is the maximum within current bounds
-      if (value > localMax) {
-        localMax = value;
-      }
+      localMax = Math.max(value, localMax);
+      localMin = Math.min(value, localMin);
 
       var point = this._map.latLngToContainerPoint(latlng);
       var latlngPoint = { x: Math.round(point.x), y: Math.round(point.y) };
@@ -111,6 +112,7 @@ var HeatmapOverlay = L.Class.extend({
     }
     if (this.cfg.useLocalExtrema) {
       generatedData.max = localMax;
+      generatedData.min = localMin;
     }
 
     generatedData.data = latLngPoints;
@@ -119,6 +121,7 @@ var HeatmapOverlay = L.Class.extend({
   },
   setData: function(data) {
     this._max = data.max || this._max;
+    this._min = data.min || this._min;
     var latField = this.cfg.latField || 'lat';
     var lngField = this.cfg.lngField || 'lng';
     var valueField = this.cfg.valueField || 'value';
@@ -159,6 +162,7 @@ var HeatmapOverlay = L.Class.extend({
       
       dataObj[valueField] = entry[valueField];
       this._max = Math.max(this._max, dataObj[valueField]);
+      this._min = Math.min(this._min, dataObj[valueField]);
 
       if (entry.radius) {
         dataObj.radius = entry.radius;
