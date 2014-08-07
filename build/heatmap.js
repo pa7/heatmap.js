@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-08-07 18:25
+ * :: 2014-08-08 00:10
  */
 ;(function(global){ 
 // Heatmap Config stores default values and will be merged with instance config
@@ -373,6 +373,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       this._opacity = (config.opacity || 0) * 255;
       this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
       this._minOpacity = (config.minOpacity || config.defaultMinOpacity) * 255;
+      this._useGradientOpacity = !!config.useGradientOpacity;
     },
     _drawAlpha: function(data) {
       var min = this._min = data.min;
@@ -436,6 +437,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var opacity = this._opacity;
       var maxOpacity = this._maxOpacity;
       var minOpacity = this._minOpacity;
+      var useGradientOpacity = this._useGradientOpacity;
 
       if (x < 0) {
         x = 0;
@@ -483,7 +485,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         imgData[i-3] = palette[offset];
         imgData[i-2] = palette[offset + 1];
         imgData[i-1] = palette[offset + 2];
-        imgData[i] = finalAlpha;
+        imgData[i] = useGradientOpacity ? palette[offset + 3] : finalAlpha;
 
       }
 
