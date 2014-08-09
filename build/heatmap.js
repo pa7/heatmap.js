@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-08-08 00:10
+ * :: 2014-08-09 03:12
  */
 ;(function(global){ 
 // Heatmap Config stores default values and will be merged with instance config
@@ -606,8 +606,8 @@ var Heatmap = (function HeatmapClosure() {
       } else {
         var plugin = HeatmapConfig.plugins[pluginToLoad];
         // set plugin renderer and store
-        this._renderer = plugin.renderer;
-        this._store = plugin.store;
+        this._renderer = new plugin.renderer(config);
+        this._store = new plugin.store(config);
       }
     } else {
       this._renderer = new Renderer(config);
