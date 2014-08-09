@@ -63,8 +63,8 @@ var Heatmap = (function HeatmapClosure() {
       } else {
         var plugin = HeatmapConfig.plugins[pluginToLoad];
         // set plugin renderer and store
-        this._renderer = plugin.renderer;
-        this._store = plugin.store;
+        this._renderer = new plugin.renderer(config);
+        this._store = new plugin.store(config);
       }
     } else {
       this._renderer = new Renderer(config);
