@@ -6,7 +6,12 @@
 * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
 */
 
-var HeatmapOverlay = L.Class.extend({
+// Leaflet < 0.8 compatibility
+if (typeof L.Layer === 'undefined') {
+    L.Layer = L.Class;
+}
+
+var HeatmapOverlay = L.Layer.extend({
 
   initialize: function (config) {
     this.cfg = config;
