@@ -8,7 +8,7 @@
 
 // Leaflet < 0.8 compatibility
 if (typeof L.Layer === 'undefined') {
-    L.Layer = L.Class;
+  L.Layer = L.Class;
 }
 
 var HeatmapOverlay = L.Layer.extend({
