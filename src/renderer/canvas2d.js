@@ -45,6 +45,35 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     return tplCanvas;
   };
 
+
+  var _getTransformX = function (x, origin, width) {
+    switch (origin) {
+      case 'center':
+        return parseInt(width / 2 + x, 10);
+        break;
+      case 'right':
+        return width + x;
+        break;
+      default:
+        return x;
+        break;
+    }
+  };
+
+  var _getTransformY = function (y, origin, height) {
+    switch (origin) {
+      case 'middle':
+        return parseInt(height / 2 + y, 10);
+        break;
+      case 'right':
+        return y + height;
+        break;
+      default:
+        return y;
+        break;
+    }
+  };
+
   var _prepareData = function(data) {
     var renderData = [];
     var min = data.min;
@@ -63,9 +92,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var yValue = yValues[yValuesLen];
         var value = data[xValue][yValue];
         var radius = radi[xValue][yValue];
+        //xValue is a string, we need to transform it to a number
         renderData.push({
-          x: xValue,
-          y: yValue,
+          x: parseInt(xValue, 10),
+          y: parseInt(yValue, 10),
           value: value,
           radius: radius
         });
@@ -82,6 +112,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   function Canvas2dRenderer(config) {
     var container = config.container;
+
+    this._xOrigin = config.xOrigin || config.defaultXOrigin;
+    this._yOrigin = config.yOrigin || config.defaultYOrigin;
+
     var shadowCanvas = this.shadowCanvas = document.createElement('canvas');
     var canvas = this.canvas = config.canvas || document.createElement('canvas');
     var renderBoundaries = this._renderBoundaries = [10000, 10000, 0, 0];
@@ -155,6 +189,12 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     _drawAlpha: function(data) {
       var min = this._min = data.min;
       var max = this._max = data.max;
+
+      var xOrigin = this._xOrigin;
+      var yOrigin = this._yOrigin;
+      var width = this._width;
+      var height = this._height;
+
       var data = data.data || [];
       var dataLen = data.length;
       // on a point basis?
@@ -164,8 +204,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
         var point = data[dataLen];
 
-        var x = point.x;
-        var y = point.y;
+        var x = _getTransformX(point.x, xOrigin, width);
+        var y = _getTransformY(point.y, yOrigin, width);
         var radius = point.radius;
         // if value is bigger than max
         // use max as value

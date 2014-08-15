@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-08-09 03:12
+ * :: 2014-08-15 16:27
  */
 ;(function(global){ 
 // Heatmap Config stores default values and will be merged with instance config
@@ -17,6 +17,11 @@ var HeatmapConfig = {
   defaultBlur: .85,
   defaultXField: 'x',
   defaultYField: 'y',
+  // default origin of points is top-left, but sometime the origin of point may be top-center or others
+  // one of ['left', 'center', 'right']
+  defaultXOrigin: 'left', 
+  // one of ['top', 'middle', 'bottom']
+  defaultYOrigin: 'top',
   defaultValueField: 'value', 
   plugins: {}
 };
@@ -138,12 +143,13 @@ var Store = (function StoreClosure() {
       // reset data arrays
       this._data = [];
       this._radi = [];
+      // init the max and min
+      this._max = data.max || 1;
+      this._min = data.min || 0;
 
       for(var i = 0; i < pointsLen; i++) {
         this._organiseData(dataPoints[i], false);
       }
-      this._max = data.max;
-      this._min = data.min || 0;
       
       this._onExtremaChange();
       this._coordinator.emit('renderall', this._getInternalData());
@@ -268,6 +274,35 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     return tplCanvas;
   };
 
+
+  var _getTransformX = function (x, origin, width) {
+    switch (origin) {
+      case 'center':
+        return parseInt(width / 2 + x, 10);
+        break;
+      case 'right':
+        return width + x;
+        break;
+      default:
+        return x;
+        break;
+    }
+  };
+
+  var _getTransformY = function (y, origin, height) {
+    switch (origin) {
+      case 'middle':
+        return parseInt(height / 2 + y, 10);
+        break;
+      case 'right':
+        return y + height;
+        break;
+      default:
+        return y;
+        break;
+    }
+  };
+
   var _prepareData = function(data) {
     var renderData = [];
     var min = data.min;
@@ -286,9 +321,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var yValue = yValues[yValuesLen];
         var value = data[xValue][yValue];
         var radius = radi[xValue][yValue];
+        //xValue is a string, we need to transform it to a number
         renderData.push({
-          x: xValue,
-          y: yValue,
+          x: parseInt(xValue, 10),
+          y: parseInt(yValue, 10),
           value: value,
           radius: radius
         });
@@ -305,6 +341,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   function Canvas2dRenderer(config) {
     var container = config.container;
+
+    this._xOrigin = config.xOrigin || config.defaultXOrigin;
+    this._yOrigin = config.yOrigin || config.defaultYOrigin;
+
     var shadowCanvas = this.shadowCanvas = document.createElement('canvas');
     var canvas = this.canvas = config.canvas || document.createElement('canvas');
     var renderBoundaries = this._renderBoundaries = [10000, 10000, 0, 0];
@@ -378,6 +418,12 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     _drawAlpha: function(data) {
       var min = this._min = data.min;
       var max = this._max = data.max;
+
+      var xOrigin = this._xOrigin;
+      var yOrigin = this._yOrigin;
+      var width = this._width;
+      var height = this._height;
+
       var data = data.data || [];
       var dataLen = data.length;
       // on a point basis?
@@ -387,8 +433,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
         var point = data[dataLen];
 
-        var x = point.x;
-        var y = point.y;
+        var x = _getTransformX(point.x, xOrigin, width);
+        var y = _getTransformY(point.y, yOrigin, width);
         var radius = point.radius;
         // if value is bigger than max
         // use max as value
