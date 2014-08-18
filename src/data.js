@@ -116,12 +116,13 @@ var Store = (function StoreClosure() {
       // reset data arrays
       this._data = [];
       this._radi = [];
+      // init the max and min
+      this._max = data.max || 1;
+      this._min = data.min || 0;
 
       for(var i = 0; i < pointsLen; i++) {
         this._organiseData(dataPoints[i], false);
       }
-      this._max = data.max;
-      this._min = data.min || 0;
       
       this._onExtremaChange();
       this._coordinator.emit('renderall', this._getInternalData());

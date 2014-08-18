@@ -9,6 +9,11 @@ var HeatmapConfig = {
   defaultBlur: .85,
   defaultXField: 'x',
   defaultYField: 'y',
+  // default origin of points is top-left, but sometime the origin of point may be top-center or others
+  // one of ['left', 'center', 'right']
+  defaultXOrigin: 'left', 
+  // one of ['top', 'middle', 'bottom']
+  defaultYOrigin: 'top',
   defaultValueField: 'value', 
   plugins: {}
 };
