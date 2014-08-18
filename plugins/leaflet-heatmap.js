@@ -23,17 +23,7 @@ var HeatmapOverlay = L.Layer.extend({
   },
 
   onAdd: function (map) {
-    var size = map.getSize();
-
     this._map = map;
-
-    this._width = size.x;
-    this._height = size.y;
-
-    this._el.style.width = size.x + 'px';
-    this._el.style.height = size.y + 'px';
-
-    this._resetOrigin();
 
     map.getPanes().overlayPane.appendChild(this._el);
 
@@ -41,20 +31,17 @@ var HeatmapOverlay = L.Layer.extend({
       this._heatmap = h337.create(this.cfg);
     } 
 
-    // on zoom, reset origin
-    map.on('viewreset', this._resetOrigin, this);
-    // redraw whenever dragend
-    map.on('dragend', this._draw, this);
+    // reset origin and redraw after map move, zoom or resize
+    map.on('moveend', this._reset, this);
 
-    this._draw();
+    this._reset();
   },
 
   onRemove: function (map) {
     // remove layer's DOM elements and listeners
     map.getPanes().overlayPane.removeChild(this._el);
 
-    map.off('viewreset', this._resetOrigin, this);
-    map.off('dragend', this._draw, this);
+    map.off('moveend', this._reset, this);
   },
   _draw: function() {
     if (!this._map) { return; }
@@ -122,6 +109,7 @@ var HeatmapOverlay = L.Layer.extend({
 
     generatedData.data = latLngPoints;
 
+    this._heatmap._renderer.setDimensions(this._width, this._height);
     this._heatmap.setData(generatedData);
   },
   setData: function(data) {
@@ -176,8 +164,16 @@ var HeatmapOverlay = L.Layer.extend({
       this._draw();
     }
   },
-  _resetOrigin: function () {
+  _reset: function () {
     this._origin = this._map.layerPointToLatLng(new L.Point(0, 0));
+
+    var size = this._map.getSize();
+    this._width  = size.x;
+    this._height = size.y;
+
+    this._el.style.width = this._width + 'px';
+    this._el.style.height = this._height + 'px';
+
     this._draw();
   } 
 });
