@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-08-09 03:12
+ * :: 2014-09-04 17:52
  */
 ;(function(global){ 
 // Heatmap Config stores default values and will be merged with instance config
@@ -406,8 +406,9 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         } else {
           tpl = this._templates[radius];
         }
-
-        shadowCtx.globalAlpha = value/(Math.abs(max-min));
+        // value from minimum / value range
+        // => [0, 1]
+        shadowCtx.globalAlpha = (value-min)/(max-min);
 
         shadowCtx.drawImage(tpl, rectX, rectY);
 

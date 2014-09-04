@@ -183,8 +183,9 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         } else {
           tpl = this._templates[radius];
         }
-
-        shadowCtx.globalAlpha = value/(Math.abs(max-min));
+        // value from minimum / value range
+        // => [0, 1]
+        shadowCtx.globalAlpha = (value-min)/(max-min);
 
         shadowCtx.drawImage(tpl, rectX, rectY);
 
