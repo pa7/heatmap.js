@@ -139,4 +139,4 @@ var heatmapFactory = {
   }
 };
 
-global['h337'] = heatmapFactory;
+return heatmapFactory;

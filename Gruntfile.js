@@ -10,8 +10,8 @@ module.exports = function(grunt) {
     // Task configuration.
     concat: {
       options: {
-        banner: '<%= banner %>'+';(function(global){ ',
-        footer: '\n\n})(this || window);'
+        banner: '<%= banner %>'+';(function (name, context, factory) {\n\n  // Supports UMD. AMD, CommonJS/Node.js and browser context\n  if (typeof module !== "undefined" && module.exports) {\n    module.exports = factory();\n  } else if (typeof define === "function" && define.amd) {\n    define(factory);\n  } else {\n    context[name] = factory();\n  }\n\n})("h337", this, function () {\n',
+        footer: '\n\n});'
       },
       dist: {
         src: packagejson.buildFiles,

@@ -1,0 +1,15 @@
+{
+    "name": "heatmap.js-amd",
+    "version": "2.0.0",
+    "description": "Support amd for heatmap.js",
+    "main": "build/heatmap.min.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pa7/heatmap.js.git"
+    },
+    "licenses": [
+        {
+            "type": "MIT"
+        }
+    ]
+}
