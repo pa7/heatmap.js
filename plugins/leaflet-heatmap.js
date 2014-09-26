@@ -179,7 +179,11 @@ var HeatmapOverlay = L.Layer.extend({
   _resetOrigin: function () {
     this._origin = this._map.layerPointToLatLng(new L.Point(0, 0));
     this._draw();
-  } 
+  },
+  addTo: function (map) {
+    map.addLayer(this);
+    return this;
+  }
 });
 
 HeatmapOverlay.CSS_TRANSFORM = (function() {
