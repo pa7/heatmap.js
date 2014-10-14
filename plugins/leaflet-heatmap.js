@@ -125,15 +125,17 @@ var HeatmapOverlay = L.Layer.extend({
     this._heatmap.setData(generatedData);
   },
   setData: function(data) {
-    this._max = data.max || Math.max.apply(Math, data.data.map(function(datum) {
-            return datum.count;
-    }));
-    this._min = data.min || Math.min.apply(Math, data.data.map(function(datum) {
-            return datum.count;
-    }));
     var latField = this.cfg.latField || 'lat';
     var lngField = this.cfg.lngField || 'lng';
     var valueField = this.cfg.valueField || 'value';
+
+    this._max = data.max || Math.max.apply(Math, data.data.map(function(datum) {
+            return datum[valueField];
+    }));
+    this._min = data.min || Math.min.apply(Math, data.data.map(function(datum) {
+            return datum[valueField];
+    }));
+    
   
     // transform data to latlngs
     var data = data.data;
