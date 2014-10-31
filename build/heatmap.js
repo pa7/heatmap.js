@@ -4,9 +4,21 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-09-04 17:52
+ * :: 2014-09-11 16:22
  */
-;(function(global){ 
+;(function (name, context, factory) {
+
+  // Supports UMD. AMD, CommonJS/Node.js and browser context
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = factory();
+  } else if (typeof define === "function" && define.amd) {
+    define(factory);
+  } else {
+    context[name] = factory();
+  }
+
+})("h337", this, function () {
+
 // Heatmap Config stores default values and will be merged with instance config
 var HeatmapConfig = {
   defaultRadius: 40,
@@ -683,6 +695,7 @@ var heatmapFactory = {
   }
 };
 
-global['h337'] = heatmapFactory;
+return heatmapFactory;
 
-})(this || window);
+
+});
