@@ -1,0 +1,27 @@
+{
+  "name": "heatmap.js",
+  "version": "2.0.0",
+  "homepage": "https://github.com/pa7/heatmap.js",
+  "authors": [
+    "Patrick Wied <contact@patrick-wied.at>"
+  ],
+  "description": "Dynamic JavaScript Heatmaps for the Web",
+  "keywords": [
+    "heatmap"
+  ],
+  "main": [
+    "build/heatmap.js",
+    "plugins/boilerplate.js",
+    "plugins/gmaps-heatmap.js",
+    "plugins/leaflet-heatmap.js",
+    "plugins/segment-heatmap.js"
+  ]
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
