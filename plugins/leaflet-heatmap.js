@@ -33,7 +33,7 @@ var HeatmapOverlay = L.Layer.extend({
     this._el.style.width = size.x + 'px';
     this._el.style.height = size.y + 'px';
 
-    this._resetOrigin();
+    this._origin = this._map.layerPointToLatLng(new L.Point(0, 0));
 
     map.getPanes().overlayPane.appendChild(this._el);
 
