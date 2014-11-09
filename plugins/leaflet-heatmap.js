@@ -76,6 +76,9 @@ var HeatmapOverlay = L.Layer.extend({
     scale = Math.pow(2, zoom);
 
     if (this._data.length == 0) {
+      if (this._heatmap) {
+        this._heatmap.setData({data:[]});
+      }
       return;
     }
 
