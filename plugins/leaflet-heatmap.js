@@ -75,11 +75,15 @@ var HeatmapOverlay = L.Layer.extend({
     zoom = this._map.getZoom();
     scale = Math.pow(2, zoom);
 
+    var generatedData = { max: this._max, min: this._min, data: [] };
+    
     if (this._data.length == 0) {
-      return;
+		  if (this._heatmap) {
+			  this._heatmap.setData(generatedData);
+		  }
+		  return;
     }
-
-    var generatedData = { max: this._max, min: this._min };
+    
     var latLngPoints = [];
     var radiusMultiplier = this.cfg.scaleRadius ? scale : 1;
     var localMax = 0;
