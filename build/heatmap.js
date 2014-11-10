@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2014-10-31 21:16
+ * :: 2014-11-10 10:46
  */
 ;(function (name, context, factory) {
 
@@ -260,7 +260,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     var tplCtx = tplCanvas.getContext('2d');
     var x = radius;
     var y = radius;
-    tplCanvas.width = tplCanvas.height = radius*2;
+    var size = Math.ceil(radius*2);
+    tplCanvas.width = tplCanvas.height = (size === 0 ? 1 : size);
 
     if (blurFactor == 1) {
       tplCtx.beginPath();

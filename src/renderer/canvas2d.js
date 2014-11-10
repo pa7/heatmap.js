@@ -25,7 +25,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     var tplCtx = tplCanvas.getContext('2d');
     var x = radius;
     var y = radius;
-    tplCanvas.width = tplCanvas.height = radius*2;
+    var size = Math.ceil(radius*2);
+    tplCanvas.width = tplCanvas.height = (size === 0 ? 1 : size);
 
     if (blurFactor == 1) {
       tplCtx.beginPath();
