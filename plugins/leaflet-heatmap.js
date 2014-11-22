@@ -66,6 +66,8 @@ var HeatmapOverlay = L.Layer.extend({
       -Math.round(point.x) + 'px,' +
       -Math.round(point.y) + 'px)';
 
+    this._el.style.position = 'absolute';
+
     this._update();
   },
   _update: function() {
