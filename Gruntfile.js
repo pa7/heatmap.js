@@ -73,7 +73,7 @@ module.exports = function(grunt) {
       npmRelease: {
         command: [
           'cd dist',
-          'npm -v'
+          'npm publish'
         ].join('&&')
       }
     }
