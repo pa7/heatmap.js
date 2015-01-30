@@ -22,7 +22,7 @@ Then browse to
 
 ## Contributions
 
-Please check the [contribution guidelines](#) before submitting contributions.
+Please check the [contribution guidelines](CONTRIBUTE.md) before submitting contributions.
 
 ## Mailing list
 
