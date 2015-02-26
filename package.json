@@ -11,6 +11,7 @@
     "grunt-contrib-watch": "0.2.0rc7",
     "grunt-contrib-jshint": ">= 0.3.0"
   },
+  "main": "build/heatmap.js",
   "buildFiles": [
     "src/config.js", 
     "src/data.js", 
