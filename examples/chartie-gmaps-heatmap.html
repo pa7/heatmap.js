@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <title>Chartie Googlemaps Heatmap Layer</title>
+        <style>
+            html { height: 100% }
+            body {
+                padding-top: 10px;                
+            }            
+            h1 { position:absolute; }
+        </style>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <script src="build/heatmap.js"></script>
+        
+        <script src="plugins/gmaps-heatmap.js"></script> 
+        <!--This script must follow gmaps-heatmap.js-->
+        <script src="plugins/chartie-gmaps-heatmap.js"></script> 
+
+        <!-- jquery library is needed for Chartie call !-->
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+
+    </head>
+    <body>
+        <h1>Gmaps Heatmap Overlay Example using the Chartie service</h1>
+        <div id="map-canvas" style="height:700px;margin-top: 100px;"></div>     
+
+        <script>
+            // map center
+            var myLatlng = new google.maps.LatLng(25.6586, -80.3568);
+            // map options,
+            var myOptions = {
+                zoom: 3,
+                center: myLatlng
+            };
+            // standard map
+            map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+            // heatmap layer        
+            heatmap = new HeatmapOverlay(map,
+                    {
+                        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+                        "radius": 4,                                          
+                        "maxOpacity": 1,
+                        // scales the radius based on map zoom
+                        "scaleRadius": true,
+                        // if set to false the heatmap uses the global maximum for colorization
+                        // if activated: uses the data maximum within the current map boundaries 
+                        //   (there will always be a red spot with useLocalExtremas true)
+                        "useLocalExtrema": false,
+                        // which field name in your data represents the latitude - default "lat"
+                        latField: 'lat',
+                        // which field name in your data represents the longitude - default "lng"
+                        lngField: 'lng',
+                        // which field name in your data represents the data value - default "value"
+                        valueField: 'count',
+                    }
+            );
+            
+            // specify a valid Chartie key in the field "key" to properly use Chartie service
+            // in order to get a free API key please visit www.chartie.io
+            var chartieKey = ""; 
+            if(chartieKey ===""){
+                alert("Please specify an API key. If you do not have one please visit www.chartie.io");
+            }else{
+                heatmap.setChartieKey(chartieKey);
+                var testData = {                
+                
+                // Now input a numerical array in the data field named "signal".                
+                data: [                    
+                    {lat: 47.5036, lng: -94.685, signal: [1.43, 1.41, 1.36, 1.36, 1.34, 1.25, 1.15, 1.3, 1.47, 1.68, 1.81, 1.85, 1.44, 1.18, 1.26, 1.39, 1.55, 1.59, 1.68, 1.91, 2.09, 2.42, 2.28, 2.21, 1.95, 1.74, 2.17, 2.33, 2.13, 1.97, 2.05, 2.32, 2.25, 2.04, 2.3, 2.12, 2.38, 2.74, 2.13, 2.04, 1.93, 1.96, 1.9, 1.63, 1.48, 1.52, 1.58, 1.69, 1.49, 1.52, 1.52, 1.63, 1.66, 1.63, 1.43, 1.53, 1.63, 1.76, 1.99, 2.67, 2.93, 3.83, 2.92, 2.25, 2.24, 2.49, 2.56, 2.04, 1.83, 2.27, 3.08, 3.81, 3.28, 2.13, 1.89, 2.01, 2.22, 2.2, 2.17, 2.44, 2.85, 3.06, 2.93, 2.33, 2.11, 2.21, 2.22, 2.45, 2.15, 2.15, 2.19, 1.86, 1.96, 1.93, 2.1, 1.72, 1.85, 1.78, 1.77, 2.11, 2.26, 2.31, 2.3, 2.79, 2.6, 2.69, 2.33, 2.35, 2.4, 2.66, 2.78, 3.04, 3.59, 4.29, 3.99, 4.43, 5.06, 5.02, 5.52, 8.91, 8.17, 5.55, 5.18, 5.18, 4.2, 3.73, 3.11, 2.95, 2.19, 2.47, 2.36, 2.42, 2.26, 2.31, 3.03, 3.43, 3.5, 3.23, 2.99, 3.09, 3.55, 4.13, 4.06, 4.75, 5.45, 7.7, 5.94, 5.28, 5.81, 5.85, 5.03, 4.99, 4.62, 4.63, 4.49, 6.14, 6.15, 5.38, 5.4, 5.72, 6.33, 6.27, 5.93, 5.41, 5.17, 6.38, 6.19, 6.58, 6.15, 6.14, 6.65, 7.18, 6.47, 7.18, 7.65, 9.52, 12.42, 13.63, 10.3, 13.05, 8.69, 7.53, 6.88, 7.17, 6.25, 6.2, 6.17, 7.13, 4.9, 5.84, 7.41, 6.73, 6.53, 8, 7.11, 7.6, 7.64, 7.35, 6.22, 6.22, 6.07, 6.74, 7.11, 7.13, 7.98, 8.54, 9.41, 10.18, 11.27, 12.68, 11.09, 8.25, 7.62, 6.74, 6.7, 5.84, 5.23, 4.49, 3.96, 3.49, 3.83, 3.8, 3.39, 3.14, 2.99, 4, 3.68, 5.35, 5.84, 5.32, 4.29, 4.04, 4.15, 4.8, 4.63, 4.31, 3.89, 3.43, 3.71, 4.25, 4.49, 4.09, 3.97, 4.24, 4.31, 4.54, 4.42, 4.05, 3.89, 3.56, 3.26, 3.16, 2.67, 2.53, 2.16, 1.95, 2.43, 2.45, 2.96, 2.84, 2.85, 3.32, 3.54, 3.34, 3.33, 3.33, 3.8, 4.17, 4.04, 3.83, 3.62, 3.43, 3.62, 3.67, 3.62, 4.19, 4.9, 5.97, 4.88, 4.68, 4.59, 4.57, 4.04, 3.88, 3.92, 3.87]},
+                    {lat: 42.1818, lng: -71.1962, signal: [100, 99, 98, 97, 96, 95, 94, 92, 93, 91, 90, 89, 88, 87, 86, 85, 84, 82, 83, 81, 80]},
+                    {lat: 40.0326, lng: -75.719, signal: [2900, 3800, 3800, 4200, 4331, 4714, 5321, 5719, 5884, 6015, 6700, 7400, 8184, 8700, 9620, 9800, 10000, 10100, 10100, 10105, 10200, 10300, 10420, 10200, 9950, 10200, 10630, 11600, 12100, 12300, 9469, 9000, 9049, 9100, 8938, 8313, 7910, 8150, 8200, 8087, 7647, 7515, 5917, 7574, 8122, 7902, 7317, 7438]},
+                    ]
+                };
+                heatmap.setChartieData(testData);
+                heatmap.addChartieData({lat: 43.561, lng: -116.214, signal: [308, 384, 706, 755, 655, 457, 604, 518, 661, 1321, 1264, 876, 878, 770, 780, 830, 840, 850, 770, 1215, 342, 450, 400, 350, 300, 250, 230, 210, 130, 50, 100, 600, 50, 50, 102, 202, 308, 366, 554, 182, 2564, 3620, 522, 459, 1925, 974, 2542]});
+            }
+            
+                        
+
+        </script>
+    </body>
+</html>
