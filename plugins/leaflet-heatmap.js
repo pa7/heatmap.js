@@ -59,7 +59,8 @@ var HeatmapOverlay = L.Layer.extend({
   _draw: function() {
     if (!this._map) { return; }
     
-    var point = this._map.latLngToContainerPoint(this._origin);        
+    var mapPane = this._map.getPanes().mapPane;
+    var point = mapPane._leaflet_pos;
 
     // reposition the layer
     this._el.style[HeatmapOverlay.CSS_TRANSFORM] = 'translate(' +
