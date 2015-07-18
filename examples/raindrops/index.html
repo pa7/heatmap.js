@@ -5,9 +5,12 @@
     <title>Raindrops example (custom gradient) | heatmap.js</title>
     <style>
       body, html { margin:0; padding:0; height:100%;}
+      body { font-family:sans-serif; }
       #heatmapContainerWrapper { width:100%; height:100%; position:absolute; }
       #heatmapContainer { width:100%; height:100%;}
-      h1 { position:absolute; background:white; padding:10px;}
+      h1 { position:absolute; background:black; color:white; padding:10px; font-weight:200;}
+      #all-examples-info { position:absolute; background:white; font-size:16px; padding:20px; top:100px; width:350px; line-height:150%; border:1px solid rgba(0,0,0,.2);}
+
     </style>
   </head>
   <body>
@@ -16,6 +19,10 @@
 
       </div>
     </div>
+    <h1>Adding datapoints in real time with heatmap.js</h1>
+        <div id="all-examples-info">
+          <strong style="font-weight:bold;line-height:200%;font-size:18px;">Looking for more examples?</strong> <br />Check out the full <a href="http://www.patrick-wied.at/static/heatmapjs/examples.html?utm_source=gh_local" target="_blank">list of all heatmap.js examples</a> with more pointers &amp; inline documentation.
+        </div>
     <script src="/build/heatmap.js"></script>
     <script>
       window.onload = function() {
