@@ -1,6 +1,5 @@
 {
     "name": "heatmap.js-amd",
-    "version": "2.0.0",
     "description": "Dynamic JavaScript Heatmaps for the Web",
     "main": "build/heatmap.min.js",
     "homepage": "http://www.patrick-wied.at/static/heatmapjs/",
