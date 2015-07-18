@@ -137,6 +137,7 @@
   HeatmapOverlay.prototype.update = function() {
     var projection = this.map.getProjection(),
       zoom, scale, bounds, topLeft;
+    var generatedData = { max: this.max, min: this.min, data: [] };
 
     if (!projection){ return; }
 
@@ -153,10 +154,13 @@
     this.resize();
 
     if (this.data.length == 0) {
+      if (this.heatmap) {
+        this.heatmap.setData(generatedData);
+      }
       return;
     }
 
-    var generatedData = { max: this.max, min: this.min };
+
     var latLngPoints = [];
     // iterate through data 
     var len = this.data.length;
