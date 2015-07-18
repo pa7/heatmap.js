@@ -45,6 +45,7 @@
 
       this._el.style.width = size.x + 'px';
       this._el.style.height = size.y + 'px';
+      this._el.style.position = 'absolute';
 
       this._resetOrigin();
 
@@ -72,7 +73,8 @@
     _draw: function() {
       if (!this._map) { return; }
       
-      var point = this._map.latLngToContainerPoint(this._origin);        
+      var mapPane = this._map.getPanes().mapPane;
+      var point = mapPane._leaflet_pos;      
 
       // reposition the layer
       this._el.style[HeatmapOverlay.CSS_TRANSFORM] = 'translate(' +
