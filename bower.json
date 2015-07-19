@@ -11,7 +11,7 @@
         "url": "https://github.com/pa7/heatmap.js.git"
     },
     "keywords": [
-        "heatmap", "heat map", "heatmaps"
+        "heatmap", "heat map", "heatmaps", "canvas", "html5", "web heatmaps"
     ],
     "main": [
       "build/heatmap.js",
