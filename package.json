@@ -1,6 +1,6 @@
 {
   "name": "heatmap.js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Dynamic JavaScript Heatmaps for the Web",
   "homepage": "http://www.patrick-wied.at/static/heatmapjs/",
   "devDependencies": {
@@ -13,6 +13,15 @@
     "grunt-contrib-copy": ">= 0.7.0",
     "grunt-shell": "^0.7.0"
   },
+  "keywords": [
+    "heatmap",
+    "heatmaps",
+    "heat map",
+    "heat maps",
+    "googlemaps heatmap",
+    "leaflet heatmap",
+    "leaflet"
+  ],
   "buildFiles": [
     "src/config.js", 
     "src/data.js", 
