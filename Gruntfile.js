@@ -63,6 +63,9 @@ module.exports = function(grunt) {
       npmPreRelease: {
         files: [
           { flatten: true, expand: true, src: 'build/*', dest: 'dist/' },
+          { expand:true, src: 'build/*/**', dest: 'dist/' },
+          { expand:true, src: 'examples/*/**', dest: 'dist/' },
+          { expand: true, src: 'docs/*/**', dest: 'dist/' },
           { src: 'package.json', dest: 'dist/' },
           { src: 'LICENSE', dest: 'dist/' },
           { src: 'README.md', dest: 'dist/' }
