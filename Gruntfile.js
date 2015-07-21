@@ -58,27 +58,6 @@ module.exports = function(grunt) {
         files: packagejson.buildFiles,
         tasks: ['concat', 'jshint', 'uglify']
       }
-    },
-    copy: {
-      npmPreRelease: {
-        files: [
-          { flatten: true, expand: true, src: 'build/*', dest: 'dist/' },
-          { expand:true, src: 'build/*/**', dest: 'dist/' },
-          { expand:true, src: 'examples/*/**', dest: 'dist/' },
-          { expand: true, src: 'docs/*/**', dest: 'dist/' },
-          { src: 'package.json', dest: 'dist/' },
-          { src: 'LICENSE', dest: 'dist/' },
-          { src: 'README.md', dest: 'dist/' }
-        ]
-      }
-    },
-    shell: {
-      npmRelease: {
-        command: [
-          'cd dist',
-          'npm publish'
-        ].join('&&')
-      }
     }
   });
 
@@ -87,11 +66,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-shell');
 
 
   // Default task.
   grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'watch']);
-  grunt.registerTask('publishToNpm', ['concat', 'jshint', 'uglify', 'copy:npmPreRelease', 'shell:npmRelease']);
 };
