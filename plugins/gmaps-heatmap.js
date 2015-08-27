@@ -186,7 +186,7 @@
       localMax = Math.max(value, localMax);
       localMin = Math.min(value, localMin);
 
-      var point = this.pixelTransform(layerProjection.fromLatLngToDivPixel(latlng));
+      var point = layerProjection.fromLatLngToDivPixel(latlng);
       var latlngPoint = { x: Math.round(point.x - layerOffset.x), y: Math.round(point.y - layerOffset.y) };
       latlngPoint[valueField] = value;
 
