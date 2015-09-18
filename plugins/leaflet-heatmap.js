@@ -108,8 +108,6 @@
       var valueField = this.cfg.valueField;
       var len = this._data.length;
       var clip = this.cfg.clip !== undefined ? this.cfg.clip : true;
-      console.log("CLIP: ", clip);
-      console.log("CFG.CLIP", this.cfg.clip);
     
       while (len--) {
         var entry = this._data[len];
