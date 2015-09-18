@@ -60,7 +60,7 @@
       // redraw whenever dragend
       map.on('dragend', this._draw, this);
       // redraw when drag momentum is 0
-      map.on('moveend', this._draw, this);
+      map.on('moveend', this._draw, this); 
 
       this._draw();
     },
@@ -107,7 +107,9 @@
       var localMin = 0;
       var valueField = this.cfg.valueField;
       var len = this._data.length;
-      var clip = this.cfg.clip;
+      var clip = this.cfg.clip !== undefined ? this.cfg.clip : true;
+      console.log("CLIP: ", clip);
+      console.log("CFG.CLIP", this.cfg.clip);
     
       while (len--) {
         var entry = this._data[len];
@@ -116,7 +118,7 @@
 
 
         // we don't wanna render points that are not even on the map ;-)
-        if (!clip && !bounds.contains(latlng)) {
+        if (clip && !bounds.contains(latlng)) {
           continue;
         }
         // local max is the maximum within current bounds
@@ -226,4 +228,3 @@
 
   return HeatmapOverlay;
 });
-
