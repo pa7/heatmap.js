@@ -3,6 +3,7 @@
   "version": "2.0.1",
   "description": "Dynamic JavaScript Heatmaps for the Web",
   "homepage": "http://www.patrick-wied.at/static/heatmapjs/",
+  "main": "heatmap.min.js",
   "devDependencies": {
     "grunt": ">= 0.4.1",
     "coffee-script": ">= 1.6.3",
