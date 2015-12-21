@@ -69,10 +69,11 @@
 
     this.getPanes().overlayLayer.appendChild(this.container);
 
+    var thisHO = this;
     this.changeHandler = google.maps.event.addListener(
       this.map,
       'bounds_changed',
-      this.draw
+      function() {  return thisHO.draw(); }
     );
    
     if (!this.heatmap) {
@@ -186,7 +187,7 @@
       localMax = Math.max(value, localMax);
       localMin = Math.min(value, localMin);
 
-      var point = this.pixelTransform(layerProjection.fromLatLngToDivPixel(latlng));
+      var point = layerProjection.fromLatLngToDivPixel(latlng);
       var latlngPoint = { x: Math.round(point.x - layerOffset.x), y: Math.round(point.y - layerOffset.y) };
       latlngPoint[valueField] = value;
 
