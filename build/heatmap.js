@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2015-07-21 01:00
+ * :: 2015-12-21 19:53
  */
 ;(function (name, context, factory) {
 

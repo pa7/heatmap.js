@@ -55,11 +55,9 @@
         this._heatmap = h337.create(this.cfg);
       } 
 
-      // on zoom, reset origin
-      map.on('viewreset', this._resetOrigin, this);
-      // redraw whenever dragend
-      map.on('dragend', this._draw, this);
-
+      // this resets the origin and redraws whenever
+      // the zoom changed or the map has been moved
+      map.on('moveend', this._resetOrigin, this);
       this._draw();
     },
 
@@ -67,8 +65,7 @@
       // remove layer's DOM elements and listeners
       map.getPanes().overlayPane.removeChild(this._el);
 
-      map.off('viewreset', this._resetOrigin, this);
-      map.off('dragend', this._draw, this);
+      map.off('moveend', this._resetOrigin, this);
     },
     _draw: function() {
       if (!this._map) { return; }
