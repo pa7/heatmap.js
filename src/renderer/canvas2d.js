@@ -1,6 +1,6 @@
 
 var Canvas2dRenderer = (function Canvas2dRendererClosure() {
-  
+
   var _getColorPalette = function(config) {
     var gradientConfig = config.gradient || config.defaultGradient;
     var paletteCanvas = document.createElement('canvas');
@@ -39,8 +39,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       tplCtx.fillStyle = gradient;
       tplCtx.fillRect(0, 0, 2*radius, 2*radius);
     }
-    
-    
+
+
 
     return tplCanvas;
   };
@@ -51,7 +51,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     var max = data.max;
     var radi = data.radi;
     var data = data.data;
-    
+
     var xValues = Object.keys(data);
     var xValuesLen = xValues.length;
 
@@ -112,14 +112,18 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   Canvas2dRenderer.prototype = {
     renderPartial: function(data) {
-      this._drawAlpha(data);
-      this._colorize();
+      if (data.data.length > 0) {
+        this._drawAlpha(data);
+        this._colorize();
+      }
     },
     renderAll: function(data) {
       // reset render boundaries
       this._clear();
-      this._drawAlpha(_prepareData(data));
-      this._colorize();
+      if (data.data.length > 0) {
+        this._drawAlpha(_prepareData(data));
+        this._colorize();
+      }
     },
     _updateGradient: function(config) {
       this._palette = _getColorPalette(config);
@@ -192,7 +196,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         // update renderBoundaries
         if (rectX < this._renderBoundaries[0]) {
             this._renderBoundaries[0] = rectX;
-          } 
+          }
           if (rectY < this._renderBoundaries[1]) {
             this._renderBoundaries[1] = rectY;
           }
