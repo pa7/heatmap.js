@@ -48,7 +48,7 @@
       this._el.style.height = size.y + 'px';
       this._el.style.position = 'absolute';
 
-      this._resetOrigin();
+      this._origin = this._map.layerPointToLatLng(new L.Point(0, 0));
 
       map.getPanes().overlayPane.appendChild(this._el);
 
@@ -58,7 +58,7 @@
 
       // this resets the origin and redraws whenever
       // the zoom changed or the map has been moved
-      map.on('moveend', this._resetOrigin, this);
+      map.on('moveend', this._reset, this);
       this._draw();
     },
 
@@ -71,7 +71,7 @@
       // remove layer's DOM elements and listeners
       map.getPanes().overlayPane.removeChild(this._el);
 
-      map.off('moveend', this._resetOrigin, this);
+      map.off('moveend', this._reset, this);
     },
     _draw: function() {
       if (!this._map) { return; }
@@ -198,8 +198,19 @@
         this._draw();
       }
     },
-    _resetOrigin: function () {
+    _reset: function () {
       this._origin = this._map.layerPointToLatLng(new L.Point(0, 0));
+      
+      var size = this._map.getSize();
+      if (this._width !== size.x || this._height !== size.y) {
+        this._width  = size.x;
+        this._height = size.y;
+
+        this._el.style.width = this._width + 'px';
+        this._el.style.height = this._height + 'px';
+
+        this._heatmap._renderer.setDimensions(this._width, this._height);
+      }
       this._draw();
     } 
   });
