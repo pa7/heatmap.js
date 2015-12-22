@@ -137,7 +137,7 @@
   };
 
   HeatmapOverlay.prototype.update = function() {
-    var projection = this.map.getProjection(),
+    var projection = this.getProjection(),
       zoom, scale, bounds, topLeft;
     var generatedData = { max: this.max, min: this.min, data: [] };
 
