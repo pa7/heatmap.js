@@ -60,6 +60,11 @@
       map.on('moveend', this._resetOrigin, this);
       this._draw();
     },
+    
+    addTo: function (map) {
+      map.addLayer(this);
+      return this;
+    },
 
     onRemove: function (map) {
       // remove layer's DOM elements and listeners
