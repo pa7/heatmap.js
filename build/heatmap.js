@@ -4,7 +4,7 @@
  * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2015-12-22 00:23
+ * :: 2015-12-22 23:07
  */
 ;(function (name, context, factory) {
 
@@ -424,7 +424,9 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         }
         // value from minimum / value range
         // => [0, 1]
-        shadowCtx.globalAlpha = (value-min)/(max-min);
+        var templateAlpha = (value-min)/(max-min);
+        // this fixes #176: small values are not visible because globalAlpha < .01 cannot be read from imageData
+        shadowCtx.globalAlpha = templateAlpha < .01 ? .01 : templateAlpha;
 
         shadowCtx.drawImage(tpl, rectX, rectY);
 
