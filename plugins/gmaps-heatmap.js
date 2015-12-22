@@ -66,10 +66,11 @@
   };
 
   HeatmapOverlay.prototype.onAdd = function(){
+    var h337 = typeof require !== 'undefined' ? require('heatmap.js') : window.h337;
+    var that = this;
 
     this.getPanes().overlayLayer.appendChild(this.container);
 
-    var that = this;
 
     this.changeHandler = google.maps.event.addListener(
       this.map,

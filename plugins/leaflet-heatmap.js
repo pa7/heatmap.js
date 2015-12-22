@@ -37,6 +37,7 @@
 
     onAdd: function (map) {
       var size = map.getSize();
+      var h337 = typeof require !== 'undefined' ? require('heatmap.js') : window.h337;
 
       this._map = map;
 
@@ -60,7 +61,7 @@
       map.on('moveend', this._resetOrigin, this);
       this._draw();
     },
-    
+
     addTo: function (map) {
       map.addLayer(this);
       return this;
