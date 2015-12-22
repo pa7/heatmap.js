@@ -69,10 +69,12 @@
 
     this.getPanes().overlayLayer.appendChild(this.container);
 
+    var that = this;
+
     this.changeHandler = google.maps.event.addListener(
       this.map,
       'bounds_changed',
-      this.draw
+      function() { return that.draw(); }
     );
    
     if (!this.heatmap) {
@@ -186,7 +188,7 @@
       localMax = Math.max(value, localMax);
       localMin = Math.min(value, localMin);
 
-      var point = this.pixelTransform(layerProjection.fromLatLngToDivPixel(latlng));
+      var point = layerProjection.fromLatLngToDivPixel(latlng);
       var latlngPoint = { x: Math.round(point.x - layerOffset.x), y: Math.round(point.y - layerOffset.y) };
       latlngPoint[valueField] = value;
 
@@ -209,22 +211,6 @@
 
     this.heatmap.setData(generatedData);
 
-  };
-
-  HeatmapOverlay.prototype.pixelTransform = function(point) {
-    if (point.x < 0) {
-      point.x += this.width;
-    }
-    if (point.x > this.width) {
-      point.x -= this.width;
-    }
-    if (point.y < 0) {
-      point.y += this.height;
-    }
-    if (point.y > this.height) {
-      point.y -= this.height;
-    }
-    return point;
   };
 
   HeatmapOverlay.prototype.setData = function(data) { 
