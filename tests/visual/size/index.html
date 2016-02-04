@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Heatmap Size Configuration Test</title>
+    <style>
+      body, html { margin:0; padding:0; }
+      .heatmap-canvas { position:relative !important; }
+      #heatmapContainer canvas{  border:5px dashed magenta;}
+    </style>
+    <script src="/build/heatmap.js"></script>
+  </head>
+  <body>
+    <h1>Heatmap Size Configuration Test</h1>
+    <div id="heatmapContainerWrapper">  
+      <div id="heatmapContainer">
+
+      </div>
+    </div>
+    <button>Reconfigure</button>
+    <script>
+
+      window.onload = function() {
+        var heatmap = h337.create({
+          container: document.getElementById('heatmapContainer'),
+          width: 300,
+          height: 300,
+          radius: 100
+        });
+        window.h = heatmap;
+
+        h.setData({ max: 10, data: [{ x: 40, y: 40, value: 10 }, { x: 80, y: 40, value: 5 }, { x: 80, y: 80, value: 15 }] })
+      
+        document.querySelector('button').onclick = function() {
+          h.configure({
+            width: ((Math.random() * 500) >> 0),
+            height: ((Math.random() * 500) >> 0)
+          });
+        }
+
+      };
+    </script>
+  </body>
+</html>
