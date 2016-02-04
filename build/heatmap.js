@@ -1,10 +1,10 @@
 /*
- * heatmap.js v2.0.1 | JavaScript Heatmap Library
+ * heatmap.js v2.0.2 | JavaScript Heatmap Library
  *
- * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
+ * Copyright 2008-2016 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2015-12-22 23:07
+ * :: 2016-02-04 21:25
  */
 ;(function (name, context, factory) {
 
@@ -325,8 +325,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     canvas.className = 'heatmap-canvas';
 
-    this._width = canvas.width = shadowCanvas.width = +(computed.width.replace(/px/,''));
-    this._height = canvas.height = shadowCanvas.height = +(computed.height.replace(/px/,''));
+    this._width = canvas.width = shadowCanvas.width = config.width || +(computed.width.replace(/px/,''));
+    this._height = canvas.height = shadowCanvas.height = config.height || +(computed.height.replace(/px/,''));
 
     this.shadowCtx = shadowCanvas.getContext('2d');
     this.ctx = canvas.getContext('2d');
@@ -385,6 +385,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       if (config.backgroundColor) {
         this.canvas.style.backgroundColor = config.backgroundColor;
       }
+
+      this._width = this.canvas.width = this.shadowCanvas.width = config.width || this._width;
+      this._height = this.canvas.height = this.shadowCanvas.height = config.height || this._height;
+
 
       this._opacity = (config.opacity || 0) * 255;
       this._maxOpacity = (config.maxOpacity || config.defaultMaxOpacity) * 255;
