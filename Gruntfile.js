@@ -6,7 +6,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     // Metadata.
     pkg: packagejson,
-    banner: '/*\n * <%= pkg.title || pkg.name %> v<%= pkg.version %> | JavaScript Heatmap Library\n *\n * Copyright 2008-2014 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.\n * Dual licensed under MIT and Beerware license \n *\n * :: <%= grunt.template.today("yyyy-mm-dd HH:MM") %>\n */\n',
+    banner: '/*\n * <%= pkg.title || pkg.name %> v<%= pkg.version %> | JavaScript Heatmap Library\n *\n * Copyright 2008-2016 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.\n * Dual licensed under MIT and Beerware license \n *\n * :: <%= grunt.template.today("yyyy-mm-dd HH:MM") %>\n */\n',
     // Task configuration.
     concat: {
       options: {
