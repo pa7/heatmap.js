@@ -4,7 +4,7 @@ var Store = (function StoreClosure() {
     this._coordinator = {};
     this._data = [];
     this._radi = [];
-    this._min = 0;
+    this._min = 10;
     this._max = 1;
     this._xField = config['xField'] || config.defaultXField;
     this._yField = config['yField'] || config.defaultYField;
@@ -40,15 +40,23 @@ var Store = (function StoreClosure() {
         } else {
           store[x][y] += value;
         }
+        var storedVal = store[x][y];
 
-        if (store[x][y] > max) {
+        if (storedVal > max) {
           if (!forceRender) {
-            this._max = store[x][y];
+            this._max = storedVal;
           } else {
-            this.setDataMax(store[x][y]);
+            this.setDataMax(storedVal);
           }
           return false;
-        } else{
+        } else if (storedVal < min) {
+          if (!forceRender) {
+            this._min = storedVal;
+          } else {
+            this.setDataMin(storedVal);
+          }
+          return false;
+        } else {
           return { 
             x: x, 
             y: y,
@@ -99,6 +107,10 @@ var Store = (function StoreClosure() {
         // add to store  
         var organisedEntry = this._organiseData(arguments[0], true);
         if (organisedEntry) {
+          // if it's the first datapoint initialize the extremas with it
+          if (this._data.length === 0) {
+            this._min = this._max = organisedEntry.value;
+          }
           this._coordinator.emit('renderpartial', {
             min: this._min,
             max: this._max,

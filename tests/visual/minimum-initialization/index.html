@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Minimum Initialization</title>
+    <style>
+      body, html { margin:0; padding:0; }
+      #heatmapContainerWrapper { width:800px; height:500px; margin:auto; background:rgba(0,0,0,.1); }
+      #heatmapContainer { width:100%; height:100%;}
+    </style>
+    <script src="/build/heatmap.js"></script>
+  </head>
+  <body>
+    <h1>Minimum Initialization</h1>
+    <div id="heatmapContainerWrapper">  
+      <div id="heatmapContainer">
+
+      </div>
+    </div>
+    <script>
+
+      window.onload = function() {
+        var heatmap = h337.create({
+          container: document.getElementById('heatmapContainer')
+        });
+        window.h = heatmap;
+
+        h.addData({x: 100, y: 100, value: 1 });
+        h.addData({x: 100, y: 100, value: 3 });
+        h.addData({x: 20, y: 100, value: 3 });
+      };
+    </script>
+  </body>
+</html>
