@@ -99,6 +99,7 @@ var Heatmap = (function HeatmapClosure() {
     configure: function(config) {
       this._config = Util.merge(this._config, config);
       this._renderer.updateConfig(this._config);
+      this._store.updateConfig(this._config);
       this._coordinator.emit('renderall', this._store._getInternalData());
       return this;
     },
