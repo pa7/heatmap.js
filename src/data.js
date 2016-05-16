@@ -6,13 +6,7 @@ var Store = (function StoreClosure() {
     this._radi = [];
     this._min = 0;
     this._max = 1;
-    this._xField = config['xField'] || config.defaultXField;
-    this._yField = config['yField'] || config.defaultYField;
-    this._valueField = config['valueField'] || config.defaultValueField;
-
-    if (config["radius"]) {
-      this._cfgRadius = config["radius"];
-    }
+    this.updateConfig(config);
   };
 
   var defaultRadius = HeatmapConfig.defaultRadius;
@@ -87,6 +81,14 @@ var Store = (function StoreClosure() {
         min: this._min,
         max: this._max
       });
+    },
+    updateConfig: function(config) {
+      this._xField = config.xField || config.defaultXField;
+      this._yField = config.yField || config.defaultYField;
+      this._valueField = config.valueField || config.defaultValueField;
+      if (config.radius) {
+        this._cfgRadius = config.radius;
+      }
     },
     addData: function() {
       if (arguments[0].length > 0) {
