@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Data Interpolation</title>
+    <style>
+      * { box-sizing:border-box;}
+      body, html { margin:0; padding:0; width:100%; height:100%; }
+      div { position:relative; display:inline-block; width:40%; }
+      body:hover div.heatmap-canvas { display:block; }
+    </style>
+    <script src="./old-heatmap.js"></script>
+    <script src="/build/heatmap.js"></script>
+  </head>
+  <body>
+    <h1>Data Interpolation</h1>
+    <div><h2>New data interpolation</h2>
+    <div id="heatmapContainer-1">
+      
+      </div></div>
+      <div><h2>Old data interpolation</h2>
+      <div id="heatmapContainer-2">
+        
+      </div></div>
+    <script>
+
+      window.onload = function() {
+        var width = document.body.clientWidth;
+        var height = document.body.clientHeight;
+        console.log(width, height);
+        var max = 100;
+        var data = [];
+        for (var i = 0; i < 400; i++) {
+          data.push({
+            x: ((Math.random()*width/2) >> 0),
+            y: ((Math.random()*height/2) >> 0),
+            value: ((Math.random()*max) >> 0),
+            radius: ((Math.random()*50) >> 0)
+          });
+        }
+        var maxIndex = 0;
+        var tmpMax = 0;
+        for (var i = 0; i < data.length; i++) {
+          if (data[i].value > tmpMax) {
+            tmpMax = data[i].value;
+            maxIndex = i;
+          }
+        }
+        console.log(data[maxIndex]);
+        var marker = document.createElement('div');
+        marker.style.cssText="position:absolute;z-index:100000;width:10px;height:10px;background:blue;top:" + (data[maxIndex].y) + 'px;left:' + (data[maxIndex].x) + 'px';
+        document.getElementById('heatmapContainer-1').appendChild(marker);
+        var heatmap1 = h337.create({
+          container: document.getElementById('heatmapContainer-1'),
+          width: width/3,
+          height: height,
+          radius: 30
+        });
+        var before = +new Date;
+        /*heatmap1.setData({
+          max: max,
+          data: data
+        });*/
+        console.log((+new Date) - before, 'ms');
+
+        var heatmap2 = h338.create({
+          container: document.getElementById('heatmapContainer-2'),
+          width: width/3,
+          height: height,
+          radius: 30
+        });
+        var data = { max: max,
+          data: data };
+        heatmap1.setData(data);
+        heatmap2.setData(data);
+      };
+    </script>
+  </body>
+</html>
