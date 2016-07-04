@@ -40,8 +40,6 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       tplCtx.fillRect(0, 0, 2*radius, 2*radius);
     }
 
-
-
     return tplCanvas;
   };
 
@@ -82,6 +80,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   function Canvas2dRenderer(config) {
     var container = config.container;
+    var maxCanvas = this.maxCanvas = document.createElement('canvas');
     var shadowCanvas = this.shadowCanvas = document.createElement('canvas');
     var canvas = this.canvas = config.canvas || document.createElement('canvas');
     var renderBoundaries = this._renderBoundaries = [10000, 10000, 0, 0];
@@ -90,20 +89,29 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
     canvas.className = 'heatmap-canvas';
 
-    this._width = canvas.width = shadowCanvas.width = config.width || +(computed.width.replace(/px/,''));
-    this._height = canvas.height = shadowCanvas.height = config.height || +(computed.height.replace(/px/,''));
+    this._width = canvas.width = shadowCanvas.width = maxCanvas.width = config.width || +(computed.width.replace(/px/,''));
+    this._height = canvas.height = shadowCanvas.height = maxCanvas.height = config.height || +(computed.height.replace(/px/,''));
 
+    this.maxCtx = maxCanvas.getContext('2d');
     this.shadowCtx = shadowCanvas.getContext('2d');
     this.ctx = canvas.getContext('2d');
+    this.shadowCtx.imageSmoothingEnabled = false;
+    this.ctx.imageSmoothingEnabled = false;
+    //console.log(this.ctx.imageSmoothingEnabled);
+
+    this.maxCtx.shadowOffsetX = 15000; 
+    this.maxCtx.shadowOffsetY = 15000; 
+    this.maxCtx.shadowBlur = 15; 
 
     // @TODO:
     // conditional wrapper
 
-    canvas.style.cssText = shadowCanvas.style.cssText = 'position:absolute;left:0;top:0;';
+    canvas.style.cssText = shadowCanvas.style.cssText = maxCanvas.style.cssText = 'position:absolute;left:0;top:0;';
 
     container.style.position = 'relative';
+    //container.appendChild(shadowCanvas);
     container.appendChild(canvas);
-
+    //container.appendChild(maxCanvas);
     this._palette = _getColorPalette(config);
     this._templates = {};
 
@@ -181,6 +189,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var rectX = x - radius;
         var rectY = y - radius;
         var shadowCtx = this.shadowCtx;
+        var maxCtx = this.maxCtx;
 
 
 
@@ -196,8 +205,30 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var templateAlpha = (value-min)/(max-min);
         // this fixes #176: small values are not visible because globalAlpha < .01 cannot be read from imageData
         shadowCtx.globalAlpha = templateAlpha < .01 ? .01 : templateAlpha;
-
+        shadowCtx.globalCompositeOperation = 'normal';
         shadowCtx.drawImage(tpl, rectX, rectY);
+        /*        shadowCtx.globalCompositeOperation = 'destination-in';
+                shadowCtx.fillStyle = 'rgb(0,' + ((templateAlpha * 255) >> 0) + ', 0)';
+        shadowCtx.fillRect(rectX, rectY, 2*radius, 2*radius);*/
+        
+
+
+        /*var gradient = maxCtx.createRadialGradient(x, y, radius*blur, x, y, radius);
+        gradient.addColorStop(0, 'rgba(0,' + ((templateAlpha * 255) >> 0) + ',0, 1)');
+        gradient.addColorStop(1, 'rgba(0,' + ((templateAlpha * 255) >> 0) + ',0, 1)');
+
+        maxCtx.fillStyle = gradient;
+        maxCtx.fillRect(rectX, rectY, 2*radius, 2*radius);*/
+
+        //maxCtx.fillStyle = 'rgb(0,' + ((templateAlpha * 255) >> 0) + ', 0)';
+        //maxCtx.globalCompositeOperation = 'normal';
+        maxCtx.shadowColor = ('rgba(0,'+((templateAlpha * 255) >> 0)+',0,'+(templateAlpha)+')');
+        maxCtx.shadowBlur = radius*this._blur;
+        maxCtx.globalCompositeOperation = 'overlay';
+        maxCtx.beginPath();
+        maxCtx.arc(x - 15000, y - 15000, radius*this._blur, 0, Math.PI*2, true);
+        maxCtx.closePath();
+        maxCtx.fill();
 
         // update renderBoundaries
         if (rectX < this._renderBoundaries[0]) {
@@ -241,6 +272,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       }
 
       var img = this.shadowCtx.getImageData(x, y, width, height);
+      var maxImg = this.maxCtx.getImageData(x, y, width, height);
+      var maxImgData = maxImg.data;
       var imgData = img.data;
       var len = imgData.length;
       var palette = this._palette;
@@ -248,6 +281,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
       for (var i = 3; i < len; i+= 4) {
         var alpha = imgData[i];
+        var maxAlpha = maxImgData[i-2] || 255;
+        alpha = Math.min(alpha, maxAlpha);
         var offset = alpha * 4;
 
 
