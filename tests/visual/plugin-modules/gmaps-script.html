@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>Module Loading Test: Script insert</title>
+  </head>
+  <body>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=MY_KEY"> </script>
+    <script src="/build/heatmap.js"></script>
+    <script src="/plugins/gmaps-heatmap.js"></script>
+    <script>
+      window.initMap = function() {
+        console.log(window.google);
+      };
+      window.onload = function() {
+        console.log('h337: ', window.h337);
+        console.log('HeatmapOverlay', window.HeatmapOverlay);
+      };
+    </script>
+  </body>
+</html>
