@@ -1,18 +1,21 @@
 {
   "name": "heatmap.js",
-  "version": "2.0.2",
+  "version": "2.0.5",
   "description": "Dynamic JavaScript Heatmaps for the Web",
-  "homepage": "http://www.patrick-wied.at/static/heatmapjs/",
-  "main": "heatmap.min.js",
+  "homepage": "https://www.patrick-wied.at/static/heatmapjs/",
+  "author": {
+    "name": "Patrick Wied",
+    "email": "heatmapjs@patrick-wied.at",
+    "url": "https://www.patrick-wied.at/"
+  },
+  "main": "build/heatmap.js",
   "devDependencies": {
     "grunt": ">= 0.4.1",
     "coffee-script": ">= 1.6.3",
     "grunt-contrib-uglify": ">= 0.2.0",
     "grunt-contrib-concat": ">= 0.1.3",
     "grunt-contrib-watch": "0.2.0rc7",
-    "grunt-contrib-jshint": ">= 0.3.0",
-    "grunt-contrib-copy": ">= 0.7.0",
-    "grunt-shell": "^0.7.0"
+    "grunt-contrib-jshint": ">= 0.3.0"
   },
   "keywords": [
     "heatmap",
@@ -23,12 +26,21 @@
     "leaflet heatmap",
     "leaflet"
   ],
+  "files": [
+    "build",
+    "plugins",
+    "examples",
+    "docs",
+    "package.json",
+    "LICENSE",
+    "README.md"
+  ],
   "buildFiles": [
-    "src/config.js", 
-    "src/data.js", 
-    "src/renderer/canvas2d.js", 
-    "src/renderer.js", 
-    "src/util.js", 
+    "src/config.js",
+    "src/data.js",
+    "src/renderer/canvas2d.js",
+    "src/renderer.js",
+    "src/util.js",
     "src/core.js"
   ]
 }
