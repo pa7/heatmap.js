@@ -1,23 +1,32 @@
 /*
 * Leaflet Heatmap Overlay
 *
-* Copyright (c) 2014, Patrick Wied (http://www.patrick-wied.at)
+* Copyright (c) 2008-2016, Patrick Wied (https://www.patrick-wied.at)
 * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
 * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
 */
-
-(function (name, context, factory) {
-
+;(function (name, context, factory) {
   // Supports UMD. AMD, CommonJS/Node.js and browser context
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = factory();
+    module.exports = factory(
+      require('heatmap.js'),
+      require('leaflet')
+    );
   } else if (typeof define === "function" && define.amd) {
-    define(factory);
+    define(['heatmap.js', 'leaflet'], factory);
   } else {
-    context[name] = factory();
+    // browser globals
+    if (typeof window.h337 === 'undefined') {
+      throw new Error('heatmap.js must be loaded before the leaflet heatmap plugin');
+    }
+    if (typeof window.L === 'undefined') {
+      throw new Error('Leaflet must be loaded before the leaflet heatmap plugin');
+    }
+    context[name] = factory(window.h337, window.L);
   }
 
-})("HeatmapOverlay", this, function () {
+})("HeatmapOverlay", this, function (h337, L) {
+  'use strict';
 
   // Leaflet < 0.8 compatibility
   if (typeof L.Layer === 'undefined') {
@@ -37,7 +46,6 @@
 
     onAdd: function (map) {
       var size = map.getSize();
-      var h337 = typeof require !== 'undefined' ? require('heatmap.js') : window.h337;
 
       this._map = map;
 
@@ -218,11 +226,11 @@
   HeatmapOverlay.CSS_TRANSFORM = (function() {
     var div = document.createElement('div');
     var props = [
-    'transform',
-    'WebkitTransform',
-    'MozTransform',
-    'OTransform',
-    'msTransform'
+      'transform',
+      'WebkitTransform',
+      'MozTransform',
+      'OTransform',
+      'msTransform'
     ];
 
     for (var i = 0; i < props.length; i++) {
@@ -231,7 +239,6 @@
         return prop;
       }
     }
-
     return props[0];
   })();
 

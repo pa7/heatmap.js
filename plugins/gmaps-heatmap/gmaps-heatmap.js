@@ -1,31 +1,39 @@
 /*
-* heatmap.js gmaps overlay
+* heatmap.js Google Maps Overlay
 *
-* Copyright (c) 2014, Patrick Wied (http://www.patrick-wied.at)
+* Copyright (c) 2008-2016, Patrick Wied (https://www.patrick-wied.at)
 * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
 * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
 */
-
-(function (name, context, factory) {
-
+;(function (name, context, factory) {
   // Supports UMD. AMD, CommonJS/Node.js and browser context
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = factory();
+    module.exports = factory(
+      require('heatmap.js'),
+      require('google-maps')
+    );
   } else if (typeof define === "function" && define.amd) {
-    define(factory);
+    define(['heatmap.js', 'google-maps'], factory);
   } else {
-    context[name] = factory();
+    // browser globals
+    if (typeof window.h337 === 'undefined') {
+      throw new Error('heatmap.js must be loaded before the gmaps heatmap plugin');
+    }
+    if (typeof window.google === 'undefined') {
+      throw new Error('Google Maps must be loaded before the gmaps heatmap plugin');
+    }
+    context[name] = factory(window.h337, window.google.maps);
   }
 
-})("HeatmapOverlay", this, function() {
+})("HeatmapOverlay", this, function(h337, gmaps) {
+  'use strict';
 
   var HeatmapOverlay = function(map, cfg){ 
     this.setMap(map);
     this.initialize(cfg || {});
   };
 
-  HeatmapOverlay.prototype = new google.maps.OverlayView();
-
+  HeatmapOverlay.prototype = new gmaps.OverlayView();
 
   HeatmapOverlay.CSS_TRANSFORM = (function() {
     var div = document.createElement('div');
@@ -66,13 +74,12 @@
   };
 
   HeatmapOverlay.prototype.onAdd = function(){
-    var h337 = typeof require !== 'undefined' ? require('heatmap.js') : window.h337;
     var that = this;
 
     this.getPanes().overlayLayer.appendChild(this.container);
 
 
-    this.changeHandler = google.maps.event.addListener(
+    this.changeHandler = gmaps.event.addListener(
       this.map,
       'bounds_changed',
       function() { return that.draw(); }
@@ -92,7 +99,7 @@
     this.container.parentElement.removeChild(this.container);
 
     if (this.changeHandler) {
-      google.maps.event.removeListener(this.changeHandler);
+      gmaps.event.removeListener(this.changeHandler);
       this.changeHandler = null;
     }
 
@@ -103,7 +110,7 @@
 
     var bounds = this.map.getBounds();
 
-    var topLeft = new google.maps.LatLng(
+    var topLeft = new gmaps.LatLng(
       bounds.getNorthEast().lat(),
       bounds.getSouthWest().lng()
     );
@@ -146,7 +153,7 @@
 
     bounds = this.map.getBounds();
 
-    topLeft = new google.maps.LatLng(
+    topLeft = new gmaps.LatLng(
       bounds.getNorthEast().lat(),
       bounds.getSouthWest().lng()
     );
@@ -229,7 +236,7 @@
 
     while (len--) {
       var entry = data[len];
-      var latlng = new google.maps.LatLng(entry[latField], entry[lngField]);
+      var latlng = new gmaps.LatLng(entry[latField], entry[lngField]);
       var dataObj = { latlng: latlng };
       dataObj[valueField] = entry[valueField];
       if (entry.radius) {
@@ -252,7 +259,7 @@
         var lngField = this.cfg.lngField || 'lng';
         var valueField = this.cfg.valueField || 'value';
         var entry = pointOrArray;
-        var latlng = new google.maps.LatLng(entry[latField], entry[lngField]);
+        var latlng = new gmaps.LatLng(entry[latField], entry[lngField]);
         var dataObj = { latlng: latlng };
         
         dataObj[valueField] = entry[valueField];

@@ -1,0 +1,21 @@
+{
+  "name": "leaflet-heatmap",
+  "version": "1.0.0",
+  "description": "heatmap.js Leaflet Overlay",
+  "homepage": "https://www.patrick-wied.at/static/heatmapjs/",
+  "main": "leaflet-heatmap.js",
+  "dependencies": {
+    "heatmap.js": "*",
+    "leaflet": "*"
+  },
+  "keywords": [
+    "heatmap",
+    "leaflet",
+    "heat",
+    "heat map",
+    "heatmaps",
+    "heat maps",
+    "map",
+    "maps"
+  ]
+}
