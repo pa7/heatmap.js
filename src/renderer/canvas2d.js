@@ -185,11 +185,12 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
 
 
+        var templateCacheKey = radius + '-' + blur;
         var tpl;
-        if (!this._templates[radius]) {
-          this._templates[radius] = tpl = _getPointTemplate(radius, blur);
+        if (!this._templates[templateCacheKey]) {
+          this._templates[templateCacheKey] = tpl = _getPointTemplate(radius, blur);
         } else {
-          tpl = this._templates[radius];
+          tpl = this._templates[templateCacheKey];
         }
         // value from minimum / value range
         // => [0, 1]
