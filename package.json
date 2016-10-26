@@ -42,5 +42,6 @@
     "src/renderer.js",
     "src/util.js",
     "src/core.js"
-  ]
+  ],
+  "license": "MIT"
 }
