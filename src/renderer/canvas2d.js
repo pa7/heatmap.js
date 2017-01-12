@@ -260,15 +260,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         if (opacity > 0) {
           finalAlpha = opacity;
         } else {
-          if (alpha < maxOpacity) {
-            if (alpha < minOpacity) {
-              finalAlpha = minOpacity;
-            } else {
-              finalAlpha = alpha;
-            }
-          } else {
-            finalAlpha = maxOpacity;
-          }
+          alpha = Math.max(Math.min(alpha, maxOpacity), minOpacity);
         }
 
         imgData[i-3] = palette[offset];
