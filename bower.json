@@ -15,8 +15,8 @@
     ],
     "main": [
       "build/heatmap.js",
-      "plugins/gmaps-heatmap.js",
-      "plugins/leaflet-heatmap.js",
+      "plugins/gmaps-heatmap/gmaps-heatmap.js",
+      "plugins/leaflet-heatmap/leaflet-heatmap.js",
       "plugins/svg-area-heatmap.js"
     ],
     "license": "MIT",
