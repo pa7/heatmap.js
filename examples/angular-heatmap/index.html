@@ -26,8 +26,7 @@
     <script src="/plugins/angular-heatmap/angular-heatmap.js"></script>
     <script>
     angular.module('heatmapApp', ['heatmap'])
-      .controller('HeatmapCtrl', ['$scope', '$heatma
-              value: ((Math.random() * max + min) >> 0),p', function($scope, $heatmap) {
+      .controller('HeatmapCtrl', ['$scope', '$heatmap', function($scope, $heatmap) {
         function generateRandomData(len) {
           var max = 100;
           var min = 1;
@@ -38,7 +37,8 @@
             data.push({
               x: ((Math.random() * maxX) >> 0),
               y: ((Math.random() * maxY) >> 0),
-              radius: ((Math.random() * 50 + min) >> 0)
+              radius: ((Math.random() * 50 + min) >> 0),
+              value: ((Math.random() * max + min) >> 0)
             });
           }
           return {
