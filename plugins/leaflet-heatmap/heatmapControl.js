@@ -32,13 +32,6 @@ L.Control.HeatmapControl = L.Control.extend({
 
     },
 
-    extractTimestamp: function(time, options) {
-        if (options.isEpoch) {
-            time = (new Date(parseInt(time))).toLocaleString(); // this is local time
-        }
-        return time.substr(options.startTimeIdx, options.startTimeIdx + options.timeStrLength);
-    },
-
     setPosition: function (position) {
         var map = this._map;
 
