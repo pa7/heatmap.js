@@ -5,22 +5,22 @@
     outline: 1px solid #000;
     line-height: 1em;
     font-size: 12px;
-    
+    overflow: hidden;    
 }
-#heatmapLegendMin {
+.heatmapLegendMin {
   float: left;
   margin: 0;
   padding: 0;
   max-width: 25px;
   overflow: hidden;  
 }
-#heatmapLegendMax {
+.heatmapLegendMax {
   float: right;
   margin: 0;
   padding: 0;
   max-width: 25px;
   overflow: hidden;    
 }
-#heatmapLegendGradient {
+.heatmapLegendGradient {
   width: 100%;
 }

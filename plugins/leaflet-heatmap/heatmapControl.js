@@ -45,7 +45,7 @@ L.Control.HeatmapControl = L.Control.extend({
             map.addControl(this);
         }
        //We need a redraw even if values didn't change, hence this little trick...
-        var data = this._extremeData; 
+	var data = this._extremeData; 
 	this._extremeData={min: undefined, max: undefined, gradient: {}};
 	console.log(data);
 	console.log(this._extremeData);
@@ -62,7 +62,7 @@ L.Control.HeatmapControl = L.Control.extend({
 	this._legendCanvas.width = 100;
 	this._legendCanvas.height = 10;
 	var legend = L.DomUtil.create('div','heatmapLegendImg', this._heatmapControlContainer);
-	legend.innerHTML = "<span id='heatmapLegendMin'></span><span id='heatmapLegendMax'></span><img src='' id='heatmapLegendGradient'>";
+	legend.innerHTML = "<span class='heatmapLegendMin'></span><span class='heatmapLegendMax'></span><img src='' class='heatmapLegendGradient'>";
         
         return this._heatmapControlContainer;
     },
@@ -78,10 +78,10 @@ L.Control.HeatmapControl = L.Control.extend({
 	  //We could create the img once in 'onAdd' but someone may change the gradient config...
 	  var legendCtx = this._legendCanvas.getContext('2d');  
 	  var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
-	  var gradientImg = document.querySelector('#heatmapLegendGradient');
+	  var gradientImg = this._heatmapControlContainer.querySelector('.heatmapLegendGradient');
 	  //Update min and max values
-	  var min = document.querySelector('#heatmapLegendMin');
-	  var max = document.querySelector('#heatmapLegendMax');
+	  var min = this._heatmapControlContainer.querySelector('.heatmapLegendMin');
+	  var max = this._heatmapControlContainer.querySelector('.heatmapLegendMax');
 	  
 	  min.innerHTML = data.min;
 	  max.innerHTML = data.max;
