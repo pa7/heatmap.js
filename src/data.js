@@ -26,7 +26,7 @@ var Store = (function StoreClosure() {
         var store = this._data;
         var max = this._max;
         var min = this._min;
-        var value = dataPoint[this._valueField] || 1;
+        var value = parseFloat(dataPoint[this._valueField] || 1);
         var radius = dataPoint.radius || this._cfgRadius || defaultRadius;
 
         if (!store[x]) {
