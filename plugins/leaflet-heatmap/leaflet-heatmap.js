@@ -95,13 +95,20 @@
       this._update();
     },
     _update: function() {
-      var bounds, zoom, scale;
+      var bounds, zoom, scale, crs, earthEquatorialCircumference, radiusMultiplierFunc;
       var generatedData = { max: this._max, min: this._min, data: [] };
 
+      crs = this._map.options.crs;
       bounds = this._map.getBounds();
       zoom = this._map.getZoom();
-      scale = Math.pow(2, zoom);
-
+      scale = crs.scale(zoom);
+      earthEquatorialCircumference = 2 * Math.PI * crs.projection.R;
+      radiusMultiplierFunc = function(latitude, scale = scale) {
+        // Formula based on http://wiki.openstreetmap.org/wiki/Zoom_levels
+        // Additional adjustments make less crs dependent.
+        return earthEquatorialCircumference * Math.abs(Math.cos(latitude * Math.PI / 180)) * scale; 
+      };
+      
       if (this._data.length == 0) {
         if (this._heatmap) {
           this._heatmap.setData(generatedData);
@@ -111,7 +118,6 @@
 
 
       var latLngPoints = [];
-      var radiusMultiplier = this.cfg.scaleRadius ? scale : 1;
       var localMax = 0;
       var localMin = 0;
       var valueField = this.cfg.valueField;
@@ -121,8 +127,8 @@
         var entry = this._data[len];
         var value = entry[valueField];
         var latlng = entry.latlng;
-
-
+        var radiusMultiplier = this.cfg.scaleRadius ? radiusMultiplierFunc(latlng.lat) : 1;
+        
         // we don't wanna render points that are not even on the map ;-)
         if (!bounds.contains(latlng)) {
           continue;
@@ -154,6 +160,7 @@
 
       this._heatmap.setData(generatedData);
     },
+    
     setData: function(data) {
       this._max = data.max || this._max;
       this._min = data.min || this._min;
