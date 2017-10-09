@@ -38,7 +38,11 @@ var Store = (function StoreClosure() {
           store[x][y] = value;
           radi[x][y] = radius;
         } else {
-          store[x][y] += value;
+          /*
+            change velue storing flow, the last flow add new data to the last stored but it's not true (at least in my case)
+              store[x][y] += value;
+           */
+          store[x][y] = value;
         }
         var storedVal = store[x][y];
 
