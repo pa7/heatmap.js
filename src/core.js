@@ -116,7 +116,7 @@ var Heatmap = (function HeatmapClosure() {
 
       if (this._store.getValueAt) {
         return this._store.getValueAt(point);
-      } else  if (this._renderer.getValueAt) {
+      } else if (this._renderer.getValueAt) {
         return this._renderer.getValueAt(point);
       } else {
         return null;
