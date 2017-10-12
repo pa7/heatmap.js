@@ -144,7 +144,17 @@ var Store = (function StoreClosure() {
       return this;
     },
     removeData: function() {
-      // TODO: implement
+
+			// reset data arrays
+			this._data = [];
+			this._radi = [];
+			this._max = 0;
+			this._min = 0;
+
+			this._onExtremaChange();
+			this._coordinator.emit('renderall', this._getInternalData());
+			return this;
+
     },
     setDataMax: function(max) {
       this._max = max;
