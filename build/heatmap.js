@@ -4,7 +4,7 @@
  * Copyright 2008-2016 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
  * Dual licensed under MIT and Beerware license 
  *
- * :: 2016-09-05 01:16
+ * :: 2017-10-12 16:44
  */
 ;(function (name, context, factory) {
 
@@ -72,7 +72,11 @@ var Store = (function StoreClosure() {
           store[x][y] = value;
           radi[x][y] = radius;
         } else {
-          store[x][y] += value;
+          /*
+            change velue storing flow, the last flow add new data to the last stored but it's not true (at least in my case)
+              store[x][y] += value;
+           */
+          store[x][y] = value;
         }
         var storedVal = store[x][y];
 
@@ -174,7 +178,17 @@ var Store = (function StoreClosure() {
       return this;
     },
     removeData: function() {
-      // TODO: implement
+
+			// reset data arrays
+			this._data = [];
+			this._radi = [];
+			this._max = 0;
+			this._min = 0;
+
+			this._onExtremaChange();
+			this._coordinator.emit('renderall', this._getInternalData());
+			return this;
+
     },
     setDataMax: function(max) {
       this._max = max;
