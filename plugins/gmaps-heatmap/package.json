@@ -1,0 +1,23 @@
+{
+  "name": "gmaps-heatmap",
+  "version": "1.0.2",
+  "description": "heatmap.js Google Maps Overlay",
+  "homepage": "https://www.patrick-wied.at/static/heatmapjs/",
+  "main": "gmaps-heatmap.js",
+  "dependencies": {
+    "heatmap.js": "*",
+    "google-maps": "*"
+  },
+  "keywords": [
+    "heatmap",
+    "google maps",
+    "googlemaps",
+    "gmaps",
+    "heat",
+    "heat map",
+    "heatmaps",
+    "heat maps",
+    "map",
+    "maps"
+  ]
+}

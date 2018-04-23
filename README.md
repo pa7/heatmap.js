@@ -1,61 +1,55 @@
 # heatmap.js
-heatmap.js is a JavaScript library that can be used to generate web heatmaps with the html5canvas element based on your data.
+Dynamic Heatmaps for the Web. 
 
-## How it works
-Heatmap instances contain a store in order to colorize the heatmap based on relative data, which means if you're adding only a single datapoint to the store it will be displayed as the hottest(red) spot, then adding another point with a higher count, it will dynamically recalculate. 
-The heatmaps are fully customizable - you're welcome to choose your own color gradient, change its opacity, datapoint radius and many more. 
+[<img src="http://www.patrick-wied.at/static/heatmapjs/assets/img/heatmapjs-examples-docs-banner.jpg" width="100%">](http://www.patrick-wied.at/static/heatmapjs/?utm_source=gh "View the heatmap.js website with usage examples, showcases, best practises, plugins ( googlemaps heatmap, leaflet) and more.")
 
-## How to use it
-Just add heatmap.js to your webpage and it will create one global object called **heatmapFactory** which you also can access as **h337**.
-This global object has a function **create** that takes one argument **config** (Object) and returns a heatmap instance. 
-At the configuration object you can specify the following properties in order to customize your heatmap instance:  
+## How to get started
 
-- **radius** (optional) Number. That's the radius of a single datapoint in the heatmap** (measured in pixels). Default is 40
-- **element** (required) String|HTMLelement. Either provide an element's id or the element itself which should contain the heatmap.
-- **visible** (optional) Boolean. Whether the heatmap is visible or not. Default is true
-- **gradient** (optional) Object. An object which contains colorstops from 0 to 1. Default is the standard heatmap gradient.
-- **opacity** (optional) Number [0-100]. Opacity of the heatmap measured in percent.
+The fastest way to get started is to install heatmap.js with bower. Just run the following command:
 
-Here is an example instanciation:
+`bower install heatmap.js-amd`
 
-```javascript
-var config = {
-    "radius": 30,
-    "element": "heatmapEl",
-    "visible": true,
-    "opacity": 40,
-    "gradient": { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)" }
-};
+This will download the latest working version of heatmap.js and put it in your bower_components folder.
 
-var heatmap = heatmapFactory.create(config);
-```
+Alternatively you could just download [the latest release](https://github.com/pa7/heatmap.js/releases) from github and unzip it.
 
-After creating the heatmap object you can set a dataset (import), add single datapoints and export the datapoints:
 
-```javascript
-// set a dataset
-heatmap.store.setDataSet({ max: 10, data: [{x: 10, y: 20, count: 5}, ...]});
+The file you're ultimately looking for is **heatmap.js** or **heatmap.min.js**
 
-// add a single datapoint
-heatmap.store.addDataPoint(10, 20);
 
-// export the dataset
-var dataSet = heatmap.store.exportDataSet();
-```
 
-As you can see a heatmap instance contains a store which stores its datapoints. 
-A store has the following functions:  
+heatmap.js is also hosted on npm:
 
-- **setDataSet(Object)** void. This initializes the heatmap with a dataset. The dataset object has to have the following structure: {max: <maximum count>, data:[{x: <dataPointX>, y: <dataPointY>, count: <valueAtXY>},...]}
-- **addDataPoint(Number, Number, [Number])** void. Adds a single datapoint to the store. First parameter is x, second parameter is y. Third parameter is the value, if not specified 1 will be used.
-- **exportdataSet()** Object. Returns the store's data as an object with the same structure that the import object at setDataSet has.
+`npm install heatmap.js`
 
-## License
-heatmap.js is dual-licensed under the MIT and the Beerware license, feel free to use it in your projects. 
+
+
+### How to run the local examples
+
+Start a webserver (e.g. python SimpleHTTPServer from the project directory root):
+
+`python -m SimpleHTTPServer 1337 &`
+
+Then browse to 
+
+`http://localhost:1337/examples/`
+
+
+## Get involved
+
+Please have a look at the [contribution guidelines](CONTRIBUTE.md) before submitting contributions. 
+
+**Disclaimer**: PRs can take time to receive feedback or be merged ( I'm only one person with very little time ) but I'm trying to get back to everyone eventually
 
 ## Questions?
-Feel free to contact me:  
-on my website [patrick-wied.at](http://www.patrick-wied.at "")  
-via twitter [@patrickwied](http://twitter.com/#!/patrickwied "")  
-or email [contact@patrick-wied.at](mailto:contact@patrick-wied.at "")
 
+In order to keep technical questions in a central place where other people can learn from it, the best thing you can do is [post your question to stackoverflow with the tag **heatmap.js**.](http://stackoverflow.com/questions/ask?tags=heatmap.js) 
+
+If you do have a very specific question (or need commercial support) don't hesitate to contact me directly [via email](mailto:heatmap-q@patrick-wied.at).
+
+
+## Mailing list
+
+Want to receive the latest updates and news about heatmap.js? 
+
+There is a [mailing list](http://eepurl.com/0mmV5). No spam, just news and important updates.
