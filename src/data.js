@@ -9,6 +9,7 @@ var Store = (function StoreClosure() {
     this._xField = config['xField'] || config.defaultXField;
     this._yField = config['yField'] || config.defaultYField;
     this._valueField = config['valueField'] || config.defaultValueField;
+    this._absolute = config['absolute'] || false;
 
     if (config["radius"]) {
       this._cfgRadius = config["radius"];
@@ -37,6 +38,8 @@ var Store = (function StoreClosure() {
         if (!store[x][y]) {
           store[x][y] = value;
           radi[x][y] = radius;
+        } else if (this._absolute) {
+          store[x][y] = Math.max(store[x][y], value);
         } else {
           store[x][y] += value;
         }
