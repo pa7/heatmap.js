@@ -172,6 +172,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     },
     _setStyles: function(config) {
       this._blur = (config.blur == 0)?0:(config.blur || config.defaultBlur);
+      this._radius = (config.radius == 0)?0:(config.radius || config.defaultRadius);
 
       if (config.backgroundColor) {
         this.canvas.style.backgroundColor = config.backgroundColor;
@@ -287,10 +288,26 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       var imgData = img.data;
       var len = imgData.length;
       var palette = this._palette;
+      var blur = this._blur;
+      var radius = this._radius;
 
       var faceData;
       if (this._absolute) {
-        var faceImageData = this.faceCtx.getImageData(x, y, width, height);
+        var faceImageData;
+        if (blur > 0) {
+          var blurCanvas = document.createElement('canvas');
+          blurCanvas.width = this.faceCanvas.width;
+          blurCanvas.height = this.faceCanvas.height;
+          var blurCtx = blurCanvas.getContext('2d');
+          blurCtx.fillStyle = 'rgba(0,0,0,1)';
+          blurCtx.fillRect(0, 0, this.faceCanvas.width, this.faceCanvas.height);
+          blurCtx.globalCompositeOperation = 'source-over';
+          blurCtx.filter = 'blur(' + radius * (1 - blur) * blur + 'px)';
+          blurCtx.drawImage(this.faceCanvas, 0, 0);
+          faceImageData = blurCtx.getImageData(x, y, width, height);
+        } else {
+          faceImageData = this.faceCtx.getImageData(x, y, width, height);
+        }
         faceData = faceImageData.data;
       }
 
