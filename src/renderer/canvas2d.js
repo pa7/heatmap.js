@@ -225,7 +225,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var templateAlpha = (value-min)/(max-min);
         // this fixes #176: small values are not visible because globalAlpha < .01 cannot be read from imageData
         edgeCtx.globalAlpha = templateAlpha < .01 ? .01 : templateAlpha;
-        edgeCtx.drawImage(tpl, rectX, rectY);
+        
+        if (!this._absolute || !this._useGradientOpacity) {
+          edgeCtx.drawImage(tpl, rectX, rectY);
+        }
 
         if (this._absolute) {
           var intensity = Math.round(templateAlpha * 255);
