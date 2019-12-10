@@ -1,4 +1,7 @@
 # heatmap.js
+
+[![run on repl.it](http://repl.it/badge/github/pa7/heatmap.js)](https://repl.it/github/pa7/heatmap.js)
+
 Dynamic Heatmaps for the Web. 
 
 [<img src="http://www.patrick-wied.at/static/heatmapjs/assets/img/heatmapjs-examples-docs-banner.jpg" width="100%">](http://www.patrick-wied.at/static/heatmapjs/?utm_source=gh "View the heatmap.js website with usage examples, showcases, best practises, plugins ( googlemaps heatmap, leaflet) and more.")
