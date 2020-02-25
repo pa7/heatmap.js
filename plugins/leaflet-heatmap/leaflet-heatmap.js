@@ -155,8 +155,8 @@
       this._heatmap.setData(generatedData);
     },
     setData: function(data) {
-      this._max = data.max || this._max;
-      this._min = data.min || this._min;
+      this._max = (typeof data.max !== 'undefined' ? data.max : this._max);
+      this._min = (typeof data.min !== 'undefined' ? data.min : this._min);
       var latField = this.cfg.latField || 'lat';
       var lngField = this.cfg.lngField || 'lng';
       var valueField = this.cfg.valueField || 'value';
