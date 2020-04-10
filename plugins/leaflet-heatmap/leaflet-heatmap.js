@@ -180,7 +180,7 @@
     
       this._draw();
     },
-    // experimential... not ready.
+    // experimental... not ready.
     addData: function(pointOrArray) {
       if (pointOrArray.length > 0) {
         var len = pointOrArray.length;
