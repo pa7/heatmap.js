@@ -248,7 +248,7 @@
     this.data = d;
     this.update();
   };
-  // experimential. not ready yet.
+  // experimental. not ready yet.
   HeatmapOverlay.prototype.addData = function(pointOrArray) {
     if (pointOrArray.length > 0) {
         var len = pointOrArray.length;
