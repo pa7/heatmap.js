@@ -8,6 +8,10 @@
     "email": "heatmapjs@patrick-wied.at",
     "url": "https://www.patrick-wied.at/"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pa7/heatmap.js.git"
+  },
   "main": "build/heatmap.js",
   "devDependencies": {
     "grunt": ">= 0.4.1",
