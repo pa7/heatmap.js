@@ -3,6 +3,10 @@ Dynamic Heatmaps for the Web.
 
 [<img src="http://www.patrick-wied.at/static/heatmapjs/assets/img/heatmapjs-examples-docs-banner.jpg" width="100%">](http://www.patrick-wied.at/static/heatmapjs/?utm_source=gh "View the heatmap.js website with usage examples, showcases, best practises, plugins ( googlemaps heatmap, leaflet) and more.")
 
+## mars3d的修改
+在vite严格模式下报错问题
+
+
 ## How to get started
 
 The fastest way to get started is to install heatmap.js with bower. Just run the following command:

@@ -1,6 +1,6 @@
 {
-  "name": "heatmap.js",
-  "version": "2.0.5",
+  "name": "@mars3d/heatmap.js",
+  "version": "2.0.6",
   "description": "Dynamic JavaScript Heatmaps for the Web",
   "homepage": "https://www.patrick-wied.at/static/heatmapjs/",
   "author": {
@@ -9,6 +9,7 @@
     "url": "https://www.patrick-wied.at/"
   },
   "main": "build/heatmap.js",
+  "types": "index.d.ts",
   "devDependencies": {
     "grunt": ">= 0.4.1",
     "coffee-script": ">= 1.6.3",
@@ -33,7 +34,8 @@
     "docs",
     "package.json",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "index.d.ts"
   ],
   "buildFiles": [
     "src/config.js",
