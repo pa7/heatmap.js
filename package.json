@@ -14,21 +14,7 @@
   },
   "files": [
     "build",
-    "plugins",
-    "examples",
-    "docs",
-    "package.json",
-    "LICENSE",
-    "README.md",
     "index.d.ts"
-  ],
-  "buildFiles": [
-    "src/config.js",
-    "src/data.js",
-    "src/renderer/canvas2d.js",
-    "src/renderer.js",
-    "src/util.js",
-    "src/core.js"
   ],
   "keywords": [
     "heatmap",
