@@ -1,14 +1,9 @@
 {
-  "name": "heatmap.js",
-  "version": "2.0.5",
+  "name": "@mars3d/heatmap.js",
+  "version": "2.0.7",
   "description": "Dynamic JavaScript Heatmaps for the Web",
-  "homepage": "https://www.patrick-wied.at/static/heatmapjs/",
-  "author": {
-    "name": "Patrick Wied",
-    "email": "heatmapjs@patrick-wied.at",
-    "url": "https://www.patrick-wied.at/"
-  },
   "main": "build/heatmap.js",
+  "types": "index.d.ts",
   "devDependencies": {
     "grunt": ">= 0.4.1",
     "coffee-script": ">= 1.6.3",
@@ -17,6 +12,14 @@
     "grunt-contrib-watch": "0.2.0rc7",
     "grunt-contrib-jshint": ">= 0.3.0"
   },
+  "scripts": {
+    "build": "grunt build",
+    "push": "npm publish --access public"
+  },
+  "files": [
+    "build",
+    "index.d.ts"
+  ],
   "keywords": [
     "heatmap",
     "heatmaps",
@@ -26,21 +29,18 @@
     "leaflet heatmap",
     "leaflet"
   ],
-  "files": [
-    "build",
-    "plugins",
-    "examples",
-    "docs",
-    "package.json",
-    "LICENSE",
-    "README.md"
-  ],
-  "buildFiles": [
-    "src/config.js",
-    "src/data.js",
-    "src/renderer/canvas2d.js",
-    "src/renderer.js",
-    "src/util.js",
-    "src/core.js"
-  ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/muyao1987/heatmap.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/muyao1987/heatmap.js/issues",
+    "email": "wh@marsgis.cn"
+  },
+  "author": {
+    "name": "火星科技 木遥",
+    "url": "http://www.marsgis.cn"
+  },
+  "license": "ISC",
+  "homepage": "https://github.com/muyao1987/heatmap.js"
 }

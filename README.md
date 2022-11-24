@@ -3,11 +3,17 @@ Dynamic Heatmaps for the Web.
 
 [<img src="http://www.patrick-wied.at/static/heatmapjs/assets/img/heatmapjs-examples-docs-banner.jpg" width="100%">](http://www.patrick-wied.at/static/heatmapjs/?utm_source=gh "View the heatmap.js website with usage examples, showcases, best practises, plugins ( googlemaps heatmap, leaflet) and more.")
 
+## mars3d update
+- fix: An error "Cannot assign to read only property 'data' of object '#<ImageData>'"
+- add: Added support for typescript in index.d.ts
+- The NPM package was released  `@mars3d/heatmap.js`
+
+
 ## How to get started
 
 The fastest way to get started is to install heatmap.js with bower. Just run the following command:
 
-`bower install heatmap.js-amd`
+`bower install @mars3d/heatmap.js-amd`
 
 This will download the latest working version of heatmap.js and put it in your bower_components folder.
 
@@ -20,7 +26,7 @@ The file you're ultimately looking for is **heatmap.js** or **heatmap.min.js**
 
 heatmap.js is also hosted on npm:
 
-`npm install heatmap.js`
+`npm install @mars3d/heatmap.js`
 
 
 
