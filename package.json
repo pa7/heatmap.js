@@ -1,6 +1,6 @@
 {
   "name": "@mars3d/heatmap.js",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Dynamic JavaScript Heatmaps for the Web",
   "main": "build/heatmap.js",
   "types": "index.d.ts",
@@ -11,6 +11,10 @@
     "grunt-contrib-concat": ">= 0.1.3",
     "grunt-contrib-watch": "0.2.0rc7",
     "grunt-contrib-jshint": ">= 0.3.0"
+  },
+  "scripts": {
+    "build": "grunt build",
+    "push": "npm publish --access public"
   },
   "files": [
     "build",

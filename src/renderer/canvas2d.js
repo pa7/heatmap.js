@@ -4,7 +4,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   var _getColorPalette = function(config) {
     var gradientConfig = config.gradient || config.defaultGradient;
     var paletteCanvas = document.createElement('canvas');
-    var paletteCtx = paletteCanvas.getContext('2d');
+    var paletteCtx = paletteCanvas.getContext('2d', { willReadFrequently: true });
 
     paletteCanvas.width = 256;
     paletteCanvas.height = 1;
@@ -22,7 +22,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   var _getPointTemplate = function(radius, blurFactor) {
     var tplCanvas = document.createElement('canvas');
-    var tplCtx = tplCanvas.getContext('2d');
+    var tplCtx = tplCanvas.getContext('2d', { willReadFrequently: true });
     var x = radius;
     var y = radius;
     tplCanvas.width = tplCanvas.height = radius*2;
@@ -93,8 +93,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     this._width = canvas.width = shadowCanvas.width = config.width || +(computed.width.replace(/px/,''));
     this._height = canvas.height = shadowCanvas.height = config.height || +(computed.height.replace(/px/,''));
 
-    this.shadowCtx = shadowCanvas.getContext('2d');
-    this.ctx = canvas.getContext('2d');
+    this.shadowCtx = shadowCanvas.getContext('2d', { willReadFrequently: true });
+    this.ctx = canvas.getContext('2d', { willReadFrequently: true });
 
     // @TODO:
     // conditional wrapper
