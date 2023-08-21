@@ -359,7 +359,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   Canvas2dRenderer.prototype = {
     renderPartial: function(data) {
-      if (data.data.length > 0) {
+      if (data.data.length > 0 || Object.keys(data.data).length>0) {
         this._drawAlpha(data);
         this._colorize();
       }
@@ -367,7 +367,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     renderAll: function(data) {
       // reset render boundaries
       this._clear();
-      if (data.data.length > 0) {
+      if (data.data.length > 0 || Object.keys(data.data).length>0) {
         this._drawAlpha(_prepareData(data));
         this._colorize();
       }
@@ -524,7 +524,6 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
       }
 
-      img.data = imgData;
       this.ctx.putImageData(img, x, y);
 
       this._renderBoundaries = [1000, 1000, 0, 0];
