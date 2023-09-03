@@ -18,15 +18,15 @@
           'config': '='
         },
         link: function(scope, el, attrs) {
-          var domEl = el[0];
-          var computed = window.getComputedStyle(domEl);
-          var defaultCfg = {
+          let domEl = el[0];
+          let computed = window.getComputedStyle(domEl);
+          let defaultCfg = {
             width: +attrs['width'] || +computed['width'].replace('px',''),
             height: +attrs['height'] || +computed['height'].replace('px','')
           };
-          var cfg = angular.merge({}, defaultCfg, scope['config'] || {});
+          let cfg = angular.merge({}, defaultCfg, scope['config'] || {});
           cfg.container = domEl;
-          var heatmapInstance = h337.create(cfg);
+          let heatmapInstance = h337.create(cfg);
 
           scope.heatmapInstance = heatmapInstance;
           $heatmap.registerInstance(attrs.id || (+new Date)+'', heatmapInstance);
@@ -45,7 +45,7 @@
       }
     }])
     .service('$heatmap', [function() {
-      var instances = {};
+      let instances = {};
       return {
         registerInstance: function(key, value) {
           instances[key] = value;
