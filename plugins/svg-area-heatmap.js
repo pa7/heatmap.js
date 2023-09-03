@@ -8,18 +8,18 @@
 (function() {
   'use strict';
 
-  var SvgAreaHeatmap = (function SvgAreaHeatmapClosure() {
+  let SvgAreaHeatmap = (function SvgAreaHeatmapClosure() {
 
-    var _getColorPalette = function(config) {
-      var gradientConfig = config.gradient || config.defaultGradient;
-      var paletteCanvas = document.createElement('canvas');
-      var paletteCtx = paletteCanvas.getContext('2d');
+    let _getColorPalette = function(config) {
+      let gradientConfig = config.gradient || config.defaultGradient;
+      let paletteCanvas = document.createElement('canvas');
+      let paletteCtx = paletteCanvas.getContext('2d');
 
       paletteCanvas.width = 256;
       paletteCanvas.height = 1;
 
-      var gradient = paletteCtx.createLinearGradient(0, 0, 256, 1);
-      for (var key in gradientConfig) {
+      let gradient = paletteCtx.createLinearGradient(0, 0, 256, 1);
+      for (let key in gradientConfig) {
         gradient.addColorStop(key, gradientConfig[key]);
       }
 
