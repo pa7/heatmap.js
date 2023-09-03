@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  var boilerplatePlugin = (function BoilerplatePluginClosure() {
+  let boilerplatePlugin = (function BoilerplatePluginClosure() {
 
     function BoilerplateStore(config) {
       this._coordinator = {};
