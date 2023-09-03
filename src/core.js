@@ -1,7 +1,7 @@
 // Heatmap Constructor
-var Heatmap = (function HeatmapClosure() {
+let Heatmap = (function HeatmapClosure() {
 
-  var Coordinator = (function CoordinatorClosure() {
+  let Coordinator = (function CoordinatorClosure() {
 
     function Coordinator() {
       this.cStore = {};
@@ -9,7 +9,7 @@ var Heatmap = (function HeatmapClosure() {
 
     Coordinator.prototype = {
       on: function(evtName, callback, scope) {
-        var cStore = this.cStore;
+        let cStore = this.cStore;
 
         if (!cStore[evtName]) {
           cStore[evtName] = [];
