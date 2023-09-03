@@ -28,7 +28,7 @@
 })("HeatmapOverlay", this, function(h337, gmaps) {
   'use strict';
 
-  var HeatmapOverlay = function(map, cfg){ 
+  let HeatmapOverlay = function(map, cfg){ 
     this.setMap(map);
     this.initialize(cfg || {});
   };
@@ -36,8 +36,8 @@
   HeatmapOverlay.prototype = new gmaps.OverlayView();
 
   HeatmapOverlay.CSS_TRANSFORM = (function() {
-    var div = document.createElement('div');
-    var props = [
+    let div = document.createElement('div');
+    let props = [
       'transform',
       'WebkitTransform',
       'MozTransform',
@@ -45,8 +45,8 @@
       'msTransform'
     ];
 
-    for (var i = 0; i < props.length; i++) {
-      var prop = props[i];
+    for (let i = 0; i < props.length; i++) {
+      let prop = props[i];
       if (div.style[prop] !== undefined) {
         return prop;
       }
