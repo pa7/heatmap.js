@@ -20,7 +20,7 @@
 })("h337", this, function () {
 
 // Heatmap Config stores default values and will be merged with instance config
-var HeatmapConfig = {
+let HeatmapConfig = {
   defaultRadius: 40,
   defaultRenderer: 'canvas2d',
   defaultGradient: { 0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
@@ -32,9 +32,9 @@ var HeatmapConfig = {
   defaultValueField: 'value', 
   plugins: {}
 };
-var Store = (function StoreClosure() {
+let Store = (function StoreClosure() {
 
-  var Store = function Store(config) {
+  let Store = function Store(config) {
     this._coordinator = {};
     this._data = [];
     this._radi = [];
@@ -49,19 +49,19 @@ var Store = (function StoreClosure() {
     }
   };
 
-  var defaultRadius = HeatmapConfig.defaultRadius;
+  let defaultRadius = HeatmapConfig.defaultRadius;
 
   Store.prototype = {
     // when forceRender = false -> called from setData, omits renderall event
     _organiseData: function(dataPoint, forceRender) {
-        var x = dataPoint[this._xField];
-        var y = dataPoint[this._yField];
-        var radi = this._radi;
-        var store = this._data;
-        var max = this._max;
-        var min = this._min;
-        var value = dataPoint[this._valueField] || 1;
-        var radius = dataPoint.radius || this._cfgRadius || defaultRadius;
+        let x = dataPoint[this._xField];
+        let y = dataPoint[this._yField];
+        let radi = this._radi;
+        let store = this._data;
+        let max = this._max;
+        let min = this._min;
+        let value = dataPoint[this._valueField] || 1;
+        let radius = dataPoint.radius || this._cfgRadius || defaultRadius;
 
         if (!store[x]) {
           store[x] = [];
@@ -74,7 +74,7 @@ var Store = (function StoreClosure() {
         } else {
           store[x][y] += value;
         }
-        var storedVal = store[x][y];
+        let storedVal = store[x][y];
 
         if (storedVal > max) {
           if (!forceRender) {
@@ -102,12 +102,12 @@ var Store = (function StoreClosure() {
         }
     },
     _unOrganizeData: function() {
-      var unorganizedData = [];
-      var data = this._data;
-      var radi = this._radi;
+      let unorganizedData = [];
+      let data = this._data;
+      let radi = this._radi;
 
-      for (var x in data) {
-        for (var y in data[x]) {
+      for (let x in data) {
+        for (let y in data[x]) {
 
           unorganizedData.push({
             x: x,
@@ -132,14 +132,14 @@ var Store = (function StoreClosure() {
     },
     addData: function() {
       if (arguments[0].length > 0) {
-        var dataArr = arguments[0];
-        var dataLen = dataArr.length;
+        let dataArr = arguments[0];
+        let dataLen = dataArr.length;
         while (dataLen--) {
           this.addData.call(this, dataArr[dataLen]);
         }
       } else {
         // add to store  
-        var organisedEntry = this._organiseData(arguments[0], true);
+        let organisedEntry = this._organiseData(arguments[0], true);
         if (organisedEntry) {
           // if it's the first datapoint initialize the extremas with it
           if (this._data.length === 0) {
@@ -155,15 +155,15 @@ var Store = (function StoreClosure() {
       return this;
     },
     setData: function(data) {
-      var dataPoints = data.data;
-      var pointsLen = dataPoints.length;
+      let dataPoints = data.data;
+      let pointsLen = dataPoints.length;
 
 
       // reset data arrays
       this._data = [];
       this._radi = [];
 
-      for(var i = 0; i < pointsLen; i++) {
+      for(let i = 0; i < pointsLen; i++) {
         this._organiseData(dataPoints[i], false);
       }
       this._max = data.max;
@@ -246,18 +246,18 @@ var Store = (function StoreClosure() {
   return Store;
 })();
 
-var Canvas2dRenderer = (function Canvas2dRendererClosure() {
+let Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
-  var _getColorPalette = function(config) {
-    var gradientConfig = config.gradient || config.defaultGradient;
-    var paletteCanvas = document.createElement('canvas');
-    var paletteCtx = paletteCanvas.getContext('2d');
+  let _getColorPalette = function(config) {
+    let gradientConfig = config.gradient || config.defaultGradient;
+    let paletteCanvas = document.createElement('canvas');
+    let paletteCtx = paletteCanvas.getContext('2d');
 
     paletteCanvas.width = 256;
     paletteCanvas.height = 1;
 
-    var gradient = paletteCtx.createLinearGradient(0, 0, 256, 1);
-    for (var key in gradientConfig) {
+    let gradient = paletteCtx.createLinearGradient(0, 0, 256, 1);
+    for (let key in gradientConfig) {
       gradient.addColorStop(key, gradientConfig[key]);
     }
 
@@ -267,11 +267,11 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     return paletteCtx.getImageData(0, 0, 256, 1).data;
   };
 
-  var _getPointTemplate = function(radius, blurFactor) {
-    var tplCanvas = document.createElement('canvas');
-    var tplCtx = tplCanvas.getContext('2d');
-    var x = radius;
-    var y = radius;
+  let _getPointTemplate = function(radius, blurFactor) {
+    let tplCanvas = document.createElement('canvas');
+    let tplCtx = tplCanvas.getContext('2d');
+    let x = radius;
+    let y = radius;
     tplCanvas.width = tplCanvas.height = radius*2;
 
     if (blurFactor == 1) {
@@ -280,7 +280,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
       tplCtx.fillStyle = 'rgba(0,0,0,1)';
       tplCtx.fill();
     } else {
-      var gradient = tplCtx.createRadialGradient(x, y, radius*blurFactor, x, y, radius);
+      let gradient = tplCtx.createRadialGradient(x, y, radius*blurFactor, x, y, radius);
       gradient.addColorStop(0, 'rgba(0,0,0,1)');
       gradient.addColorStop(1, 'rgba(0,0,0,0)');
       tplCtx.fillStyle = gradient;
@@ -292,24 +292,24 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     return tplCanvas;
   };
 
-  var _prepareData = function(data) {
-    var renderData = [];
-    var min = data.min;
-    var max = data.max;
-    var radi = data.radi;
-    var data = data.data;
+  let _prepareData = function(data) {
+    let renderData = [];
+    let min = data.min;
+    let max = data.max;
+    let radi = data.radi;
+    let data = data.data;
 
-    var xValues = Object.keys(data);
-    var xValuesLen = xValues.length;
+    let xValues = Object.keys(data);
+    let xValuesLen = xValues.length;
 
     while(xValuesLen--) {
-      var xValue = xValues[xValuesLen];
-      var yValues = Object.keys(data[xValue]);
-      var yValuesLen = yValues.length;
+      let xValue = xValues[xValuesLen];
+      let yValues = Object.keys(data[xValue]);
+      let yValuesLen = yValues.length;
       while(yValuesLen--) {
-        var yValue = yValues[yValuesLen];
-        var value = data[xValue][yValue];
-        var radius = radi[xValue][yValue];
+        let yValue = yValues[yValuesLen];
+        let value = data[xValue][yValue];
+        let radius = radi[xValue][yValue];
         renderData.push({
           x: xValue,
           y: yValue,
@@ -328,12 +328,12 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
 
   function Canvas2dRenderer(config) {
-    var container = config.container;
-    var shadowCanvas = this.shadowCanvas = document.createElement('canvas');
-    var canvas = this.canvas = config.canvas || document.createElement('canvas');
-    var renderBoundaries = this._renderBoundaries = [10000, 10000, 0, 0];
+    let container = config.container;
+    let shadowCanvas = this.shadowCanvas = document.createElement('canvas');
+    let canvas = this.canvas = config.canvas || document.createElement('canvas');
+    let renderBoundaries = this._renderBoundaries = [10000, 10000, 0, 0];
 
-    var computed = getComputedStyle(config.container) || {};
+    let computed = getComputedStyle(config.container) || {};
 
     canvas.className = 'heatmap-canvas';
 
