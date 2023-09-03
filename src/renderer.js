@@ -1,7 +1,7 @@
 
-var Renderer = (function RendererClosure() {
+let Renderer = (function RendererClosure() {
 
-  var rendererFn = false;
+  let rendererFn = false;
 
   if (HeatmapConfig['defaultRenderer'] === 'canvas2d') {
     rendererFn = Canvas2dRenderer;
