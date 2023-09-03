@@ -1,6 +1,6 @@
-var Store = (function StoreClosure() {
+let Store = (function StoreClosure() {
 
-  var Store = function Store(config) {
+  let Store = function Store(config) {
     this._coordinator = {};
     this._data = [];
     this._radi = [];
@@ -15,19 +15,19 @@ var Store = (function StoreClosure() {
     }
   };
 
-  var defaultRadius = HeatmapConfig.defaultRadius;
+  let defaultRadius = HeatmapConfig.defaultRadius;
 
   Store.prototype = {
     // when forceRender = false -> called from setData, omits renderall event
     _organiseData: function(dataPoint, forceRender) {
-        var x = dataPoint[this._xField];
-        var y = dataPoint[this._yField];
-        var radi = this._radi;
-        var store = this._data;
-        var max = this._max;
-        var min = this._min;
-        var value = dataPoint[this._valueField] || 1;
-        var radius = dataPoint.radius || this._cfgRadius || defaultRadius;
+        let x = dataPoint[this._xField];
+        let y = dataPoint[this._yField];
+        let radi = this._radi;
+        let store = this._data;
+        let max = this._max;
+        let min = this._min;
+        let value = dataPoint[this._valueField] || 1;
+        let radius = dataPoint.radius || this._cfgRadius || defaultRadius;
 
         if (!store[x]) {
           store[x] = [];
