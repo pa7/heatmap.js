@@ -1,10 +1,10 @@
 (function() {
   'use strict';
 
-  var segmentHeatmapPlugin = (function SegmentHeatmapPluginClosure() {
+  let segmentHeatmapPlugin = (function SegmentHeatmapPluginClosure() {
 
-    var defaultSegmentsX = 10;
-    var defaultSegmentsY = 5;
+    let defaultSegmentsX = 10;
+    let defaultSegmentsY = 5;
 
     function SegmentStore(config) {
       this._coordinator = {};
@@ -22,9 +22,9 @@
 
       },
       setData: function(data) {
-        var max = data.max;
-        var min = data.min;
-        var data = data.data;
+        let max = data.max;
+        let min = data.min;
+        let data = data.data;
 
         this._coordinator.emit('renderall', {
           min: min,
