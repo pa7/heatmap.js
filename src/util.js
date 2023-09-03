@@ -1,12 +1,12 @@
 
 
-var Util = {
+let Util = {
   merge: function() {
-    var merged = {};
-    var argsLen = arguments.length;
-    for (var i = 0; i < argsLen; i++) {
-      var obj = arguments[i]
-      for (var key in obj) {
+    let merged = {};
+    let argsLen = arguments.length;
+    for (let i = 0; i < argsLen; i++) {
+      let obj = arguments[i]
+      for (let key in obj) {
         merged[key] = obj[key];
       }
     }
