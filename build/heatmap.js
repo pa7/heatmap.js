@@ -23,6 +23,7 @@
 var HeatmapConfig = {
   defaultRadius: 40,
   defaultRenderer: 'canvas2d',
+  defaultCSS: 'position:absolute;left:0;top:12.5%;pointer-events:none',
   defaultGradient: { 0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
   defaultMaxOpacity: 1,
   defaultMinOpacity: 0,
@@ -249,6 +250,7 @@ var Store = (function StoreClosure() {
 var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   var _getColorPalette = function(config) {
+    console.log(config)
     var gradientConfig = config.gradient || config.defaultGradient;
     var paletteCanvas = document.createElement('canvas');
     var paletteCtx = paletteCanvas.getContext('2d');
@@ -346,9 +348,10 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     // @TODO:
     // conditional wrapper
 
-    canvas.style.cssText = shadowCanvas.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none';
+    canvas.style.cssText = shadowCanvas.style.cssText = config.css;
+    console.log(canvas.style);
 
-    container.style.position = 'relative';
+    // container.style.position = 'relative';
     container.appendChild(canvas);
 
     this._palette = _getColorPalette(config);
