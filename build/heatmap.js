@@ -346,7 +346,8 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     // @TODO:
     // conditional wrapper
 
-    canvas.style.cssText = shadowCanvas.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none';
+    // canvas.style.cssText = shadowCanvas.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none';
+    canvas.style.cssText = shadowCanvas.style.cssText = config.css;
 
     container.style.position = 'relative';
     container.appendChild(canvas);
